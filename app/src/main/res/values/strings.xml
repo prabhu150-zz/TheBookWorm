@@ -61,7 +61,7 @@
     <string name="blank_password_error">Password must be at least 6 characters!</string>
     <string name="blank_confirmpassword_error">Please re-enter password</string>
     <string name="password_dont_match_error">Passwords dont match!</string>
-    <string name="password_invalid_error">Password must be at least</string>
+    <string name="password_invalid_error">Password must be at least 6 characters</string>
     <string name="email_in_use_error">That email already exists!</string>
     <string name="nickname_in_use_error">That nickname is already in use!</string>
     <string name="register_fail">Couldnt Register!</string>
@@ -100,8 +100,8 @@
     <string name="title_activity_second">SecondActivity</string>
     <string name="username_placeHolder">userName_here</string>
     <string name="numposts_placeHolder">numPosts_here</string>
-    <string name="switchTextOn">Customer</string>
-    <string name="switchTextOff">Vendor</string>
+    <string name="buyerSelected">Buyer</string>
+    <string name="sellerSelected">Seller</string>
 
 
     <string name="load_books">Load All Books</string>

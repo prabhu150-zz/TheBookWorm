@@ -7,7 +7,7 @@ public class Buyer {
 
 
     String userID, name, email, nickname;
-    String profilePic = "https://firebasestorage.googleapis.com/v0/b/instapost-bb5c4.appspot.com/o/profile-pics%2Favatar-single-360.png?alt=media&token=137ad0f3-aca7-4096-aa95-eeed0a630890";
+    String profilePic = "https://firebasestorage.googleapis.com/v0/b/bookworm-cb649.appspot.com/o/profile-pics%2Fdefault.png?alt=media&token=58ed84ff-1040-428d-bfb3-0e1c224693ba";
 
 //    List<Orders> orders;
 //    List<Product> cartItems;

@@ -78,7 +78,7 @@ public class RegisterActivity extends AppCompatActivity {
         type = findViewById(R.id.type);
 
         type.setChecked(true);
-        type.setText(R.string.switchTextOn);
+        type.setText(R.string.buyerSelected);
 
         signin = findViewById(R.id.sign_in_button);
         signup = findViewById(R.id.sign_up_button);
@@ -120,9 +120,9 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked)
-                    type.setText(R.string.switchTextOn);
+                    type.setText(R.string.buyerSelected);
                 else
-                    type.setText(R.string.switchTextOff);
+                    type.setText(R.string.sellerSelected);
             }
         });
 
@@ -244,7 +244,6 @@ public class RegisterActivity extends AppCompatActivity {
     private void storeUserDetails() {
 
         DatabaseReference userDbReference = FirebaseDatabase.getInstance().getReference().child("/users/");
-
         String userId = userDbReference.push().getKey();
 
 
@@ -317,15 +316,27 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void pushToRealTimeDb(String userID, String profilePic) {
 
-        Seller guestLogin = new Seller(userID, name.getText().toString(), email.getText().toString(), nickname.getText().toString(), type.getText().toString());
 
+        if (type.getText().equals("Buyer")) {
+            Buyer guestLogin = new Buyer(userID, name.getText().toString(), email.getText().toString(), nickname.getText().toString());
 
-        if (!profilePic.isEmpty())
-            guestLogin.setProfilePic(profilePic);
+            if (!profilePic.isEmpty())
+                guestLogin.setProfilePic(profilePic);
 
-        logit("Current user added: " + guestLogin.nickname);
+            logit("Current buyer added: " + guestLogin.nickname);
 
-        FirebaseDatabase.getInstance().getReference().child("/users/").child(userID).setValue(guestLogin);
+            FirebaseDatabase.getInstance().getReference().child("/users/buyers/").child(userID).setValue(guestLogin);
+        } else {
+            Seller guestLogin = new Seller(userID, name.getText().toString(), email.getText().toString());
+
+            if (!profilePic.isEmpty())
+                guestLogin.setProfilePic(profilePic);
+
+            logit("Current seller added: " + guestLogin.name);
+
+            FirebaseDatabase.getInstance().getReference().child("/users/sellers/").child(userID).setValue(guestLogin);
+        }
+
 
 
     }

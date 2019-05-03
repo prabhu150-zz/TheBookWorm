@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -115,7 +114,7 @@ public class DashBoard extends AppCompatActivity {
         try {
             InputStream myInput;
             myInput = assetManager.open("Books.xls");
-
+            currentSeller.loadInventory(myInput);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -186,10 +185,6 @@ public class DashBoard extends AppCompatActivity {
                         if (currentSeller == null)
                             throw new IllegalStateException("User not retrieved!");
 
-                        if (currentSeller.type == "Vendor")
-
-
-                            Log.d(TAG, "Current user " + currentSeller.nickname + " retrieved!");
 
                     }
                 }
