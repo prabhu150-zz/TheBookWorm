@@ -104,4 +104,9 @@
     <string name="switchTextOff">Vendor</string>
 
 
+    <string name="load_books">Load All Books</string>
+    <string name="view_orders">View Orders</string>
+    <string name="view_customers">View Customers</string>
+
+
 </resources>

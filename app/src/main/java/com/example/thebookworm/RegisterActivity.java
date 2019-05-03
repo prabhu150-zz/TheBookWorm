@@ -317,7 +317,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void pushToRealTimeDb(String userID, String profilePic) {
 
-        User guestLogin = new User(userID, name.getText().toString(), email.getText().toString(), nickname.getText().toString(), type.getText().toString());
+        Seller guestLogin = new Seller(userID, name.getText().toString(), email.getText().toString(), nickname.getText().toString(), type.getText().toString());
 
 
         if (!profilePic.isEmpty())
