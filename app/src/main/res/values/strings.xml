@@ -1,0 +1,107 @@
+<resources>
+    <string name="app_name">Firebase Auth</string>
+    <string name="action_sign_in_short">Register</string>
+    <string name="email">Email</string>
+    <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
+    <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
+    <string name="change_email">Change Email</string>
+    <string name="change_password">Change Password</string>
+    <string name="send_password_reset_email">Send Password reset email</string>
+    <string name="remove_user">Remove user</string>
+    <string name="new_pass">New Password</string>
+    <string name="title_activity_profile">Firebase</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_name">Fullname</string>
+    <string name="btn_login">LOGIN</string>
+    <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
+    <string name="btn_link_to_login">Already registered. Login Me!</string>
+    <string name="title_activity_reset_password">ResetPasswordActivity</string>
+    <string name="btn_forgot_password">Forgot your password?</string>
+    <string name="btn_reset_password">Reset Password</string>
+    <string name="btn_back"><![CDATA[<< Back]]></string>
+    <string name="hint_new_email">New Email</string>
+    <string name="btn_change">Change</string>
+    <string name="btn_send">Send</string>
+    <string name="btn_remove">Remove</string>
+    <string name="btn_sign_out">Sign Out</string>
+    <string name="lbl_forgot_password">Forgot password?</string>
+    <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.
+    </string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_dash_board">DashBoard</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short (6 characters)</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+    <string name="title_activity_sign_up">SignUpActivity</string>
+    <string name="signupLabel">SignUp</string>
+    <string name="namePlaceHolder">Name</string>
+    <string name="emailPlaceHolder">Email</string>
+    <string name="passwordPlaceHolder">Password</string>
+    <string name="confirmPasswordPlaceHolder">Confirm Password</string>
+    <string name="nicknamePlaceHolder">Nickname</string>
+    <string name="agePlaceHolder">Age</string>
+    <string name="name_error">Name cannot be blank!</string>
+    <string name="blank_email_error">Email cannot be blank!</string>
+    <string name="invalid_email_error">Invalid Email!</string>
+    <string name="blank_nickname_error">Nickname cannot be blank!</string>
+    <string name="blank_password_error">Password must be at least 6 characters!</string>
+    <string name="blank_confirmpassword_error">Please re-enter password</string>
+    <string name="password_dont_match_error">Passwords dont match!</string>
+    <string name="password_invalid_error">Password must be at least</string>
+    <string name="email_in_use_error">That email already exists!</string>
+    <string name="nickname_in_use_error">That nickname is already in use!</string>
+    <string name="register_fail">Couldnt Register!</string>
+    <string name="register_success">User registered successfully!</string>
+    <string name="content_desc_logo">Instagram Logo</string>
+    <string name="post_button">Post</string>
+    <string name="upload_image_prompt">Upload Image</string>
+    <string name="caption_text">Say something about this post</string>
+    <string name="hashtag_prompt">Pick a cool hashtag</string>
+    <string name="title_activity_create_post">Add New Post</string>
+    <string name="file_name_prompt">FileName</string>
+    <string name="select_image">Select Image</string>
+    <string name="searchByHashtag">Hashtags</string>
+    <string name="searchByHashtagTitle">Find Posts by Hashtags!</string>
+    <string name="searchUsers">Users</string>
+    <string name="searchUsersTitle">Find Users by Username!</string>
+    <string name="createNewPost">Add Post</string>
+    <string name="createNewPostTitle">Create New Post!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="request">request</string>
+
+    <string name="personal_dashboard_request">11</string>
+    <string name="custom_hashtag_dashboard_request">22</string>
+    <string name="custom_user_dashboard_request">33</string>
+
+
+    <string name="userNicknameFragmentArg">nickname</string>
+    <string name="hashTagFragmentArg">hashtag</string>
+
+
+    <string name="logout">logout</string>
+    <string name="title_activity_second">SecondActivity</string>
+    <string name="username_placeHolder">userName_here</string>
+    <string name="numposts_placeHolder">numPosts_here</string>
+    <string name="switchTextOn">Customer</string>
+    <string name="switchTextOff">Vendor</string>
+
+
+</resources>
