@@ -82,6 +82,7 @@ public class DashBoard extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() == null) {
+            //TODO add an error 404 page if auth is inaccessible due to poor internet
             redirect(LoginActivity.class);
         } else {
             retrieveCurrentUser();
@@ -147,70 +148,29 @@ public class DashBoard extends AppCompatActivity {
     }
 
     private void redirect(Class nextActivity) {
-
         Intent redirect = new Intent(this, nextActivity);
         redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(redirect);
     }
 
-    /*
-        private fun getUserByNickName(nickName: String): User {
-
-            val userEmail = FirebaseAuth.getInstance().currentUser?.email ?: ""
-            var currentUser = User()
-
-            if (userEmail.isEmpty())
-                throw IllegalStateException("Invalid user!")
-
-            val query3 = FirebaseDatabase.getInstance().getReference("/users/")
-                .orderByChild("nickName")
-                .equalTo(nickName)
-
-            val postListener = object : ValueEventListener {
-                override fun onDataChange(tasks: DataSnapshot) {
-                    logDebug("Inside on data change module")
-                    if (tasks.exists())
-                        for (currentTask in tasks.children) {
-                            currentUser = currentTask.getValue(User::class.java) ?: User()
-                            toastNotification("Viewing all posts by ${currentUser.nickName}")
-                        }
-
-                    logDebug("User nickname : ${currentUser.userID}")
-                    retrievePosts(currentUser)
-                    updateUI(currentUser)
-                }
-
-                override fun onCancelled(databaseError: DatabaseError) {
-                    logDebug("""Database error:${databaseError.message}""")
-                }
-            }
-
-            query3.addListenerForSingleValueEvent(postListener)
-
-            logDebug("For custom users, recieved ${currentUser.name} as name")
-
-            return currentUser
-        }
-         */
     private void retrieveCurrentUser() {
         String email = auth.getCurrentUser().getEmail();
 
-        Query query = FirebaseDatabase.getInstance().getReference("/users/sellers").orderByChild("/email/").equalTo(email);
+        Query query = FirebaseDatabase.getInstance().getReference("/users/sellers/").orderByChild("email").equalTo(email);
 
         logit("Retrieving user from realtime database");
 
         ValueEventListener eventListener = new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot.exists()) {
-
                     for (DataSnapshot currentTask : dataSnapshot.getChildren()) {
                         currentSeller = currentTask.getValue(Seller.class);
 
                         if (currentSeller == null)
                             throw new IllegalStateException("User not retrieved!");
-
 
                     }
                     logit("Loading seller details on UI. Seller Name " + currentSeller.name);

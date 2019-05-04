@@ -119,6 +119,7 @@ public class LoginActivity extends AppCompatActivity {
         Intent redirect = new Intent(this, nextActivity);
         redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(redirect);
+        finish();
     }
     private boolean validUserInput() {
 

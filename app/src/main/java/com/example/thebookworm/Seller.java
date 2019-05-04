@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -65,7 +66,8 @@ public class Seller {
 
             while (cellIter.hasNext()) {
                 HSSFCell myCell = (HSSFCell) cellIter.next();
-                String currentColumn = myCell.toString().trim().toLowerCase();
+                String currentColumn = myCell.toString().trim().toLowerCase().replaceAll("[^\\w\\s]", "");
+
                 itemList.put(currentColumn, "");
                 columns.add(currentColumn);
             }
@@ -80,7 +82,7 @@ public class Seller {
 
                 while (cellIter.hasNext()) {
                     HSSFCell myCell = (HSSFCell) cellIter.next();
-                    itemList.put(columns.get(columnIndex++ % columns.size()), myCell.toString());
+                    itemList.put(columns.get(columnIndex++ % columns.size()), myCell.toString().replaceAll("[^-\\w\\s]", ""));
                 }
 
                 String productType = itemList.get("product");
@@ -94,6 +96,7 @@ public class Seller {
                         break;
 
                     // can add new products to e commerce stores. Wont be limited to only books in the future
+
                 }
                 itemList.clear();
             }
@@ -110,15 +113,20 @@ public class Seller {
     }
 
     private void updateVendorStock() {
-        DatabaseReference sellerRef = FirebaseDatabase.getInstance().getReference("/sellers/").child(userID).child("/inventory/");
+        DatabaseReference sellerRef = FirebaseDatabase.getInstance().getReference("/users/sellers/").child(userID).child("/inventory/");
 
-
+        logit("Adding " + inventory.size() + " vendor products to market!");
         for (Product currentProduct : inventory) {
 
-            sellerRef.setValue(currentProduct.getPID()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            sellerRef.child(currentProduct.getPID()).setValue(currentProduct.getPID()).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     logit("onComplete: Another product added to Seller's acc");
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    logit("Couldnt add products. Reason: " + e.getMessage());
                 }
             });
         }
@@ -129,7 +137,11 @@ public class Seller {
     private void updateMarketProductList() {
         DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("/market/");
 
-        marketRef.child("/users/").child(userID).setValue(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+        /*
+        I am keeping market separate from buyer and seller to accommodate product/user deletions in the future. If a buyer or seller decides to delete their account its easier to remove them from the market rather than individually removing them from buyer and seller tables respectively.
+         */
+
+        marketRef.child("/users/sellers/").child(userID).setValue(userID).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 logit("onComplete: Another User added to Seller's acc");
@@ -138,7 +150,6 @@ public class Seller {
 
 
         marketRef = marketRef.child("/products/");
-
 
         for (Product currentProduct : inventory) {
             marketRef.child(currentProduct.getPID()).setValue(currentProduct);
