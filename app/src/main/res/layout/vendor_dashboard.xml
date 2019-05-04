@@ -30,20 +30,20 @@
 
         <Button
             android:id="@+id/viewCustomers"
-            style="?android:textAppearanceSmall"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_horizontal_margin"
             android:layout_marginTop="16dp"
             android:background="@color/colorAccent"
             android:text="@string/view_customers"
+            style="?android:textAppearanceSmall"
             android:textColor="@android:color/black"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/addBooks"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/previewProfilePic" />
+            app:layout_constraintTop_toBottomOf="@+id/sellerName" />
 
 
         <Button
@@ -77,6 +77,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/sellerName"
+            style="?android:textAppearanceLarge"
+            android:layout_width="wrap_content"
+
+            android:layout_height="match_parent"
+
+            android:layout_marginTop="16dp"
+            android:text="@string/sellerNamePlaceHolder"
+            android:textColor="@android:color/black"
+
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/previewProfilePic"
+
+
+            />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

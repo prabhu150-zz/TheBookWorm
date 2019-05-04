@@ -1,8 +1,10 @@
 package com.example.thebookworm;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -22,6 +24,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText email, password;
     private String Tag = "Login";
     private ProgressBar createUserprogress;
+    private final boolean debug = true;
+    Button signIn, registerRedirect;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,6 +34,8 @@ public class LoginActivity extends AppCompatActivity {
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         createUserprogress = findViewById(R.id.createUserprogress);
+        signIn = findViewById(R.id.sign_in_button);
+        registerRedirect = findViewById(R.id.register_redirect);
     }
 
 
@@ -52,6 +58,13 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    private void autofill() {
+        email.setText("abc@gm.com");
+        password.setText("123456");
+
+    }
+
+
     private void logit(String message) {
         Log.d(Tag, message);
     }
@@ -60,30 +73,53 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        if (debug)
+            autofill();
+
 
         checkIfEmpty(email, getString(R.string.blank_email_error));
         checkIfEmpty(password, getString(R.string.blank_password_error));
 
-        if (validUserInput()) {
-            createUserprogress.setVisibility(View.VISIBLE);
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if (task.isSuccessful()) {
-                        notifyByToast("Logged in successfully!");
-                        logit("Login Success");
-                    } else {
-                        notifyByToast("Login Failed. Error: " + task.getException().getMessage());
-                        logit("Login Error: " + task.getException().getMessage());
-                    }
-                    createUserprogress.setVisibility(View.GONE);
+        signIn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validUserInput()) {
+                    createUserprogress.setVisibility(View.VISIBLE);
+                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                notifyByToast("Logged in successfully!");
+                                logit("Login Success");
+                                redirect(DashBoard.class);
+                            } else {
+                                notifyByToast("Login Failed. Error: " + task.getException().getMessage());
+                                logit("Login Error: " + task.getException().getMessage());
+                            }
+                            createUserprogress.setVisibility(View.GONE);
+                        }
+                    });
                 }
-            });
-        }
+            }
+        });
+
+
+        registerRedirect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                redirect(RegisterActivity.class);
+            }
+        });
 
 
     }
 
+    private void redirect(Class nextActivity) {
+
+        Intent redirect = new Intent(this, nextActivity);
+        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(redirect);
+    }
     private boolean validUserInput() {
 
         boolean validSignIn = !(email.getText().toString().isEmpty() || password.getText().toString().isEmpty());

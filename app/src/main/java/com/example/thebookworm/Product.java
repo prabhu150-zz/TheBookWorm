@@ -11,6 +11,9 @@ public abstract class Product {
 
     }
 
+    public String getPID() {
+        return PID;
+    }
 
     public Product(String name, String description, String imageURL, double price, String PID, int availableStock) {
         this.name = name;

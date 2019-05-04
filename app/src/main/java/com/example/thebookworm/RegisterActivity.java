@@ -22,8 +22,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bookworm.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -34,7 +35,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
@@ -55,7 +55,8 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     private Uri imageURI;
-    private StorageTask<UploadTask.TaskSnapshot> currentUpload;
+    private final boolean debug = true;
+
 
 
     @Override
@@ -63,7 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_page);
 
-        FirebaseApp.initializeApp(this);
+//        FirebaseApp.initializeApp(this); should only uncomment this the first time
 
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
@@ -77,8 +78,8 @@ public class RegisterActivity extends AppCompatActivity {
         confirmPassword = findViewById(R.id.confirmPassword);
         type = findViewById(R.id.type);
 
-        type.setChecked(true);
-        type.setText(R.string.buyerSelected);
+        type.setChecked(false);
+        type.setText(R.string.sellerSelected);
 
         signin = findViewById(R.id.sign_in_button);
         signup = findViewById(R.id.sign_up_button);
@@ -88,17 +89,12 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
 
-    private void redirect(Class nextActivity) {
-
-        Intent redirect = new Intent(this, nextActivity);
-        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(redirect);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
 
+        if (debug)
+            autofill();
 
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +103,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
         });
-
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -128,18 +123,28 @@ public class RegisterActivity extends AppCompatActivity {
 
         signUpCurrentUser();
 
+    }
+
+    private void autofill() {
+        name.setText("someName");
+        email.setText("abc@gm.com");
+        nickname.setText("abcd");
+        password.setText("123456");
+        confirmPassword.setText("123456");
 
     }
 
     private void checkIfEmpty(final EditText txtView, final String error) {
 
         txtView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus)
                     if (txtView.getText().toString().isEmpty())
                         txtView.setError(error);
             }
+
         });
 
     }
@@ -153,6 +158,14 @@ public class RegisterActivity extends AppCompatActivity {
     private void logit(String message) {
         Log.d(Tag, message);
     }
+
+    private void redirect(Class nextActivity) {
+
+        Intent redirect = new Intent(this, nextActivity);
+        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(redirect);
+    }
+
 
     private void signUpCurrentUser() {
         checkIfEmpty(name, getString(R.string.name_error));
@@ -172,9 +185,8 @@ public class RegisterActivity extends AppCompatActivity {
                             .equalTo(((EditText) findViewById(R.id.nickname)).getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
                             createUserprogress.setVisibility(View.GONE);
+
                             if (dataSnapshot.getChildrenCount() > 0) {
                                 findViewById(R.id.createUserprogress).setVisibility(View.GONE);
                                 ((EditText) findViewById(R.id.nickname)).setError("That one is taken!");
@@ -209,7 +221,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if (it.isSuccessful()) {
                     logit("New user added to auth!");
                     storeUserDetails();
-                    signin();
+
                 } else {
                     logit("Failed to create user error: " + it.getException().getMessage());
                     notifyByToast("Failed Signup: " + it.getException().getMessage());
@@ -234,7 +246,6 @@ public class RegisterActivity extends AppCompatActivity {
                 profilePic.setVisibility(View.VISIBLE);
                 Picasso.get().load(imageURI).into(profilePic);
                 uploadImageButton.setElevation(-1);
-//                uploadImageButton.setVisibility(View.INVISIBLE);
             } else {
                 notifyByToast("No File Selected!");
             }
@@ -246,9 +257,8 @@ public class RegisterActivity extends AppCompatActivity {
         DatabaseReference userDbReference = FirebaseDatabase.getInstance().getReference().child("/users/");
         String userId = userDbReference.push().getKey();
 
-
         if (userId == null)
-            throw new IllegalStateException("Database couldnt generate new key!");
+            throw new IllegalStateException("Database couldn't generate new key!");
 
         if (imageURI != null) {
             logit("uploading an image...");
@@ -261,41 +271,40 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void uploadImageToStorage(final String userID) {
 
-        final StorageReference profilePics = FirebaseStorage.getInstance().getReference().child("/profile-pics");
+        final StorageReference profilePics = FirebaseStorage.getInstance().getReference().child("/profile-pics/");
 
         if (imageURI == null)
             return;
 
-        String fileName = System.currentTimeMillis() + "" + getFileExtension(imageURI);
+        final String fileName = System.currentTimeMillis() + "" + getFileExtension(imageURI);
 
         StorageReference fileReference = profilePics.child(fileName);
 
-        fileReference.putFile(imageURI).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        createUserprogress.setVisibility(View.VISIBLE);
+
+        fileReference.putFile(imageURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    logit("Profile Pic uploaded!");
-                    notifyByToast("Image uploaded!");
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                logit("Uploaded image sucessfully");
+                notifyByToast("Profile pic uploaded!");
 
-                    profilePics.getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                logit("Got download url as : " + task.toString());
-                                pushToRealTimeDb(userID, task.toString());
-                            }
-                        }
-                    });
-
-                } else {
-                    if (task.getException() != null)
-                        logit("Pic did not upload. Error: " + task.getException().getMessage());
-                }
-
-                createUserprogress.setVisibility(View.GONE);
+                profilePics.child(fileName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        logit("Url retrieved is : " + uri.toString());
+                        pushToRealTimeDb(userID, uri.toString());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        logit("Couldn't fetch URL, using default image");
+                        pushToRealTimeDb(userID, "");
+                    }
+                });
 
             }
-        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+        })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                 int progress = (int) ((100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
@@ -303,6 +312,8 @@ public class RegisterActivity extends AppCompatActivity {
 
             }
         });
+
+        createUserprogress.setVisibility(View.GONE);
     }
 
     private String getFileExtension(Uri uri) {
@@ -310,14 +321,18 @@ public class RegisterActivity extends AppCompatActivity {
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         if (uri != null)
             return mime.getExtensionFromMimeType(cR.getType(uri));
-        return "";
+        else
+            return "";
     }
 
 
     private void pushToRealTimeDb(String userID, String profilePic) {
 
+        logit("pushToRealTimeDb method");
+        logit(type.getText().toString() + " is the selected option");
 
-        if (type.getText().equals("Buyer")) {
+        if (type.getText().toString().equals("Buyer")) {
+
             Buyer guestLogin = new Buyer(userID, name.getText().toString(), email.getText().toString(), nickname.getText().toString());
 
             if (!profilePic.isEmpty())
@@ -326,7 +341,9 @@ public class RegisterActivity extends AppCompatActivity {
             logit("Current buyer added: " + guestLogin.nickname);
 
             FirebaseDatabase.getInstance().getReference().child("/users/buyers/").child(userID).setValue(guestLogin);
+
         } else {
+
             Seller guestLogin = new Seller(userID, name.getText().toString(), email.getText().toString());
 
             if (!profilePic.isEmpty())
@@ -335,7 +352,11 @@ public class RegisterActivity extends AppCompatActivity {
             logit("Current seller added: " + guestLogin.name);
 
             FirebaseDatabase.getInstance().getReference().child("/users/sellers/").child(userID).setValue(guestLogin);
+
+
         }
+
+        signin();
 
 
 

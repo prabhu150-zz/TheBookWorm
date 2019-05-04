@@ -4,8 +4,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,7 +42,7 @@ public class DashBoard extends AppCompatActivity {
     Button viewCustomersButton, loadBooksButton, viewOrdersButton;
     private Seller currentSeller;
     private String TAG = "SeeDash";
-
+    private TextView sellerName;
     public static File getFilefromAssets(Context context, String filename) throws IOException {
         File cacheFile = new File(context.getCacheDir(), filename);
         try {
@@ -62,12 +67,7 @@ public class DashBoard extends AppCompatActivity {
         return cacheFile;
     }
 
-    private void redirect(Class nextActivity) {
 
-        Intent redirect = new Intent(this, nextActivity);
-        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(redirect);
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class DashBoard extends AppCompatActivity {
         loadBooksButton = findViewById(R.id.addBooks);
         viewOrdersButton = findViewById(R.id.viewOrders);
         profilePic = findViewById(R.id.previewProfilePic);
-
+        sellerName = findViewById(R.id.sellerName);
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() == null) {
@@ -86,6 +86,21 @@ public class DashBoard extends AppCompatActivity {
         } else {
             retrieveCurrentUser();
         }
+
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.logout, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        auth.signOut();
+        redirect(LoginActivity.class);
+        return true;
 
     }
 
@@ -97,11 +112,8 @@ public class DashBoard extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String message = "Books loaded!";
-
-
                 loadInventory();
-
-                toastNotify(message);
+                notifyByToast(message);
             }
         });
     }
@@ -125,8 +137,20 @@ public class DashBoard extends AppCompatActivity {
     }
 
 
-    private void toastNotify(String message) {
-        Toast.makeText(DashBoard.this, message, Toast.LENGTH_SHORT).show();
+    private void notifyByToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+
+    }
+
+    private void logit(String message) {
+        Log.d(TAG, message);
+    }
+
+    private void redirect(Class nextActivity) {
+
+        Intent redirect = new Intent(this, nextActivity);
+        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(redirect);
     }
 
     /*
@@ -171,7 +195,9 @@ public class DashBoard extends AppCompatActivity {
     private void retrieveCurrentUser() {
         String email = auth.getCurrentUser().getEmail();
 
-        Query query = FirebaseDatabase.getInstance().getReference("/users/").orderByChild("email").equalTo(email);
+        Query query = FirebaseDatabase.getInstance().getReference("/users/sellers").orderByChild("/email/").equalTo(email);
+
+        logit("Retrieving user from realtime database");
 
         ValueEventListener eventListener = new ValueEventListener() {
             @Override
@@ -187,6 +213,10 @@ public class DashBoard extends AppCompatActivity {
 
 
                     }
+                    logit("Loading seller details on UI. Seller Name " + currentSeller.name);
+                    sellerName.setText(currentSeller.name);
+                    Picasso.get().load(currentSeller.profilePic).into(profilePic);
+
                 }
 
 
