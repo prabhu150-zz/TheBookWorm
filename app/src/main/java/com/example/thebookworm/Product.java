@@ -15,6 +15,26 @@ public abstract class Product {
         return PID;
     }
 
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public int getAvailableStock() {
+        return availableStock;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public Product(String name, String description, String imageURL, double price, String PID, int availableStock) {
         this.name = name;
         this.description = description;

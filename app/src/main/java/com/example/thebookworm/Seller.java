@@ -31,18 +31,18 @@ public class Seller {
 
     //     List<Buyer> customers;
 //  //   List<Order> orders;
-    List<Product> inventory;
+//    List<String> inventory; // list of ids of all products that current seller has
 
 
     public Seller(String userID, String name, String email) {
         this.userID = userID;
         this.name = name;
         this.email = email;
-        inventory = new ArrayList<>();
+//        inventory = new ArrayList<>();
     }
 
     public Seller() {
-        inventory = new ArrayList<>();
+//        inventory = new ArrayList<>();
     }
 
     public void setProfilePic(String profilePic) {
@@ -50,6 +50,9 @@ public class Seller {
     }
 
     public void loadInventory(InputStream myInput) {
+
+        List<Product> vendorStock = new ArrayList<>();
+        List<String> inventory = new ArrayList<>();
 
         Map<String, String> itemList = new LinkedHashMap<>();
         List<String> columns = new ArrayList<>();
@@ -67,7 +70,6 @@ public class Seller {
             while (cellIter.hasNext()) {
                 HSSFCell myCell = (HSSFCell) cellIter.next();
                 String currentColumn = myCell.toString().trim().toLowerCase().replaceAll("[^\\w\\s]", "");
-
                 itemList.put(currentColumn, "");
                 columns.add(currentColumn);
             }
@@ -92,7 +94,8 @@ public class Seller {
                         Product currentProduct = new Book(itemList.get("title"), itemList.get("description"), "", Double.parseDouble(itemList.get("price")), itemList.get("isbn"), (int) Double.parseDouble(itemList.get("quantity")));
 
                         ((Book) currentProduct).setDetails(itemList.get("author"), itemList.get("genre"), itemList.get("publisher"), (int) Double.parseDouble(itemList.get("pages")), itemList.get("date published"));
-                        inventory.add(currentProduct);
+                        vendorStock.add(currentProduct);
+                        inventory.add(currentProduct.getPID());
                         break;
 
                     // can add new products to e commerce stores. Wont be limited to only books in the future
@@ -103,7 +106,9 @@ public class Seller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        updateVendorStock();
+
+        updateMarketProductList(vendorStock, inventory);
+
 
     }
 
@@ -112,13 +117,13 @@ public class Seller {
         Log.d("SellerClass", message);
     }
 
-    private void updateVendorStock() {
+    private void updateVendorStock(List<String> inventory) {
         DatabaseReference sellerRef = FirebaseDatabase.getInstance().getReference("/users/sellers/").child(userID).child("/inventory/");
 
         logit("Adding " + inventory.size() + " vendor products to market!");
-        for (Product currentProduct : inventory) {
+        for (String currentProduct : inventory) {
 
-            sellerRef.child(currentProduct.getPID()).setValue(currentProduct.getPID()).addOnCompleteListener(new OnCompleteListener<Void>() {
+            sellerRef.child(currentProduct).setValue(currentProduct).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     logit("onComplete: Another product added to Seller's acc");
@@ -131,10 +136,10 @@ public class Seller {
             });
         }
 
-        updateMarketProductList();
+
     }
 
-    private void updateMarketProductList() {
+    private void updateMarketProductList(List<Product> vendorStock, List<String> inventory) {
         DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("/market/");
 
         /*
@@ -151,10 +156,11 @@ public class Seller {
 
         marketRef = marketRef.child("/products/");
 
-        for (Product currentProduct : inventory) {
+        for (Product currentProduct : vendorStock) {
             marketRef.child(currentProduct.getPID()).setValue(currentProduct);
         }
 
+        updateVendorStock(inventory);
 
     }
 

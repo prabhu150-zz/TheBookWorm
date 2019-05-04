@@ -176,7 +176,6 @@ public class DashBoard extends AppCompatActivity {
                     logit("Loading seller details on UI. Seller Name " + currentSeller.name);
                     sellerName.setText(currentSeller.name);
                     Picasso.get().load(currentSeller.profilePic).into(profilePic);
-
                 }
 
 
