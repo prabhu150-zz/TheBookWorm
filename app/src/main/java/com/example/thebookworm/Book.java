@@ -15,6 +15,7 @@ public class Book extends Product {
     public Book(String name, String description, String imageURL, double price, String PID, int stocks) {
         super(name, description, imageURL, price, PID, stocks);
         this.title = name;
+        this.imageURL = imageURL;
     }
 
     // TODO fix image url in superclass
@@ -27,7 +28,7 @@ public class Book extends Product {
         this.author = author;
         this.genre = genre;
         this.publisher = publisher;
-        this.published = new SimpleDateFormat("d-MMM-yy").parse(datePublished);
+        this.published = new SimpleDateFormat("MM/dd/yy").parse(datePublished);
         this.pages = pages;
     }
 

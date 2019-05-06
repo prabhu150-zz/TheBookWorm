@@ -41,6 +41,7 @@ import com.squareup.picasso.Picasso;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.paperdb.Paper;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -67,8 +68,13 @@ public class RegisterActivity extends AppCompatActivity {
 //        FirebaseApp.initializeApp(this); should only uncomment this the first time
 
 
+        Paper.init(this);
+
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+
             redirect(DashBoard.class);
+
         }
 
         name = findViewById(R.id.name);
@@ -339,6 +345,9 @@ public class RegisterActivity extends AppCompatActivity {
             if (!profilePic.isEmpty())
                 guestLogin.setProfilePic(profilePic);
 
+
+            Paper.book().write("currentBuyer", guestLogin);
+
             logit("Current buyer added: " + guestLogin.nickname);
 
             FirebaseDatabase.getInstance().getReference().child("/users/buyers/").child(userID).setValue(guestLogin);
@@ -347,8 +356,11 @@ public class RegisterActivity extends AppCompatActivity {
 
             Seller guestLogin = new Seller(userID, name.getText().toString(), email.getText().toString());
 
-            if (!profilePic.isEmpty())
+            if (!profilePic.isEmpty()) {
                 guestLogin.setProfilePic(profilePic);
+            }
+
+            Paper.book().write("currentUser", guestLogin);
 
             logit("Current seller added: " + guestLogin.name);
 

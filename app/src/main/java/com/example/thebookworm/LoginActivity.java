@@ -18,6 +18,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import io.paperdb.Paper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -36,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         createUserprogress = findViewById(R.id.createUserprogress);
         signIn = findViewById(R.id.sign_in_button);
         registerRedirect = findViewById(R.id.register_redirect);
+        Paper.init(this);
     }
 
 
@@ -91,6 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 notifyByToast("Logged in successfully!");
                                 logit("Login Success");
+                                storeCurrentUser();
                                 redirect(DashBoard.class);
                             } else {
                                 notifyByToast("Login Failed. Error: " + task.getException().getMessage());
@@ -112,6 +121,78 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void storeCurrentUser() {
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        Query query = FirebaseDatabase.getInstance().getReference("/users/sellers/").orderByChild("email").equalTo(email);
+
+        logit("Retrieving seller from realtime database");
+
+        ValueEventListener eventListener = new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot currentTask : dataSnapshot.getChildren()) {
+                        Seller currentSeller = currentTask.getValue(Seller.class);
+                        if (currentSeller == null)
+                            throw new IllegalStateException("User not retrieved!");
+
+                        Paper.book().write("currentUser", currentSeller);
+
+                    }
+                } else {
+                    logit("Its probably a buyer. No-one from sellers found!");
+                    getCurrentBuyer();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        query.addListenerForSingleValueEvent(eventListener);
+    }
+
+    private void getCurrentBuyer() {
+        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+
+        Query query = FirebaseDatabase.getInstance().getReference("/users/sellers/").orderByChild("email").equalTo(email);
+
+        logit("Retrieving seller from realtime database");
+
+        ValueEventListener eventListener = new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot currentTask : dataSnapshot.getChildren()) {
+                        Buyer currentBuyer = currentTask.getValue(Buyer.class);
+                        if (currentBuyer == null)
+                            throw new IllegalStateException("User not retrieved!");
+
+                        Paper.book().write("currentUser", currentBuyer);
+
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+        query.addListenerForSingleValueEvent(eventListener);
     }
 
     private void redirect(Class nextActivity) {

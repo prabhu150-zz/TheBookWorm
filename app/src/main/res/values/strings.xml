@@ -108,6 +108,19 @@
     <string name="load_books">Load All Books</string>
     <string name="view_orders">View Orders</string>
     <string name="view_customers">View Customers</string>
+    <string name="title_activity_dash">DashActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="product_catalog">Catalog</string>
+    <string name="shoppingCart">Shopping Cart</string>
+    <string name="orders">View Orders</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
 
 
 </resources>

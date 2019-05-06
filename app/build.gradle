@@ -57,6 +57,8 @@ dependencies {
     implementation 'com.xwray:groupie-kotlin-android-extensions:2.3.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'org.apache.poi:poi:3.9'
+    implementation 'io.paperdb:paperdb:2.6'
+
 
 
 }

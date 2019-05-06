@@ -38,7 +38,7 @@ public abstract class Product {
     public Product(String name, String description, String imageURL, double price, String PID, int availableStock) {
         this.name = name;
         this.description = description;
-//        this.imageURL = imageURL;
+        this.imageURL = imageURL;
         this.price = price;
         this.PID = PID;
         this.availableStock = availableStock;

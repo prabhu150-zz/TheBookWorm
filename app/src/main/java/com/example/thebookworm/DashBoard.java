@@ -12,17 +12,11 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bookworm.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -33,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.paperdb.Paper;
 
 
 public class DashBoard extends AppCompatActivity {
@@ -40,9 +35,11 @@ public class DashBoard extends AppCompatActivity {
     FirebaseAuth auth;
     CircleImageView profilePic;
     Button viewCustomersButton, loadBooksButton, viewOrdersButton;
-    private Seller currentSeller;
     private String TAG = "SeeDash";
     private TextView sellerName;
+    private Seller currentSeller;
+
+
     public static File getFilefromAssets(Context context, String filename) throws IOException {
         File cacheFile = new File(context.getCacheDir(), filename);
         try {
@@ -67,13 +64,12 @@ public class DashBoard extends AppCompatActivity {
         return cacheFile;
     }
 
-
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vendor_dashboard);
 
+        Paper.init(this);
         viewCustomersButton = findViewById(R.id.viewCustomers);
         loadBooksButton = findViewById(R.id.addBooks);
         viewOrdersButton = findViewById(R.id.viewOrders);
@@ -81,11 +77,16 @@ public class DashBoard extends AppCompatActivity {
         sellerName = findViewById(R.id.sellerName);
         auth = FirebaseAuth.getInstance();
 
+
         if (auth.getCurrentUser() == null) {
             //TODO add an error 404 page if auth is inaccessible due to poor internet
             redirect(LoginActivity.class);
         } else {
-            retrieveCurrentUser();
+
+            currentSeller = Paper.book().read("currentUser");
+            logit("Username retrieved from paper " + currentSeller.name);
+            sellerName.setText(currentSeller.name);
+            Picasso.get().load(currentSeller.profilePic).into(profilePic);
         }
 
     }
@@ -153,44 +154,7 @@ public class DashBoard extends AppCompatActivity {
         startActivity(redirect);
     }
 
-    private void retrieveCurrentUser() {
-        String email = auth.getCurrentUser().getEmail();
 
-        Query query = FirebaseDatabase.getInstance().getReference("/users/sellers/").orderByChild("email").equalTo(email);
-
-        logit("Retrieving user from realtime database");
-
-        ValueEventListener eventListener = new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot currentTask : dataSnapshot.getChildren()) {
-                        currentSeller = currentTask.getValue(Seller.class);
-
-                        if (currentSeller == null)
-                            throw new IllegalStateException("User not retrieved!");
-
-                    }
-                    logit("Loading seller details on UI. Seller Name " + currentSeller.name);
-                    sellerName.setText(currentSeller.name);
-                    Picasso.get().load(currentSeller.profilePic).into(profilePic);
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-
-        query.addListenerForSingleValueEvent(eventListener);
-
-    }
 }
 
 
