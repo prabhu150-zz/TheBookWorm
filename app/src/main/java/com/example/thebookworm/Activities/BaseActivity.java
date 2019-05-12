@@ -1,9 +1,10 @@
-package com.example.thebookworm;
+package com.example.thebookworm.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,8 +16,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.bookworm.R;
+import com.example.thebookworm.BackEnd;
+import com.example.thebookworm.Fragments.BuyerDashBoard;
+import com.example.thebookworm.Fragments.SellerDashboard;
+import com.example.thebookworm.Models.Buyer;
+import com.example.thebookworm.Models.Seller;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -27,7 +36,6 @@ public class BaseActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
 
         singleton = new BackEnd(this, "FragmentManager");
 
@@ -55,11 +63,16 @@ public class BaseActivity extends AppCompatActivity
         setContentView(R.layout.buyer_navbar);
         Toolbar toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
         setSupportActionBar(toolbar);
+
         toolbar.setTitle("Buyer DashBoard");
         toolbar.inflateMenu(R.menu.buyer_toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        View navbar = navigationView.getHeaderView(0);
+        updateBuyerDashUI(navbar);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
@@ -70,15 +83,20 @@ public class BaseActivity extends AppCompatActivity
 
         Fragment dashBoard = new BuyerDashBoard();
         replaceFragment(dashBoard);
-
     }
 
     private void handleSeller() {
 
         setContentView(R.layout.seller_navbar);
         Toolbar toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
-        setSupportActionBar(toolbar);
         toolbar.setTitle("Seller Dashboard");
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+
+        View navbar = navigationView.getHeaderView(0);
+        updateSellerDashUI(navbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
 
@@ -94,8 +112,7 @@ public class BaseActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -106,6 +123,31 @@ public class BaseActivity extends AppCompatActivity
 
         Fragment dashBoard = new SellerDashboard();
         replaceFragment(dashBoard);
+    }
+
+    private void updateSellerDashUI(View navbar) {
+        Seller currentSeller = (Seller) singleton.getFromPersistentStorage("currentUser");
+
+        CircleImageView profilePic = navbar.findViewById(R.id.profilePic);
+        TextView sellerName = navbar.findViewById(R.id.userName);
+        TextView sellerEmail = navbar.findViewById(R.id.userEmail);
+
+        sellerName.setText(currentSeller.getName());
+        Picasso.get().load(currentSeller.getProfilePic()).into(profilePic);
+        sellerEmail.setText(currentSeller.getEmail());
+    }
+
+
+    private void updateBuyerDashUI(View navbar) {
+        Buyer currentBuyer = (Buyer) singleton.getFromPersistentStorage("currentUser");
+
+        CircleImageView profilePic = navbar.findViewById(R.id.profilePic);
+        TextView sellerName = navbar.findViewById(R.id.userName);
+        TextView sellerEmail = navbar.findViewById(R.id.userEmail);
+
+        sellerName.setText(currentBuyer.getNickname());
+        Picasso.get().load(currentBuyer.getProfilePic()).into(profilePic);
+        sellerEmail.setText(currentBuyer.getEmail());
     }
 
     @Override
@@ -153,11 +195,12 @@ public class BaseActivity extends AppCompatActivity
                 singleton.notifyByToast("View Customers!");
                 break;
 
-            case R.id.viewOrders:
+            case R.id.orders:
                 singleton.notifyByToast("View all orders!");
                 break;
 
             case R.id.logoutButton:
+                singleton.notifyByToast("Logging out!");
                 singleton.logout();
                 break;
 

@@ -1,4 +1,4 @@
-package com.example.thebookworm;
+package com.example.thebookworm.Fragments;
 
 import android.os.Bundle;
 

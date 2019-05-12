@@ -28,7 +28,6 @@
             android:icon="@mipmap/baseline_exit_to_app_black_24dp"
             android:title="@string/logout" />
 
-
     </group>
 
 

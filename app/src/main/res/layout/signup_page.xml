@@ -10,7 +10,7 @@
     android:fitsSystemWindows="true"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.example.thebookworm.RegisterActivity">
+    tools:context="com.example.thebookworm.Activities.RegisterActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="fill_parent"

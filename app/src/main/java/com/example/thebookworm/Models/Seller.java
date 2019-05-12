@@ -1,4 +1,4 @@
-package com.example.thebookworm;
+package com.example.thebookworm.Models;
 
 import android.util.Log;
 
@@ -28,7 +28,22 @@ import java.util.Map;
 
 public class Seller {
 
-    String userID, name, email, profilePic = "https://firebasestorage.googleapis.com/v0/b/bookworm-cb649.appspot.com/o/profile-pics%2Fbarnes.png?alt=media&token=750c05c8-67e2-436c-ad04-79d8f1fa9e3d";
+    String userID;
+    String name;
+    String email;
+    String profilePic = "https://firebasestorage.googleapis.com/v0/b/bookworm-cb649.appspot.com/o/profile-pics%2Fbarnes.png?alt=media&token=750c05c8-67e2-436c-ad04-79d8f1fa9e3d";
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
 
     //     List<Buyer> customers;
 //  //   List<Order> orders;

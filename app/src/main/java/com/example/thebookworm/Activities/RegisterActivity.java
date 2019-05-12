@@ -1,4 +1,4 @@
-package com.example.thebookworm;
+package com.example.thebookworm.Activities;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -21,6 +21,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bookworm.R;
+import com.example.thebookworm.BackEnd;
+import com.example.thebookworm.Models.Buyer;
+import com.example.thebookworm.Models.Seller;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -346,7 +349,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             Paper.book().write("currentBuyer", guestLogin);
 
-            logit("Current buyer added: " + guestLogin.nickname);
+            logit("Current buyer added: " + guestLogin.getNickname());
 
             FirebaseDatabase.getInstance().getReference().child("/users/buyers/").child(userID).setValue(guestLogin);
 
@@ -360,7 +363,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             Paper.book().write("currentUser", guestLogin);
 
-            logit("Current seller added: " + guestLogin.name);
+            logit("Current seller added: " + guestLogin.getName());
 
             FirebaseDatabase.getInstance().getReference().child("/users/sellers/").child(userID).setValue(guestLogin);
 

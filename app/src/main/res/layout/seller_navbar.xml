@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.example.thebookworm.BaseActivity"
+    tools:context="com.example.thebookworm.Activities.BaseActivity"
     tools:openDrawer="start">
 
     <include
@@ -21,6 +21,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_dash"
-        app:menu="@menu/buyer_nav_drawer" />
+        app:menu="@menu/seller_nav_drawer" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

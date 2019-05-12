@@ -1,4 +1,4 @@
-package com.example.thebookworm;
+package com.example.thebookworm.Models;
 
 public abstract class Product {
 

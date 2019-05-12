@@ -7,6 +7,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.example.thebookworm.Activities.BaseActivity;
+import com.example.thebookworm.Activities.LoginActivity;
+import com.example.thebookworm.Models.Buyer;
+import com.example.thebookworm.Models.Seller;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -59,7 +63,7 @@ public class BackEnd {
                     for (DataSnapshot currentTask : dataSnapshot.getChildren()) {
                         Seller currentSeller = new Seller(currentTask.child("userID").getValue().toString(), currentTask.child("name").getValue().toString(), currentTask.child("email").getValue().toString());
                         currentSeller.setProfilePic(currentTask.child("profilePic").getValue().toString());
-                        logit("Seller profile pic set as: " + currentSeller.profilePic);
+                        logit("Seller profile pic set as: " + currentSeller);
                         saveToPersistentStorage("currentUser", currentSeller);
                         getDashBoard("Seller");
                     }
@@ -120,12 +124,12 @@ public class BackEnd {
     }
 
 
-    private void saveToPersistentStorage(String key, Object value) {
+    public void saveToPersistentStorage(String key, Object value) {
         Paper.book().write(key, value);
     }
 
-    private Object getFromPersistentStorage(String key) {
-        return Paper.book().getPath(key);
+    public Object getFromPersistentStorage(String key) {
+        return Paper.book().read(key);
     }
 
     private void checkBuyersList() {

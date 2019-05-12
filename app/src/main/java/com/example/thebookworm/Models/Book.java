@@ -1,4 +1,4 @@
-package com.example.thebookworm;
+package com.example.thebookworm.Models;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

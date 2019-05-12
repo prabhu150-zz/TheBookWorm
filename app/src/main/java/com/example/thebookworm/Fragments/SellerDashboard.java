@@ -1,9 +1,8 @@
-package com.example.thebookworm;
+package com.example.thebookworm.Fragments;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.bookworm.R;
+import com.example.thebookworm.BackEnd;
+import com.example.thebookworm.Models.Seller;
 import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
@@ -27,17 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.paperdb.Paper;
 
 
 public class SellerDashboard extends Fragment {
 
     FirebaseAuth auth;
-    CircleImageView profilePic;
-    Button viewCustomersButton, loadBooksButton, viewOrdersButton;
     private String TAG = "SeeDash";
-    private TextView sellerName;
-    private Seller currentSeller;
+    private BackEnd singleton;
 
     public static File getFilefromAssets(Context context, String filename) throws IOException {
         File cacheFile = new File(context.getCacheDir(), filename);
@@ -65,17 +62,20 @@ public class SellerDashboard extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        singleton = new BackEnd(getContext(), "SellerDashBoard");
         return inflater.inflate(R.layout.vendor_dashboard, null);
     }
 
 
     private void handleSellerDashBoard() {
 
+        updateSellerUI();
+        Button viewCustomersButton, loadBooksButton, viewOrdersButton;
+
         viewCustomersButton = getView().findViewById(R.id.viewCustomers);
         loadBooksButton = getView().findViewById(R.id.addBooks);
         viewOrdersButton = getView().findViewById(R.id.viewOrders);
-        profilePic = getView().findViewById(R.id.previewProfilePic);
-        sellerName = getView().findViewById(R.id.sellerName);
+
         auth = FirebaseAuth.getInstance();
 
         loadBooksButton.setOnClickListener(new View.OnClickListener() {
@@ -86,17 +86,39 @@ public class SellerDashboard extends Fragment {
                 notifyByToast(message);
             }
         });
-        currentSeller = Paper.book().read("currentUser");
-        logit("Username retrieved from paper " + currentSeller.name);
-        sellerName.setText(currentSeller.name);
-        Picasso.get().load(currentSeller.profilePic).into(profilePic);
-    }
-//    }
 
-//    private void handleBuyerDashBoard(){
-//        notifyByToast("This is buyers dashboard!");
-//        handleSellerDashBoard();
-//    }
+        viewCustomersButton.setOnClickListener(new View.OnClickListener() {
+                                                   @Override
+                                                   public void onClick(View v) {
+                                                       notifyByToast("See Customers");
+                                                   }
+                                               }
+        );
+
+        viewOrdersButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    notifyByToast("See Customers");
+                                                }
+                                            }
+        );
+
+
+    }
+
+    private void updateSellerUI() {
+        CircleImageView profilePic = getView().findViewById(R.id.previewProfilePic);
+        TextView sellerName = getView().findViewById(R.id.sellerName);
+
+        Seller currentSeller = (Seller) singleton.getFromPersistentStorage("currentUser");
+
+        Picasso.get().load(currentSeller.getProfilePic()).into(profilePic);
+        sellerName.setText(currentSeller.getName());
+    }
+
+    private void notifyByToast(String message) {
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+    }
 
     @Override
     public void onStart() {
@@ -104,13 +126,15 @@ public class SellerDashboard extends Fragment {
         handleSellerDashBoard();
     }
 
+
+    // delete this later
     public List<String> loadInventory() {
         AssetManager assetManager = getActivity().getAssets();
         List<String> res = new ArrayList<>();
         try {
             InputStream myInput;
             myInput = assetManager.open("Books.xls");
-            currentSeller.loadInventory(myInput);
+//            currentSeller.loadInventory(myInput);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -118,18 +142,8 @@ public class SellerDashboard extends Fragment {
         return res;
     }
 
+}
 
-    private void notifyByToast(String message) {
-        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
-
-    }
-
-    private void logit(String message) {
-        Log.d(TAG, message);
-    }
-
-
-    }
 
 
 
