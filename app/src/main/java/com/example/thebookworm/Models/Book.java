@@ -1,14 +1,10 @@
 package com.example.thebookworm.Models;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class Book extends Product {
 
-    String title, author, genre, publisher;
+    String title, author, genre, publisher, datePublished;
     int pages;
-    Date published;
+    //    Date published; too complex not needed
     String imageURL = "https://firebasestorage.googleapis.com/v0/b/bookworm-cb649.appspot.com/o/profile-pics%2Fdefault.png?alt=media&token=58ed84ff-1040-428d-bfb3-0e1c224693ba";
 
 
@@ -24,13 +20,17 @@ public class Book extends Product {
         super();
     }
 
-    public void setDetails(String author, String genre, String publisher, int pages, String datePublished) throws ParseException {
+    public void setDetails(String author, String genre, String publisher, int pages, String datePublished) {
 
-        this.author = author;
-        this.genre = genre;
-        this.publisher = publisher;
-        this.published = new SimpleDateFormat("MM/dd/yy").parse(datePublished);
-        this.pages = pages;
+        {
+            this.author = author;
+            this.genre = genre;
+            this.publisher = publisher;
+//            this.published = new SimpleDateFormat("MM/dd/yy").parse(datePublished);
+            this.datePublished = datePublished;
+            this.pages = pages;
+        }
+
     }
 
 }

@@ -83,46 +83,6 @@ public class BackEnd {
         query.addListenerForSingleValueEvent(eventListener);
     }
 
-    private void loadInventoryFromBackEnd(final Seller currentSeller) {
-
-        Query selectAllProducts = FirebaseDatabase.getInstance().getReference("/users/sellers/inventory/");
-
-        final DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("market/products/");
-
-        logit("Loading all products from seller's current inventory to seller model");
-
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-
-                    List<String> productIds = new ArrayList<>();
-
-                    for (DataSnapshot currentChild : dataSnapshot.getChildren())
-                        productIds.add(currentChild.getValue().toString());
-
-
-                    for (String productId : productIds) {
-//                        DatabaseReference productRef = marketRef.child(productId);
-//                        Product product = new Product(productRef.child("name").toString(), productRef.child("description"), productRef.child("imageURL"))
-
-
-//                        currentSeller.inventory.add();
-                    }
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-
-    }
-
 
     public void saveToPersistentStorage(String key, Object value) {
         Paper.book().write(key, value);
@@ -174,7 +134,7 @@ public class BackEnd {
     private void getDashBoard(String type) {
         Intent redirect = new Intent(currentActivity, BaseActivity.class);
         redirect.putExtra("userType", type);
-        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         currentActivity.startActivity(redirect);
     }
 
@@ -190,5 +150,44 @@ public class BackEnd {
 
     }
 
+    private void loadInventoryFromBackEnd(final Seller currentSeller) {
+
+        Query selectAllProducts = FirebaseDatabase.getInstance().getReference("/users/sellers/inventory/");
+
+        final DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("market/products/");
+
+        logit("Loading all products from seller's current inventory to seller model");
+
+        ValueEventListener listener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    List<String> productIds = new ArrayList<>();
+
+                    for (DataSnapshot currentChild : dataSnapshot.getChildren())
+                        productIds.add(currentChild.getValue().toString());
+
+
+                    for (String productId : productIds) {
+//                        DatabaseReference productRef = marketRef.child(productId);
+//                        Product product = new Product(productRef.child("name").toString(), productRef.child("description"), productRef.child("imageURL"))
+
+
+//                        currentSeller.inventory.add();
+                    }
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+
+
+    }
 
 }

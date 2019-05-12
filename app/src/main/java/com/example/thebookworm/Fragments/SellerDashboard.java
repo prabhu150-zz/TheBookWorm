@@ -63,9 +63,8 @@ public class SellerDashboard extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         singleton = new BackEnd(getContext(), "SellerDashBoard");
-        return inflater.inflate(R.layout.vendor_dashboard, null);
+        return inflater.inflate(R.layout.seller_dashboard, container, false);
     }
-
 
     private void handleSellerDashBoard() {
 
@@ -98,7 +97,7 @@ public class SellerDashboard extends Fragment {
         viewOrdersButton.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
-                                                    notifyByToast("See Customers");
+                                                    notifyByToast("See Orders");
                                                 }
                                             }
         );
@@ -131,10 +130,12 @@ public class SellerDashboard extends Fragment {
     public List<String> loadInventory() {
         AssetManager assetManager = getActivity().getAssets();
         List<String> res = new ArrayList<>();
+        Seller currentSeller = (Seller) singleton.getFromPersistentStorage("currentUser");
+
         try {
             InputStream myInput;
             myInput = assetManager.open("Books.xls");
-//            currentSeller.loadInventory(myInput);
+            currentSeller.loadInventory(myInput);
 
         } catch (IOException e) {
             e.printStackTrace();

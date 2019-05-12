@@ -68,7 +68,7 @@ public class Seller {
 
         List<Product> inventory = new ArrayList<>();
 //        List<String> inventory = new ArrayList<>();
-
+        String productType = "";
         Map<String, String> itemList = new LinkedHashMap<>();
         List<String> columns = new ArrayList<>();
 
@@ -106,10 +106,10 @@ public class Seller {
                 if (itemList.get("product") == null)
                     continue;
 
-                String productType = itemList.get("product");
+                productType = itemList.get("product").trim().toLowerCase().replaceAll("[^\\w\\s]", "");
 
                 switch (productType) {
-                    case "Book":
+                    case "book":
                         Product currentProduct = new Book(itemList.get("title"), itemList.get("description"), itemList.get("book cover"), Double.parseDouble(itemList.get("price")), itemList.get("isbn"), (int) Double.parseDouble(itemList.get("quantity")));
 
                         ((Book) currentProduct).setDetails(itemList.get("author"), itemList.get("genre"), itemList.get("publisher"), (int) Double.parseDouble(itemList.get("pages")), itemList.get("date published"));
@@ -124,17 +124,18 @@ public class Seller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        updateMarketProductList(inventory);
+
+        if (!productType.isEmpty())
+            updateMarketProductList(inventory, productType);
 
     }
-
 
     private void logit(String message) {
         Log.d("SellerClass", message);
     }
 
-    private void updateVendorStock(List<Product> inventory) {
-        DatabaseReference sellerRef = FirebaseDatabase.getInstance().getReference("/users/sellers/").child(userID).child("/inventory/");
+    private void updateVendorStock(List<Product> inventory, String productType) {
+        DatabaseReference sellerRef = FirebaseDatabase.getInstance().getReference("/users/sellers/").child(userID).child("/inventory/" + productType);
 
         logit("Adding " + inventory.size() + " vendor products to market!");
         for (Product currentProduct : inventory) {
@@ -153,7 +154,7 @@ public class Seller {
         }
     }
 
-    private void updateMarketProductList(List<Product> inventory) {
+    private void updateMarketProductList(List<Product> inventory, String productType) {
         DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("/market/");
 
         /*
@@ -168,13 +169,13 @@ public class Seller {
         });
 
 
-        marketRef = marketRef.child("/products/");
+        marketRef = marketRef.child("/products/" + productType);
 
         for (Product currentProduct : inventory) {
             marketRef.child(currentProduct.getPID()).setValue(currentProduct);
         }
 
-        updateVendorStock(inventory);
+        updateVendorStock(inventory, productType);
 
     }
 

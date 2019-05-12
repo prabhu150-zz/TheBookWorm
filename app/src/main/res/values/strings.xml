@@ -124,6 +124,7 @@
     <string name="menu_send">Send</string>
     <string name="searchProduct">Search Product</string>
     <string name="filterProduct">Filter Product</string>
+    <string name="empty_inventory">No Products Found!</string>
 
 
 </resources>
