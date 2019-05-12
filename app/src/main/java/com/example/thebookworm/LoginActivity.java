@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,11 +17,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import io.paperdb.Paper;
 
@@ -33,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar createUserprogress;
     private final boolean debug = true;
     Button signIn, registerRedirect;
+    private BackEnd singleton;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +40,13 @@ public class LoginActivity extends AppCompatActivity {
         signIn = findViewById(R.id.sign_in_button);
         registerRedirect = findViewById(R.id.register_redirect);
         Paper.init(this);
+        singleton = new BackEnd(this, Tag);
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            singleton.findCurrentUser();
+        }
+
     }
 
 
@@ -61,21 +64,12 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    private void notifyByToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-
-    }
-
     private void autofill() {
         email.setText("abc@gm.com");
         password.setText("123456");
-
     }
 
 
-    private void logit(String message) {
-        Log.d(Tag, message);
-    }
 
     @Override
     protected void onStart() {
@@ -93,21 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (validUserInput()) {
                     createUserprogress.setVisibility(View.VISIBLE);
-                    FirebaseAuth.getInstance().signInWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                notifyByToast("Logged in successfully!");
-                                logit("Login Success");
-                                storeCurrentUser();
-                                redirect(DashBoard.class);
-                            } else {
-                                notifyByToast("Login Failed. Error: " + task.getException().getMessage());
-                                logit("Login Error: " + task.getException().getMessage());
-                            }
-                            createUserprogress.setVisibility(View.GONE);
-                        }
-                    });
+                    signInUser();
                 }
             }
         });
@@ -119,95 +99,40 @@ public class LoginActivity extends AppCompatActivity {
                 redirect(RegisterActivity.class);
             }
         });
-
-
     }
 
-    private void storeCurrentUser() {
-        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
-        Query query = FirebaseDatabase.getInstance().getReference("/users/sellers/").orderByChild("email").equalTo(email);
-
-        logit("Retrieving seller from realtime database");
-
-        ValueEventListener eventListener = new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot currentTask : dataSnapshot.getChildren()) {
-                        Seller currentSeller = currentTask.getValue(Seller.class);
-                        if (currentSeller == null)
-                            throw new IllegalStateException("User not retrieved!");
-
-                        Paper.book().write("currentUser", currentSeller);
-
-                    }
-                } else {
-                    logit("Its probably a buyer. No-one from sellers found!");
-                    getCurrentBuyer();
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        query.addListenerForSingleValueEvent(eventListener);
-    }
-
-    private void getCurrentBuyer() {
-        String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
-        Query query = FirebaseDatabase.getInstance().getReference("/users/sellers/").orderByChild("email").equalTo(email);
-
-        logit("Retrieving seller from realtime database");
-
-        ValueEventListener eventListener = new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-                    for (DataSnapshot currentTask : dataSnapshot.getChildren()) {
-                        Buyer currentBuyer = currentTask.getValue(Buyer.class);
-                        if (currentBuyer == null)
-                            throw new IllegalStateException("User not retrieved!");
-
-                        Paper.book().write("currentUser", currentBuyer);
-
-                    }
-                }
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-        query.addListenerForSingleValueEvent(eventListener);
-    }
-
-    private void redirect(Class nextActivity) {
-
-        Intent redirect = new Intent(this, nextActivity);
+    private void redirect(Class<RegisterActivity> registerActivityClass) {
+        Intent redirect = new Intent(this, registerActivityClass);
         redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(redirect);
         finish();
     }
+
+
+    private void signInUser() {
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    singleton.notifyByToast("Logged in successfully!");
+                    singleton.logit("Login Success");
+                    singleton.findCurrentUser();
+
+                } else {
+                    singleton.notifyByToast("Login Failed. Error: " + task.getException().getMessage());
+                    singleton.logit("Error: " + task.getException().getMessage());
+                }
+                createUserprogress.setVisibility(View.GONE);
+            }
+        });
+    }
+
+
+
+
     private boolean validUserInput() {
-
         boolean validSignIn = !(email.getText().toString().isEmpty() || password.getText().toString().isEmpty());
-
         Log.d("LogIn", "Valid fields: " + validSignIn);
-
         return validSignIn;
 
     }

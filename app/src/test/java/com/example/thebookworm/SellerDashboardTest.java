@@ -6,12 +6,12 @@ import java.util.List;
 
 import static org.junit.Assert.assertNotEquals;
 
-public class DashBoardTest {
+public class SellerDashboardTest {
 
 
     @Test
     public void loadInventory() {
-        List<String> res = new DashBoard().loadInventory();
+        List<String> res = new SellerDashboard().loadInventory();
 
         for (String curr : res)
             System.out.println(curr);

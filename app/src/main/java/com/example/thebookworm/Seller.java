@@ -32,18 +32,17 @@ public class Seller {
 
     //     List<Buyer> customers;
 //  //   List<Order> orders;
-    List<Product> inventory; // list of ids of all products that current seller has
+//    List<Product> inventory; // list of ids of all products that current seller has
 
 
     public Seller(String userID, String name, String email) {
         this.userID = userID;
         this.name = name;
         this.email = email;
-        inventory = new ArrayList<>();
     }
 
     public Seller() {
-        inventory = new ArrayList<>();
+//        inventory = new ArrayList<>();
     }
 
     public void setProfilePic(String profilePic) {
@@ -52,7 +51,7 @@ public class Seller {
 
     public void loadInventory(InputStream myInput) {
 
-//        List<Product> vendorStock = new ArrayList<>();
+        List<Product> inventory = new ArrayList<>();
 //        List<String> inventory = new ArrayList<>();
 
         Map<String, String> itemList = new LinkedHashMap<>();
@@ -110,7 +109,7 @@ public class Seller {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        updateMarketProductList();
+        updateMarketProductList(inventory);
 
     }
 
@@ -119,7 +118,7 @@ public class Seller {
         Log.d("SellerClass", message);
     }
 
-    private void updateVendorStock() {
+    private void updateVendorStock(List<Product> inventory) {
         DatabaseReference sellerRef = FirebaseDatabase.getInstance().getReference("/users/sellers/").child(userID).child("/inventory/");
 
         logit("Adding " + inventory.size() + " vendor products to market!");
@@ -137,11 +136,9 @@ public class Seller {
                 }
             });
         }
-
-
     }
 
-    private void updateMarketProductList() {
+    private void updateMarketProductList(List<Product> inventory) {
         DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("/market/");
 
         /*
@@ -162,7 +159,7 @@ public class Seller {
             marketRef.child(currentProduct.getPID()).setValue(currentProduct);
         }
 
-        updateVendorStock();
+        updateVendorStock(inventory);
 
     }
 

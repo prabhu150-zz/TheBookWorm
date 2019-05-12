@@ -1,19 +1,19 @@
 package com.example.thebookworm;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
 import com.example.bookworm.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
 
 
-public class DashBoard extends AppCompatActivity {
+public class SellerDashboard extends Fragment {
 
     FirebaseAuth auth;
     CircleImageView profilePic;
@@ -38,7 +38,6 @@ public class DashBoard extends AppCompatActivity {
     private String TAG = "SeeDash";
     private TextView sellerName;
     private Seller currentSeller;
-
 
     public static File getFilefromAssets(Context context, String filename) throws IOException {
         File cacheFile = new File(context.getCacheDir(), filename);
@@ -65,50 +64,19 @@ public class DashBoard extends AppCompatActivity {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.vendor_dashboard);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.vendor_dashboard, null);
+    }
 
-        Paper.init(this);
-        viewCustomersButton = findViewById(R.id.viewCustomers);
-        loadBooksButton = findViewById(R.id.addBooks);
-        viewOrdersButton = findViewById(R.id.viewOrders);
-        profilePic = findViewById(R.id.previewProfilePic);
-        sellerName = findViewById(R.id.sellerName);
+
+    private void handleSellerDashBoard() {
+
+        viewCustomersButton = getView().findViewById(R.id.viewCustomers);
+        loadBooksButton = getView().findViewById(R.id.addBooks);
+        viewOrdersButton = getView().findViewById(R.id.viewOrders);
+        profilePic = getView().findViewById(R.id.previewProfilePic);
+        sellerName = getView().findViewById(R.id.sellerName);
         auth = FirebaseAuth.getInstance();
-
-
-        if (auth.getCurrentUser() == null) {
-            //TODO add an error 404 page if auth is inaccessible due to poor internet
-            redirect(LoginActivity.class);
-        } else {
-
-            currentSeller = Paper.book().read("currentUser");
-            logit("Username retrieved from paper " + currentSeller.name);
-            sellerName.setText(currentSeller.name);
-            Picasso.get().load(currentSeller.profilePic).into(profilePic);
-        }
-
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.logout, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        auth.signOut();
-        redirect(LoginActivity.class);
-        return true;
-
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
 
         loadBooksButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,13 +86,27 @@ public class DashBoard extends AppCompatActivity {
                 notifyByToast(message);
             }
         });
+        currentSeller = Paper.book().read("currentUser");
+        logit("Username retrieved from paper " + currentSeller.name);
+        sellerName.setText(currentSeller.name);
+        Picasso.get().load(currentSeller.profilePic).into(profilePic);
+    }
+//    }
+
+//    private void handleBuyerDashBoard(){
+//        notifyByToast("This is buyers dashboard!");
+//        handleSellerDashBoard();
+//    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        handleSellerDashBoard();
     }
 
     public List<String> loadInventory() {
-        AssetManager assetManager = getAssets();
-
+        AssetManager assetManager = getActivity().getAssets();
         List<String> res = new ArrayList<>();
-
         try {
             InputStream myInput;
             myInput = assetManager.open("Books.xls");
@@ -133,14 +115,12 @@ public class DashBoard extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
         return res;
     }
 
 
     private void notifyByToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
 
     }
 
@@ -148,13 +128,9 @@ public class DashBoard extends AppCompatActivity {
         Log.d(TAG, message);
     }
 
-    private void redirect(Class nextActivity) {
-        Intent redirect = new Intent(this, nextActivity);
-        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(redirect);
+
     }
 
 
-}
 
 

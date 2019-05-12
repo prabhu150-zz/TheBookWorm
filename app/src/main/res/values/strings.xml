@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Firebase Auth</string>
+    <string name="app_name">Book_Worm</string>
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
@@ -96,7 +96,7 @@
     <string name="hashTagFragmentArg">hashtag</string>
 
 
-    <string name="logout">logout</string>
+    <string name="logout">Log out</string>
     <string name="title_activity_second">SecondActivity</string>
     <string name="username_placeHolder">userName_here</string>
     <string name="numposts_placeHolder">numPosts_here</string>
@@ -116,11 +116,14 @@
     <string name="nav_header_desc">Navigation header</string>
 
     <string name="product_catalog">Catalog</string>
+    <string name="view_inventory">View Inventory</string>
     <string name="shoppingCart">Shopping Cart</string>
     <string name="orders">View Orders</string>
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="searchProduct">Search Product</string>
+    <string name="filterProduct">Filter Product</string>
 
 
 </resources>

@@ -53,7 +53,7 @@ public class RegisterActivity extends AppCompatActivity {
     private CircleImageView profilePic;
     private ProgressBar createUserprogress;
     private int IMAGE_REQUEST = 11;
-
+    private BackEnd singleton;
 
     private Uri imageURI;
     private final boolean debug = true;
@@ -67,16 +67,8 @@ public class RegisterActivity extends AppCompatActivity {
 
 //        FirebaseApp.initializeApp(this); should only uncomment this the first time
 
-
         Paper.init(this);
-
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-
-
-            redirect(DashBoard.class);
-
-        }
-
+        singleton = new BackEnd(this, Tag);
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         nickname = findViewById(R.id.nickname);
@@ -92,8 +84,15 @@ public class RegisterActivity extends AppCompatActivity {
         uploadImageButton = findViewById(R.id.select_image_button);
         profilePic = findViewById(R.id.previewProfilePic);
         createUserprogress = findViewById(R.id.createUserprogress);
-    }
+        singleton = new BackEnd(this, Tag);
 
+//        FirebaseAuth.getInstance().signOut();
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            singleton.findCurrentUser();
+        }
+
+    }
 
     @Override
     protected void onStart() {
@@ -166,7 +165,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void redirect(Class nextActivity) {
-
         Intent redirect = new Intent(this, nextActivity);
         redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(redirect);
@@ -382,7 +380,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> it) {
                 if (it.isSuccessful()) {
                     logit("User signed in!");
-                    redirect(DashBoard.class);
+                    redirect(BaseActivity.class);
                 } else {
                     logit("Couldn't Sign-In Error: " + it.getException().getMessage());
                     notifyByToast("Couldn't Sign-In Error: " + it.getException().getMessage());
