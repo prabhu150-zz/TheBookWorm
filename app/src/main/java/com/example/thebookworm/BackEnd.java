@@ -2,6 +2,7 @@ package com.example.thebookworm;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,7 +10,9 @@ import androidx.annotation.NonNull;
 
 import com.example.thebookworm.Activities.BaseActivity;
 import com.example.thebookworm.Activities.LoginActivity;
+import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Buyer;
+import com.example.thebookworm.Models.Product;
 import com.example.thebookworm.Models.Seller;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -18,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -204,5 +209,31 @@ public class BackEnd {
 
 
     }
+
+
+    @NotNull
+    public Product fetchProduct(DataSnapshot currentChild, Bundle args) {
+
+        Product currentProduct;
+
+
+        String productType = args.getString("productType");
+
+        productType = productType.trim().toLowerCase().replaceAll("[^\\w\\s]", "");
+
+        switch (productType) {
+            case "book":
+
+                currentProduct = new Book(getChildStringVal(currentChild, "/name/"), getChildStringVal(currentChild, "/description/"), getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(getChildStringVal(currentChild, "/price/")), getChildStringVal(currentChild, "/pid/"), Integer.parseInt(getChildStringVal(currentChild, "/availableStock/")), getChildStringVal(currentChild, "/soldBy"), getChildStringVal(currentChild, "/type"));
+//                String author, String genre, String publisher, int pages, String datePublished
+
+                ((Book) currentProduct).setDetails(getChildStringVal(currentChild, "/author/"), getChildStringVal(currentChild, "/genre"), getChildStringVal(currentChild, "/publisher/"), Integer.parseInt(getChildStringVal(currentChild, "/pages/")), getChildStringVal(currentChild, "/datePublished"));
+                return currentProduct;
+
+            default:
+                throw new IllegalArgumentException("This product " + productType + " is not yet supported!");
+        }
+    }
+
 
 }

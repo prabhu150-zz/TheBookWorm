@@ -48,7 +48,6 @@ import io.paperdb.Paper;
 
 public class RegisterActivity extends AppCompatActivity {
 
-
     private String Tag = "SignUpUser";
     private EditText name, email, password, confirmPassword, nickname;
     private Switch type;
@@ -57,15 +56,11 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressBar createUserprogress;
     private int IMAGE_REQUEST = 11;
     private BackEnd singleton;
-
     private Uri imageURI;
     private final boolean debug = true;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_page);
@@ -77,7 +72,6 @@ public class RegisterActivity extends AppCompatActivity {
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             singleton.findCurrentUser();
         }
-
 
 //        FirebaseApp.initializeApp(this); should only uncomment this the first time
 
@@ -100,9 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
         createUserprogress = findViewById(R.id.createUserprogress);
 
 
-
 //        FirebaseAuth.getInstance().signOut();
-
 
     }
 

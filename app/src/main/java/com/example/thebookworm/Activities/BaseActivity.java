@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.bookworm.R;
 import com.example.thebookworm.BackEnd;
 import com.example.thebookworm.Fragments.BuyerDashBoard;
+import com.example.thebookworm.Fragments.ProductDescription;
 import com.example.thebookworm.Fragments.SellerDashboard;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Seller;
@@ -61,6 +62,27 @@ public class BaseActivity extends AppCompatActivity
         transaction.addToBackStack(null);
         transaction.commit();
     }
+
+
+    public void redirectToFragment(String request, Bundle fragmentArguments) {
+        final String buyerRequest = getString(R.string.buyer_get_product_by_id_request);
+        final String sellerRequest = getString(R.string.seller_get_product_by_id_request);
+
+        if (request.equals(buyerRequest)) {
+            Fragment buyerDash = new ProductDescription();
+            buyerDash.setArguments(fragmentArguments);
+            replaceFragment(buyerDash);
+
+        } else if (request.equals(sellerRequest)) {
+            Fragment sellerDash = new ProductDescription();
+            sellerDash.setArguments(fragmentArguments);
+            replaceFragment(sellerDash);
+        } else {
+            throw new IllegalArgumentException("This user not currently supported!");
+        }
+
+    }
+
 
     private void handleBuyer() {
         setContentView(R.layout.buyer_navbar);
@@ -205,7 +227,6 @@ public class BaseActivity extends AppCompatActivity
                 singleton.notifyByToast("cart_appbar clicked!");
                 break;
         }
-
 
 
         return super.onOptionsItemSelected(item);

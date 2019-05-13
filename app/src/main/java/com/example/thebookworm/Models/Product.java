@@ -5,7 +5,7 @@ public abstract class Product {
     String imageURL = "https://firebasestorage.googleapis.com/v0/b/bookworm-cb649.appspot.com/o/profile-pics%2Fdefault.png?alt=media&token=58ed84ff-1040-428d-bfb3-0e1c224693ba";
     private double price;
     private int availableStock;
-    private String name, description, PID;
+    private String name, description, PID, type;
 
     private String soldBy;
 
@@ -13,7 +13,7 @@ public abstract class Product {
 // for firebase
     }
 
-    public Product(String name, String description, String imageURL, double price, String PID, int availableStock, String soldBy) {
+    public Product(String name, String description, String imageURL, double price, String PID, int availableStock, String soldBy, String type) {
         this.name = name;
         this.description = description;
         this.imageURL = imageURL;
@@ -21,6 +21,7 @@ public abstract class Product {
         this.PID = PID;
         this.availableStock = availableStock;
         this.soldBy = soldBy;
+        this.type = type;
     }
 
     public String getPID() {
@@ -49,6 +50,10 @@ public abstract class Product {
 
     public String getSoldBy() {
         return soldBy;
+    }
+
+    public String getType() {
+        return type;
     }
 
 }
