@@ -8,12 +8,11 @@ public class Book extends Product {
     String imageURL = "https://firebasestorage.googleapis.com/v0/b/bookworm-cb649.appspot.com/o/profile-pics%2Fdefault.png?alt=media&token=58ed84ff-1040-428d-bfb3-0e1c224693ba";
 
 
-    public Book(String name, String description, String imageURL, double price, String PID, int stocks) {
-        super(name, description, imageURL, price, PID, stocks);
+    public Book(String name, String description, String imageURL, double price, String PID, int stocks, String soldBy) {
+        super(name, description, imageURL, price, PID, stocks, soldBy);
         this.title = name;
         this.imageURL = imageURL;
     }
-
 
     // TODO fix image url in superclass
     public Book() {

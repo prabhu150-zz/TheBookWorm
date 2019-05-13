@@ -1,12 +1,12 @@
 package com.example.thebookworm.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,11 +43,10 @@ public class BuyerDashBoard extends Fragment {
 
     private BackEnd singleton;
 
-    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         singleton = new BackEnd(getContext(), "BuyerDashBoard");
-        return inflater.inflate(R.layout.buyer_dashboard, null);
+        return inflater.inflate(R.layout.buyer_dashboard, container, false);
     }
 
     private void notifyByToast(String message) {
@@ -59,13 +58,16 @@ public class BuyerDashBoard extends Fragment {
         super.onStart();
         singleton = new BackEnd(getContext(), "BuyerDashBoard");
         handleBuyerDashBoard();
+    }
 
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     private void handleBuyerDashBoard() {
         getAllProducts("book"); // this can be extended to include all types of products in future
-
-
     }
 
     private void getAllProducts(final String productType) {
@@ -76,26 +78,25 @@ public class BuyerDashBoard extends Fragment {
         final GroupAdapter<ViewHolder> adapter = new GroupAdapter<>();
         final RecyclerView recyclerView = getView().findViewById(R.id.productsList);
         final List<ProductRow> productsList = new ArrayList<>();
-
+        final List<Product> catalogProducts = new ArrayList<>();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
         getAllProducts.addListenerForSingleValueEvent(new ValueEventListener() {
 
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
                 if (dataSnapshot.exists()) {
                     singleton.logit("Found " + dataSnapshot.getChildrenCount() + " products!");
-
                     for (DataSnapshot currentChild : dataSnapshot.getChildren()) {
-//
-//                     public Product(String name, String description, String imageURL, double price, String PID, int availableStock)
 
                         Product currentProduct = getSpecificProduct(currentChild, productType);
 
+                        catalogProducts.add(currentProduct);
                         productsList.add(new ProductRow(currentProduct));
+
                     }
 
                     Collections.reverse(productsList);
@@ -104,10 +105,20 @@ public class BuyerDashBoard extends Fragment {
                         adapter.add(currProd);
 
 
+
                     adapter.setOnItemClickListener(new OnItemClickListener() {
                         @Override
                         public void onItemClick(@NonNull Item item, @NonNull View view) {
-                            notifyByToast("I:" + item.getId() + "P: " + view.findViewById(R.id.productName));
+
+                            String pid = ((TextView) view.findViewById(R.id.productID)).getText().toString();
+
+
+//                            Product selectedProduct = findProduct(catalogProducts,pid);
+
+
+                            Log.d("Args", "FragArgs: " + pid);
+
+
                         }
                     });
 
@@ -119,6 +130,14 @@ public class BuyerDashBoard extends Fragment {
                     notifyByToast("No Products Found!");
                 }
 
+            }
+
+            private Product findProduct(List<Product> catalogProducts, String pid) {
+                for (Product curr : catalogProducts)
+                    if (curr.getPID().equals(pid))
+                        return curr;
+
+                throw new IllegalStateException("Product not found!");
             }
 
             @Override
@@ -139,11 +158,11 @@ public class BuyerDashBoard extends Fragment {
 
         switch (productType) {
             case "book":
-                currentProduct = new Book(getChildValue(currentChild, "/name/"), getChildValue(currentChild, "/description/"), getChildValue(currentChild, "/imageURL/"), Double.parseDouble(getChildValue(currentChild, "/price/")), getChildValue(currentChild, "/pid/"), Integer.parseInt(getChildValue(currentChild, "/availableStock/")));
 
+                currentProduct = new Book(singleton.getChildStringVal(currentChild, "/name/"), singleton.getChildStringVal(currentChild, "/description/"), singleton.getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(singleton.getChildStringVal(currentChild, "/price/")), singleton.getChildStringVal(currentChild, "/pid/"), Integer.parseInt(singleton.getChildStringVal(currentChild, "/availableStock/")), singleton.getChildStringVal(currentChild, "/soldBy"));
 //                String author, String genre, String publisher, int pages, String datePublished
 
-                ((Book) currentProduct).setDetails(getChildValue(currentChild, "/author/"), getChildValue(currentChild, "/genre"), getChildValue(currentChild, "/publisher/"), Integer.parseInt(getChildValue(currentChild, "/pages/")), getChildValue(currentChild, "/datePublished"));
+                ((Book) currentProduct).setDetails(singleton.getChildStringVal(currentChild, "/author/"), singleton.getChildStringVal(currentChild, "/genre"), singleton.getChildStringVal(currentChild, "/publisher/"), Integer.parseInt(singleton.getChildStringVal(currentChild, "/pages/")), singleton.getChildStringVal(currentChild, "/datePublished"));
                 return currentProduct;
 
             default:
@@ -152,42 +171,7 @@ public class BuyerDashBoard extends Fragment {
     }
 
 
-    private String getChildValue(DataSnapshot currentChild, String path) {
-
-        String result = currentChild.child(path).getValue().toString();
-        singleton.logit("path: " + path + "child exists: " + currentChild.child(path).exists() + " value: " + result);
-        return result;
-    }
-
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.buyer_toolbar, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.search:
-                notifyByToast("Search!");
-                break;
-
-            case R.id.filter:
-                notifyByToast("Filter!");
-                break;
-
-            case R.id.cartButton:
-                notifyByToast("Cart!");
-                break;
-
-        }
-        return super.onOptionsItemSelected(item);
-    }
-}
-
-class ProductRow extends Item<ViewHolder> {
+    static class ProductRow extends Item<ViewHolder> implements Filterable {
 
     Product currentProduct;
 
@@ -195,24 +179,47 @@ class ProductRow extends Item<ViewHolder> {
         this.currentProduct = currentProduct;
     }
 
+        private Filter productFilter = new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                return null;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+
+            }
+        };
+
+        @Override
+        public int getLayout() {
+            return R.layout.product_catalog_row;
+        }
+
     @Override
     public void bind(@NonNull ViewHolder viewHolder, int position) {
         TextView productName = viewHolder.itemView.findViewById(R.id.productName);
-        TextView productPrice = viewHolder.itemView.findViewById(R.id.price);
+        TextView productPrice = viewHolder.itemView.findViewById(R.id.soldBy);
         ImageView productImage = viewHolder.itemView.findViewById(R.id.productImage);
         TextView productStock = viewHolder.itemView.findViewById(R.id.stock);
         TextView productSeller = viewHolder.itemView.findViewById(R.id.seller);
+        TextView productId = viewHolder.itemView.findViewById(R.id.productID);
+
 
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());
         productPrice.setText(String.format("$%.2f", currentProduct.getPrice()));
         productStock.setText(String.valueOf(currentProduct.getAvailableStock()));
-        productSeller.setText("Amazon Inc"); // TODO fix foreign key relations
+        productSeller.setText(currentProduct.getSoldBy());
+        productId.setText(currentProduct.getPID());
+
     }
 
     @Override
-    public int getLayout() {
-        return R.layout.product_catalog_row;
+    public Filter getFilter() {
+        return productFilter;
+    }
+
     }
 }
 

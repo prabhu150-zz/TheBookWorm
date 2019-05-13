@@ -7,8 +7,20 @@ public abstract class Product {
     private int availableStock;
     private String name, description, PID;
 
-    public Product() {
+    private String soldBy;
 
+    public Product() {
+// for firebase
+    }
+
+    public Product(String name, String description, String imageURL, double price, String PID, int availableStock, String soldBy) {
+        this.name = name;
+        this.description = description;
+        this.imageURL = imageURL;
+        this.price = price;
+        this.PID = PID;
+        this.availableStock = availableStock;
+        this.soldBy = soldBy;
     }
 
     public String getPID() {
@@ -35,13 +47,8 @@ public abstract class Product {
         return description;
     }
 
-    public Product(String name, String description, String imageURL, double price, String PID, int availableStock) {
-        this.name = name;
-        this.description = description;
-        this.imageURL = imageURL;
-        this.price = price;
-        this.PID = PID;
-        this.availableStock = availableStock;
+    public String getSoldBy() {
+        return soldBy;
     }
 
 }

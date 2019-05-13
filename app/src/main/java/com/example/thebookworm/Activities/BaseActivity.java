@@ -2,8 +2,11 @@ package com.example.thebookworm.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -21,7 +24,6 @@ import com.example.thebookworm.Fragments.BuyerDashBoard;
 import com.example.thebookworm.Fragments.SellerDashboard;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Seller;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.squareup.picasso.Picasso;
 
@@ -31,7 +33,7 @@ public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private BackEnd singleton;
-
+    boolean isBuyer = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,7 @@ public class BaseActivity extends AppCompatActivity
 
         if (currentUserType.equals("Buyer")) {
             handleBuyer();
+            isBuyer = true;
         } else if (currentUserType.equals("Seller")) {
             handleSeller();
         } else {
@@ -62,10 +65,9 @@ public class BaseActivity extends AppCompatActivity
     private void handleBuyer() {
         setContentView(R.layout.buyer_navbar);
         Toolbar toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
-        setSupportActionBar(toolbar);
-
-        toolbar.setTitle("Buyer DashBoard");
+        toolbar.setTitle("Catalog");
         toolbar.inflateMenu(R.menu.buyer_toolbar);
+        setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -98,27 +100,13 @@ public class BaseActivity extends AppCompatActivity
         View navbar = navigationView.getHeaderView(0);
         updateSellerDashUI(navbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-
-                String message = "This will add a book";
-                singleton.notifyByToast(message);
-
-            }
-        });
-
-
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
         navigationView.setNavigationItemSelectedListener(this);
 
         Fragment dashBoard = new SellerDashboard();
@@ -163,13 +151,62 @@ public class BaseActivity extends AppCompatActivity
 
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+
+        MenuInflater inflater = getMenuInflater();
+
+        if (isBuyer) {
+            inflater.inflate(R.menu.buyer_toolbar, menu);
+
+            MenuItem search = menu.findItem(R.id.search);
+
+            SearchView searchView = (SearchView)
+                    search.getActionView();
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return false;
+                }
+            });
+        } else {
+            // handle sellers case
+        }
+
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case R.id.search:
+                singleton.notifyByToast("Search clicked!");
+                break;
+
+
+            case R.id.filter:
+                singleton.notifyByToast("filter clicked!");
+                break;
+
+
+            case R.id.cart_appbar:
+                singleton.notifyByToast("cart_appbar clicked!");
+                break;
+        }
+
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -178,9 +215,8 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+        // Handle navigation view item clicks here. Nav drawer items here
         int id = item.getItemId();
-
 
         switch (id) {
             case R.id.cart:
@@ -189,6 +225,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.catalog:
                 singleton.notifyByToast("Show Catalog");
+                replaceFragment(new BuyerDashBoard());
                 break;
 
             case R.id.viewCustomers:
@@ -204,7 +241,10 @@ public class BaseActivity extends AppCompatActivity
                 singleton.logout();
                 break;
 
+            ///////
+
         }
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

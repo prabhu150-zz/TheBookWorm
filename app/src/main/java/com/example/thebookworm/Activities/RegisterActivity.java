@@ -65,13 +65,24 @@ public class RegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_page);
+
+        singleton = new BackEnd(this, Tag);
+
+//        FirebaseAuth.getInstance().signOut();
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            singleton.findCurrentUser();
+        }
+
 
 //        FirebaseApp.initializeApp(this); should only uncomment this the first time
 
         Paper.init(this);
-        singleton = new BackEnd(this, Tag);
+
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         nickname = findViewById(R.id.nickname);
@@ -87,13 +98,11 @@ public class RegisterActivity extends AppCompatActivity {
         uploadImageButton = findViewById(R.id.select_image_button);
         profilePic = findViewById(R.id.previewProfilePic);
         createUserprogress = findViewById(R.id.createUserprogress);
-        singleton = new BackEnd(this, Tag);
+
+
 
 //        FirebaseAuth.getInstance().signOut();
 
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            singleton.findCurrentUser();
-        }
 
     }
 

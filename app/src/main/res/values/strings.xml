@@ -125,6 +125,8 @@
     <string name="searchProduct">Search Product</string>
     <string name="filterProduct">Filter Product</string>
     <string name="empty_inventory">No Products Found!</string>
+    <string name="filter_price">By Price</string>
+    <string name="filter_author">By Author</string>
 
 
 </resources>
