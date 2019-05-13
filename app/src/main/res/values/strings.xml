@@ -129,4 +129,16 @@
     <string name="filter_author">By Author</string>
 
 
+    <string name="buyer_get_all_products_request">222</string>
+    <string name="buyer_get_product_by_id_request">333</string>
+    <string name="buyer_get_product_by_price_request">444</string>
+    <string name="buyer_get_product_by_author_request">555</string>
+
+
+    <string name="seller_get_product_by_id_request">666</string>
+    <string name="seller_inventory_request">777</string>
+    <string name="seller_orders_request">888</string>
+    <string name="seller_customers_request">999</string>
+
+
 </resources>

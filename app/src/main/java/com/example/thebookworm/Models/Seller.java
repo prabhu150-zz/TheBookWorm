@@ -133,7 +133,7 @@ public class Seller {
                 switch (productType) {
                     case "book":
 
-                        Product currentProduct = new Book(itemList.get("title"), itemList.get("description"), itemList.get("book cover"), Double.parseDouble(itemList.get("price")), itemList.get("isbn"), (int) Double.parseDouble(itemList.get("quantity")), name);
+                        Product currentProduct = new Book(itemList.get("title"), itemList.get("description"), itemList.get("book cover"), Double.parseDouble(itemList.get("price")), itemList.get("isbn"), (int) Double.parseDouble(itemList.get("quantity")), name, productType);
 
                         ((Book) currentProduct).setDetails(itemList.get("author"), itemList.get("genre"), itemList.get("publisher"), (int) Double.parseDouble(itemList.get("pages")), itemList.get("date published"));
                         inventory.add(currentProduct);

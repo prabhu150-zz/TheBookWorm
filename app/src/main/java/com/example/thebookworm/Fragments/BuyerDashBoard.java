@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookworm.R;
+import com.example.thebookworm.Activities.BaseActivity;
 import com.example.thebookworm.BackEnd;
 import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Product;
@@ -113,7 +114,17 @@ public class BuyerDashBoard extends Fragment {
                             String pid = ((TextView) view.findViewById(R.id.productID)).getText().toString();
 
 
-//                            Product selectedProduct = findProduct(catalogProducts,pid);
+                            Product selectedProduct = findProduct(catalogProducts, pid);
+
+
+                            Bundle fragArguments = new Bundle();
+
+
+                            fragArguments.putString("pid", selectedProduct.getPID());
+                            fragArguments.putString("productType", "book"); // TODO fix this after reloading inventory should be selectprod.getType()
+
+
+                            ((BaseActivity) getActivity()).redirectToFragment(getString(R.string.buyer_get_product_by_id_request), fragArguments);
 
 
                             Log.d("Args", "FragArgs: " + pid);
@@ -159,7 +170,7 @@ public class BuyerDashBoard extends Fragment {
         switch (productType) {
             case "book":
 
-                currentProduct = new Book(singleton.getChildStringVal(currentChild, "/name/"), singleton.getChildStringVal(currentChild, "/description/"), singleton.getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(singleton.getChildStringVal(currentChild, "/price/")), singleton.getChildStringVal(currentChild, "/pid/"), Integer.parseInt(singleton.getChildStringVal(currentChild, "/availableStock/")), singleton.getChildStringVal(currentChild, "/soldBy"));
+                currentProduct = new Book(singleton.getChildStringVal(currentChild, "/name/"), singleton.getChildStringVal(currentChild, "/description/"), singleton.getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(singleton.getChildStringVal(currentChild, "/price/")), singleton.getChildStringVal(currentChild, "/pid/"), Integer.parseInt(singleton.getChildStringVal(currentChild, "/availableStock/")), singleton.getChildStringVal(currentChild, "/soldBy"), singleton.getChildStringVal(currentChild, "/type"));
 //                String author, String genre, String publisher, int pages, String datePublished
 
                 ((Book) currentProduct).setDetails(singleton.getChildStringVal(currentChild, "/author/"), singleton.getChildStringVal(currentChild, "/genre"), singleton.getChildStringVal(currentChild, "/publisher/"), Integer.parseInt(singleton.getChildStringVal(currentChild, "/pages/")), singleton.getChildStringVal(currentChild, "/datePublished"));
