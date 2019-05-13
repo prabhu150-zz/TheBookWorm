@@ -41,6 +41,17 @@ public class Seller {
         return name;
     }
 
+
+    public Seller(Seller copy) {
+        this.userID = copy.userID;
+        this.name = copy.name;
+        this.email = copy.email;
+        this.profilePic = copy.profilePic;
+        this.customers = new ArrayList<>(copy.customers);
+        this.inventory = new ArrayList<>(copy.inventory);
+
+    }
+
     public String getEmail() {
         return email;
     }
@@ -122,7 +133,7 @@ public class Seller {
                 switch (productType) {
                     case "book":
 
-                        Product currentProduct = new Book(itemList.get("title"), itemList.get("description"), itemList.get("book cover"), Double.parseDouble(itemList.get("price")), itemList.get("isbn"), (int) Double.parseDouble(itemList.get("quantity")), userID);
+                        Product currentProduct = new Book(itemList.get("title"), itemList.get("description"), itemList.get("book cover"), Double.parseDouble(itemList.get("price")), itemList.get("isbn"), (int) Double.parseDouble(itemList.get("quantity")), name);
 
                         ((Book) currentProduct).setDetails(itemList.get("author"), itemList.get("genre"), itemList.get("publisher"), (int) Double.parseDouble(itemList.get("pages")), itemList.get("date published"));
                         inventory.add(currentProduct);
@@ -174,10 +185,9 @@ public class Seller {
         productsRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-
                 // if any new products are added in the market then the corresponding inventory of that user
                 // should be updated!
+
                 Product newProduct = dataSnapshot.getValue(Book.class);
 
                 if (!inventory.contains(newProduct)) {
@@ -214,7 +224,6 @@ public class Seller {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
                 logit("On products cancelled error: " + databaseError.getMessage());
             }
         });

@@ -3,8 +3,10 @@ package com.example.thebookworm.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -63,10 +65,9 @@ public class BaseActivity extends AppCompatActivity
     private void handleBuyer() {
         setContentView(R.layout.buyer_navbar);
         Toolbar toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
-        toolbar.setTitle("Buyer DashBoard");
+        toolbar.setTitle("Catalog");
         toolbar.inflateMenu(R.menu.buyer_toolbar);
         setSupportActionBar(toolbar);
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -152,8 +153,32 @@ public class BaseActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-//        return super.onCreateOptionsMenu(R.menu.buyer_toolbar);
-        // TODO fix this
+
+        MenuInflater inflater = getMenuInflater();
+
+        if (isBuyer) {
+            inflater.inflate(R.menu.buyer_toolbar, menu);
+
+            MenuItem search = menu.findItem(R.id.search);
+
+            SearchView searchView = (SearchView)
+                    search.getActionView();
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return false;
+                }
+            });
+        } else {
+            // handle sellers case
+        }
+
         return super.onCreateOptionsMenu(menu);
 
     }
@@ -165,7 +190,23 @@ public class BaseActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case R.id.search:
+                singleton.notifyByToast("Search clicked!");
+                break;
+
+
+            case R.id.filter:
+                singleton.notifyByToast("filter clicked!");
+                break;
+
+
+            case R.id.cart_appbar:
+                singleton.notifyByToast("cart_appbar clicked!");
+                break;
+        }
+
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -174,9 +215,8 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+        // Handle navigation view item clicks here. Nav drawer items here
         int id = item.getItemId();
-
 
         switch (id) {
             case R.id.cart:
@@ -185,6 +225,7 @@ public class BaseActivity extends AppCompatActivity
 
             case R.id.catalog:
                 singleton.notifyByToast("Show Catalog");
+                replaceFragment(new BuyerDashBoard());
                 break;
 
             case R.id.viewCustomers:
@@ -202,25 +243,7 @@ public class BaseActivity extends AppCompatActivity
 
             ///////
 
-            case R.id.search:
-                singleton.notifyByToast("Search!");
-                break;
-
-            case R.id.filter:
-                singleton.notifyByToast("Filter!");
-                break;
-
-            case R.id.cartButton:
-                singleton.notifyByToast("Cart!");
-                break;
-
         }
-
-        switch (item.getItemId()) {
-
-
-        }
-
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

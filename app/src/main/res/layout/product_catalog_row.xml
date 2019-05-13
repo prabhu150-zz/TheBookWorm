@@ -28,6 +28,7 @@
         android:layout_marginBottom="8dp"
         android:padding="5sp"
         android:text="productName here"
+
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/seller"
         app:layout_constraintStart_toStartOf="@+id/seller"
@@ -49,7 +50,7 @@
         app:layout_constraintGuide_percent="0.5" />
 
     <TextView
-        android:id="@+id/price"
+        android:id="@+id/soldBy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16sp"
@@ -83,9 +84,22 @@
         android:text="productStock here"
         android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/price"
-        app:layout_constraintTop_toBottomOf="@+id/price"
+        app:layout_constraintStart_toStartOf="@+id/soldBy"
+        app:layout_constraintTop_toBottomOf="@+id/soldBy"
         app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/productID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        android:padding="5sp"
+        android:text="productId hidden"
+        android:textSize="10sp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toEndOf="@+id/seller"
+        app:layout_constraintTop_toBottomOf="@+id/productName" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
