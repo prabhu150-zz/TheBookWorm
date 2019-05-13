@@ -21,6 +21,7 @@ import com.example.bookworm.R;
 import com.example.thebookworm.BackEnd;
 import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Product;
+import com.example.thebookworm.Models.Seller;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -90,8 +91,6 @@ public class BuyerDashBoard extends Fragment {
                     singleton.logit("Found " + dataSnapshot.getChildrenCount() + " products!");
 
                     for (DataSnapshot currentChild : dataSnapshot.getChildren()) {
-//
-//                     public Product(String name, String description, String imageURL, double price, String PID, int availableStock)
 
                         Product currentProduct = getSpecificProduct(currentChild, productType);
 
@@ -139,11 +138,12 @@ public class BuyerDashBoard extends Fragment {
 
         switch (productType) {
             case "book":
-                currentProduct = new Book(getChildValue(currentChild, "/name/"), getChildValue(currentChild, "/description/"), getChildValue(currentChild, "/imageURL/"), Double.parseDouble(getChildValue(currentChild, "/price/")), getChildValue(currentChild, "/pid/"), Integer.parseInt(getChildValue(currentChild, "/availableStock/")));
 
+                currentProduct = new Book(singleton.getChildStringVal(currentChild, "/name/"), singleton.getChildStringVal(currentChild, "/description/"), singleton.getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(singleton.getChildStringVal(currentChild, "/price/")), singleton.getChildStringVal(currentChild, "/pid/"), Integer.parseInt(singleton.getChildStringVal(currentChild, "/availableStock/")), singleton.getChildStringVal(currentChild, "/soldBy"));
 //                String author, String genre, String publisher, int pages, String datePublished
 
-                ((Book) currentProduct).setDetails(getChildValue(currentChild, "/author/"), getChildValue(currentChild, "/genre"), getChildValue(currentChild, "/publisher/"), Integer.parseInt(getChildValue(currentChild, "/pages/")), getChildValue(currentChild, "/datePublished"));
+
+                ((Book) currentProduct).setDetails(singleton.getChildStringVal(currentChild, "/author/"), singleton.getChildStringVal(currentChild, "/genre"), singleton.getChildStringVal(currentChild, "/publisher/"), Integer.parseInt(singleton.getChildStringVal(currentChild, "/pages/")), singleton.getChildStringVal(currentChild, "/datePublished"));
                 return currentProduct;
 
             default:
@@ -151,13 +151,12 @@ public class BuyerDashBoard extends Fragment {
         }
     }
 
-
-    private String getChildValue(DataSnapshot currentChild, String path) {
-
-        String result = currentChild.child(path).getValue().toString();
-        singleton.logit("path: " + path + "child exists: " + currentChild.child(path).exists() + " value: " + result);
-        return result;
+    private Seller retrieveSeller(DataSnapshot currentChild) {
+        Seller currentSeller = currentChild.child("/soldBy/").getValue(Seller.class);
+        singleton.logit("Current Product sold by: " + currentSeller.getName());
+        return currentSeller;
     }
+
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
@@ -165,24 +164,23 @@ public class BuyerDashBoard extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        switch (item.getItemId()) {
-            case R.id.search:
-                notifyByToast("Search!");
-                break;
-
-            case R.id.filter:
-                notifyByToast("Filter!");
-                break;
-
-            case R.id.cartButton:
-                notifyByToast("Cart!");
-                break;
-
-        }
+//        switch (item.getItemId()) {
+//            case R.id.search:
+//                notifyByToast("Search!");
+//                break;
+//
+//            case R.id.filter:
+//                notifyByToast("Filter!");
+//                break;
+//
+//            case R.id.cartButton:
+//                notifyByToast("Cart!");
+//                break;
+//
+//        }
         return super.onOptionsItemSelected(item);
     }
 }
@@ -207,7 +205,7 @@ class ProductRow extends Item<ViewHolder> {
         productName.setText(currentProduct.getName());
         productPrice.setText(String.format("$%.2f", currentProduct.getPrice()));
         productStock.setText(String.valueOf(currentProduct.getAvailableStock()));
-        productSeller.setText("Amazon Inc"); // TODO fix foreign key relations
+//        getSeller(currentProduct.getSoldBy(),productSeller); // TODO fix foreign key relations
     }
 
     @Override

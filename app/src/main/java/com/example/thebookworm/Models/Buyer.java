@@ -1,5 +1,7 @@
 package com.example.thebookworm.Models;
 
+import java.util.List;
+
 public class Buyer {
     /*
     Have kept buyer as a concrete class since there is only one type of customer.
@@ -23,9 +25,8 @@ public class Buyer {
         return profilePic;
     }
 
-
 //    List<Orders> orders;
-//    List<Product> cartItems;
+List<Product> cartItems;
 
 //    List<String> reviews;
 //    List<Integer> ratings;

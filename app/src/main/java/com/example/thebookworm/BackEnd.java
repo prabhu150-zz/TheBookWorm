@@ -74,6 +74,7 @@ public class BackEnd {
 
             }
 
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -83,9 +84,23 @@ public class BackEnd {
         query.addListenerForSingleValueEvent(eventListener);
     }
 
+    public Seller getSeller(DataSnapshot currentTask, String path) {
+        Seller currentSeller = currentTask.child(path).getValue(Seller.class);
+        logit("Seller for curr product " + currentSeller.getName());
+        return currentSeller;
+    }
+
 
     public void saveToPersistentStorage(String key, Object value) {
         Paper.book().write(key, value);
+    }
+
+
+    public String getChildStringVal(DataSnapshot currentChild, String path) {
+
+        String result = currentChild.child(path).getValue().toString();
+        logit("path: " + path + "child exists: " + currentChild.child(path).exists() + " value: " + result);
+        return result;
     }
 
     public Object getFromPersistentStorage(String key) {
