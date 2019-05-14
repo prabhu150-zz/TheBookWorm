@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -54,11 +55,8 @@ public class ViewCart extends Fragment {
 
     private void getCartItems() {
         final Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
-
         final GroupAdapter<ViewHolder> adapter = new GroupAdapter<>();
-
         final RecyclerView recyclerView = getView().findViewById(R.id.shopping_cart);
-
         final List<CartItemRow> cartItemList = new ArrayList<>();
 
 
@@ -72,31 +70,29 @@ public class ViewCart extends Fragment {
                     for (DataSnapshot currItem : dataSnapshot.getChildren()) {
                         Product current = currItem.getValue(Book.class);
                         current.setImageURL(currItem.child("/imageURL").getValue().toString());
+                        current.setPID(currItem.child("/pid").getValue().toString());
                         cartProducts.add(current);
                         Log.d("VE", "onDataChange: " + current.getImageURL());
                     }
 
                     Collections.reverse(cartProducts);
 
-                    TextView bill = getView().findViewById(R.id.bill);
-                    TextView numItems = getView().findViewById(R.id.numItems);
-
-                    bill.setText(String.format("%.2f", currentBuyer.calculateBill()));
-                    numItems.setText(String.valueOf(currentBuyer.cartSize()));
+                    updateUI(currentBuyer);
 
 
                     for (Product cartItem : cartProducts)
-                        cartItemList.add(new CartItemRow(cartItem));
+                        cartItemList.add(new CartItemRow(cartItem, backEnd, adapter));
 
 
-                    for (CartItemRow cartItem : cartItemList)
+                    for (CartItemRow cartItem : cartItemList) {
                         adapter.add(cartItem);
+                    }
 
 
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-
                     recyclerView.setAdapter(adapter);
+
 
                 } else {
                     // handle no items in cart situation
@@ -110,23 +106,32 @@ public class ViewCart extends Fragment {
             }
         });
 
-
-
-
     }
+
+    private void updateUI(Buyer currentBuyer) {
+        TextView bill = getView().findViewById(R.id.bill);
+        TextView numItems = getView().findViewById(R.id.numItems);
+        bill.setText(String.format("%.2f", currentBuyer.calculateBill()));
+        numItems.setText(String.valueOf(currentBuyer.cartSize()));
+    }
+
 
 }
 
 class CartItemRow extends Item<ViewHolder> {
 
     Product currentProduct;
+    BackEnd backEnd;
+    GroupAdapter<ViewHolder> adapter;
+
 
 
     // TODO finish this later
 
-    public CartItemRow(Product currentProduct) {
+    public CartItemRow(Product currentProduct, BackEnd backEnd, GroupAdapter<ViewHolder> adapter) {
         this.currentProduct = currentProduct;
-
+        this.backEnd = backEnd;
+        this.adapter = adapter;
     }
 
 
@@ -143,6 +148,10 @@ class CartItemRow extends Item<ViewHolder> {
         TextView productStock = viewHolder.itemView.findViewById(R.id.stock);
         TextView productSeller = viewHolder.itemView.findViewById(R.id.seller);
         TextView productId = viewHolder.itemView.findViewById(R.id.productID);
+        Button removeFromCart = viewHolder.itemView.findViewById(R.id.removeFromCart);
+
+
+        final CartItemRow currRow = this;
 
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());
@@ -150,5 +159,20 @@ class CartItemRow extends Item<ViewHolder> {
         productStock.setText(String.valueOf(currentProduct.getAvailableStock()));
         productSeller.setText(currentProduct.getSoldBy());
         productId.setText(currentProduct.getPID());
+        removeFromCart.setVisibility(View.VISIBLE);
+
+
+        removeFromCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("removeFromCart", "onClick: " + currentProduct.getPID());
+
+                backEnd.removeItemFromCart(currentProduct.getPID());
+                adapter.remove(currRow);
+                notifyChanged();
+
+
+            }
+        });
     }
 }

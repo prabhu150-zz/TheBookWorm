@@ -215,8 +215,8 @@ class ProductRow extends Item<ViewHolder> implements Filterable {
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());
         productPrice.setText(String.format("$%.2f", currentProduct.getPrice()));
-        productStock.setText(String.valueOf(currentProduct.getAvailableStock()));
-        productSeller.setText(currentProduct.getSoldBy());
+        productStock.setText("Stock: " + currentProduct.getAvailableStock());
+        productSeller.setText("Sold By: " + currentProduct.getSoldBy());
         productId.setText(currentProduct.getPID());
 
     }

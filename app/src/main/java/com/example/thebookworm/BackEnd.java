@@ -14,6 +14,7 @@ import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Product;
 import com.example.thebookworm.Models.Seller;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -246,7 +247,23 @@ public class BackEnd {
 
 
     public void updateBuyeronBackEnd(Buyer currentBuyer, int position) {
-//        Buyer currentBuyer = (Buyer) getFromPersistentStorage("currentUser");
-        FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart/" + position).setValue(currentBuyer.getLatestItem());
+        FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart/" + currentBuyer.getLatestItem().getPID()).setValue(currentBuyer.getLatestItem());
+    }
+
+    public void removeItemFromCart(String currentProductPID) {
+        Buyer currentBuyer = (Buyer) getFromPersistentStorage("currentUser");
+
+        currentBuyer.removeFromCart(currentBuyer.getUserID());
+        Log.d("removeFromCart", "UserId: " + currentBuyer.getUserID());
+
+        FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID()).child("/cart/" + currentProductPID).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                logit("Deleted item from cart!");
+
+            }
+        });
+
+
     }
 }
