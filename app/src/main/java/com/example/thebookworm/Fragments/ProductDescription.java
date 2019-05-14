@@ -100,10 +100,8 @@ public class ProductDescription extends Fragment {
         Button buyNow = getView().findViewById(R.id.buyslashdelete);
         TextView stocks = getView().findViewById(R.id.stock);
 
-
         buyNow.setText("Buy Now!");
         addToCart.setText("Add To Cart!");
-
 
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());

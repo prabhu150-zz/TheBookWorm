@@ -2,6 +2,11 @@ package com.example.thebookworm.Models;
 
 public abstract class Product {
 
+    //TODO remove conflicting/duplicate values from inherited values and make a pt to store an item
+    // as its parent and not its children
+
+
+
     String imageURL = "https://firebasestorage.googleapis.com/v0/b/bookworm-cb649.appspot.com/o/profile-pics%2Fdefault.png?alt=media&token=58ed84ff-1040-428d-bfb3-0e1c224693ba";
     private double price;
     private int availableStock;
@@ -60,4 +65,7 @@ public abstract class Product {
         return type;
     }
 
+    public void setPID(String PID) {
+        this.PID = PID;
+    }
 }
