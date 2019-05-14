@@ -26,8 +26,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class Seller {
 
@@ -161,8 +163,12 @@ public class Seller {
 
 
     private void updateMarketProductList(String productType) {
+
+
         DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("/market/");
         final DatabaseReference inventoryRef = FirebaseDatabase.getInstance().getReference("/users/sellers/" + userID + "/inventory/" + productType);
+
+        final Queue<String> imageUrls = new LinkedList<String>();
 
         /*
         I am keeping market separate from buyer and seller to accommodate product/user deletions in the future. If a buyer or seller decides to delete their account its easier to remove them from the market rather than individually removing them from buyer and seller tables respectively.
@@ -177,10 +183,11 @@ public class Seller {
 
         DatabaseReference productsRef = marketRef.child("/products/" + productType);
 
+
         for (Product currentProduct : inventory) {
             productsRef.child(currentProduct.getPID()).setValue(currentProduct);
+            imageUrls.add(currentProduct.getImageURL());
         }
-
 
         productsRef.addChildEventListener(new ChildEventListener() {
             @Override
@@ -190,17 +197,17 @@ public class Seller {
 
                 Product newProduct = dataSnapshot.getValue(Book.class);
 
-                if (!inventory.contains(newProduct)) {
-                    inventory.add(newProduct);
-                }
 
-                inventoryRef.child(dataSnapshot.child("pid").getValue().toString()).setValue(newProduct);
+                String path = dataSnapshot.child("pid").getValue().toString();
+                inventoryRef.child(path).setValue(newProduct);
+                inventoryRef.child(path + "/imageURL").setValue(imageUrls.remove());
+
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                Product newProduct = dataSnapshot.getValue(Product.class);
+                Product newProduct = dataSnapshot.getValue(Book.class);
 
                 inventory.add(newProduct);
 
@@ -227,6 +234,8 @@ public class Seller {
                 logit("On products cancelled error: " + databaseError.getMessage());
             }
         });
+
+
     }
 
 

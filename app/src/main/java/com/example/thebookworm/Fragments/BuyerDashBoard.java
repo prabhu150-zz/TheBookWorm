@@ -205,7 +205,7 @@ class ProductRow extends Item<ViewHolder> implements Filterable {
     @Override
     public void bind(@NonNull ViewHolder viewHolder, int position) {
         TextView productName = viewHolder.itemView.findViewById(R.id.productName);
-        TextView productPrice = viewHolder.itemView.findViewById(R.id.soldBy);
+        TextView productPrice = viewHolder.itemView.findViewById(R.id.sellerPrice);
         ImageView productImage = viewHolder.itemView.findViewById(R.id.productImage);
         TextView productStock = viewHolder.itemView.findViewById(R.id.stock);
         TextView productSeller = viewHolder.itemView.findViewById(R.id.seller);

@@ -81,4 +81,8 @@ public class Buyer {
 
         return bill;
     }
+
+    public Product getLatestItem() {
+        return cart.get(cart.size() - 1);
+    }
 }

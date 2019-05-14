@@ -68,7 +68,10 @@ public class ProductDescription extends Fragment {
 
                 if (dataSnapshot.exists()) {
                     Product currentProduct = singleton.fetchProduct(dataSnapshot, arguments);
+
+                    Log.d("checkUrl", "onDataChange: " + currentProduct.getImageURL());
                     updateBuyersUI(currentProduct);
+
                 } else {
 
 
@@ -85,25 +88,34 @@ public class ProductDescription extends Fragment {
     }
 
     private void updateBuyersUI(final Product currentProduct) {
-        ImageView productImage = getView().findViewById(R.id.imageView);
+//        ImageView productImage = getView().findViewById(R.id.imageView);
+//        TextView price = getView().findViewById(R.id.productPrice);
+//        TextView stocks = getView().findViewById(R.id.stocks);
 
+        ImageView productImage = getView().findViewById(R.id.productImage);
+        TextView price = getView().findViewById(R.id.sellerPrice);
         TextView productName = getView().findViewById(R.id.productName);
-        TextView soldBy = getView().findViewById(R.id.soldBy);
-        TextView price = getView().findViewById(R.id.productPrice);
-        TextView stocks = getView().findViewById(R.id.stocks);
+        TextView soldBy = getView().findViewById(R.id.seller);
         Button addToCart = getView().findViewById(R.id.cartslashmodify);
         Button buyNow = getView().findViewById(R.id.buyslashdelete);
+        TextView stocks = getView().findViewById(R.id.stock);
+
+
+        buyNow.setText("Buy Now!");
+        addToCart.setText("Add To Cart!");
+
 
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());
         soldBy.setText(currentProduct.getSoldBy());
-        price.setText(String.format("%.2f", currentProduct.getPrice()));
-        stocks.setText(String.valueOf(currentProduct.getAvailableStock()));
+        price.setText(String.format("$%.2f", currentProduct.getPrice()));
+
+        String stocks_str = "Stocks: " + currentProduct.getAvailableStock() + " items";
+        stocks.setText(stocks_str);
 
         // TODO display product specific details in the table below
 
         final Buyer currentBuyer = (Buyer) (singleton.getFromPersistentStorage("currentUser"));
-
 
         addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +129,9 @@ public class ProductDescription extends Fragment {
                 if (status) {
                     singleton.notifyByToast("Items in cart: " + currentBuyer.cartSize());
                     singleton.saveToPersistentStorage("currentUser", currentBuyer);
-                    singleton.updateBuyeronBackEnd();
+
+                    Log.d("lastUrl", "Latest Product: " + currentBuyer.getCart().get(currentBuyer.cartSize() - 1).getImageURL());
+                    singleton.updateBuyeronBackEnd(currentBuyer, currentBuyer.cartSize());
                 } else {
                     singleton.notifyByToast("Couldn't add to cart!");
                 }

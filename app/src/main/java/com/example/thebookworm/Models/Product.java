@@ -32,6 +32,10 @@ public abstract class Product {
         return imageURL;
     }
 
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
     public double getPrice() {
         return price;
     }

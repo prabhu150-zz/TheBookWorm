@@ -1,6 +1,7 @@
 package com.example.thebookworm.Fragments;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.bookworm.R;
 import com.example.thebookworm.BackEnd;
+import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Product;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.xwray.groupie.GroupAdapter;
 import com.xwray.groupie.Item;
@@ -47,7 +53,7 @@ public class ViewCart extends Fragment {
     }
 
     private void getCartItems() {
-        Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
+        final Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
 
         final GroupAdapter<ViewHolder> adapter = new GroupAdapter<>();
 
@@ -55,30 +61,57 @@ public class ViewCart extends Fragment {
 
         final List<CartItemRow> cartItemList = new ArrayList<>();
 
-        List<Product> cartProducts = new ArrayList<>(currentBuyer.getCart());
 
-        Collections.reverse(cartProducts);
+        FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    List<Product> cartProducts = new ArrayList<>();
+
+                    for (DataSnapshot currItem : dataSnapshot.getChildren()) {
+                        Product current = currItem.getValue(Book.class);
+                        current.setImageURL(currItem.child("/imageURL").getValue().toString());
+                        cartProducts.add(current);
+                        Log.d("VE", "onDataChange: " + current.getImageURL());
+                    }
+
+                    Collections.reverse(cartProducts);
+
+                    TextView bill = getView().findViewById(R.id.bill);
+                    TextView numItems = getView().findViewById(R.id.numItems);
+
+                    bill.setText(String.format("%.2f", currentBuyer.calculateBill()));
+                    numItems.setText(String.valueOf(currentBuyer.cartSize()));
 
 
-        TextView bill = getView().findViewById(R.id.bill);
-        TextView numItems = getView().findViewById(R.id.numItems);
-
-        bill.setText(String.format("%.2f", currentBuyer.calculateBill()));
-        numItems.setText(String.valueOf(currentBuyer.cartSize()));
+                    for (Product cartItem : cartProducts)
+                        cartItemList.add(new CartItemRow(cartItem));
 
 
-        for (Product cartItem : cartProducts)
-            cartItemList.add(new CartItemRow(cartItem));
+                    for (CartItemRow cartItem : cartItemList)
+                        adapter.add(cartItem);
 
 
-        for (CartItemRow cartItem : cartItemList)
-            adapter.add(cartItem);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    recyclerView.setAdapter(adapter);
+
+                } else {
+                    // handle no items in cart situation
+                    backEnd.notifyByToast("No items in cart!");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
-        recyclerView.setAdapter(adapter);
+
 
     }
 
@@ -88,10 +121,12 @@ class CartItemRow extends Item<ViewHolder> {
 
     Product currentProduct;
 
+
     // TODO finish this later
 
     public CartItemRow(Product currentProduct) {
         this.currentProduct = currentProduct;
+
     }
 
 
@@ -103,7 +138,7 @@ class CartItemRow extends Item<ViewHolder> {
     @Override
     public void bind(@NonNull ViewHolder viewHolder, int position) {
         TextView productName = viewHolder.itemView.findViewById(R.id.productName);
-        TextView productPrice = viewHolder.itemView.findViewById(R.id.soldBy);
+        TextView productPrice = viewHolder.itemView.findViewById(R.id.sellerPrice);
         ImageView productImage = viewHolder.itemView.findViewById(R.id.productImage);
         TextView productStock = viewHolder.itemView.findViewById(R.id.stock);
         TextView productSeller = viewHolder.itemView.findViewById(R.id.seller);

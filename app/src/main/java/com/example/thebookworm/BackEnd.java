@@ -104,7 +104,7 @@ public class BackEnd {
 
     public String getChildStringVal(DataSnapshot currentChild, String path) {
         String result = currentChild.child(path).getValue().toString();
-        logit("path: " + path + "child exists: " + currentChild.child(path).exists() + " value: " + result);
+//        logit("path: " + path + "child exists: " + currentChild.child(path).exists() + " value: " + result);
         return result;
     }
 
@@ -245,10 +245,8 @@ public class BackEnd {
     }
 
 
-    public void updateBuyeronBackEnd() {
-        Buyer currentBuyer = (Buyer) getFromPersistentStorage("currentUser");
-
-        FirebaseDatabase.getInstance().getReference("/users/buyers").child(currentBuyer.getUserID()).setValue(currentBuyer);
-
+    public void updateBuyeronBackEnd(Buyer currentBuyer, int position) {
+//        Buyer currentBuyer = (Buyer) getFromPersistentStorage("currentUser");
+        FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart/" + position).setValue(currentBuyer.getLatestItem());
     }
 }
