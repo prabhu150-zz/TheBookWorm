@@ -9,19 +9,20 @@
         android:icon="@mipmap/baseline_filter_list_black_18dp"
         android:title="@string/filterProduct"
         app:showAsAction="ifRoom">
+
         <menu>
             <item
                 android:id="@+id/filter_price"
                 android:icon="@drawable/ic_attach_money_black_24dp"
                 android:title="@string/filter_price"
-                app:showAsAction="ifRoom"></item>
+                app:showAsAction="ifRoom" />
 
 
             <item
                 android:id="@+id/filter_author"
                 android:icon="@drawable/writer"
                 android:title="@string/filter_author"
-                app:showAsAction="ifRoom"></item>
+                app:showAsAction="ifRoom" />
         </menu>
 
 
@@ -35,11 +36,11 @@
         app:showAsAction="ifRoom|collapseActionView" />
 
 
-    <item
-        android:id="@+id/cart_appbar"
-        android:icon="@mipmap/outline_shopping_cart_black_24dp"
-        android:title="@string/shoppingCart"
-        app:showAsAction="ifRoom" />
+    <!--<item-->
+    <!--android:id="@+id/cart_appbar"-->
+    <!--android:icon="@mipmap/outline_shopping_cart_black_24dp"-->
+    <!--android:title="@string/shoppingCart"-->
+    <!--app:showAsAction="ifRoom" />-->
 
 
 </menu>

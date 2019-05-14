@@ -44,7 +44,6 @@ import com.squareup.picasso.Picasso;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.paperdb.Paper;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -55,7 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
     private CircleImageView profilePic;
     private ProgressBar createUserprogress;
     private int IMAGE_REQUEST = 11;
-    private BackEnd singleton;
+    private BackEnd backend;
     private Uri imageURI;
     private final boolean debug = true;
 
@@ -65,17 +64,16 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_page);
 
-        singleton = new BackEnd(this, Tag);
+        backend = new BackEnd(this, Tag);
 
 //        FirebaseAuth.getInstance().signOut();
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            singleton.findCurrentUser();
+            backend.findCurrentUser();
+            finish();
         }
 
 //        FirebaseApp.initializeApp(this); should only uncomment this the first time
-
-        Paper.init(this);
 
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
@@ -171,8 +169,8 @@ public class RegisterActivity extends AppCompatActivity {
     private void redirect(Class nextActivity) {
         Intent redirect = new Intent(this, nextActivity);
         redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        redirect.putExtra("userType", type.getText().toString());
         startActivity(redirect);
-        finish();
     }
 
 
@@ -270,7 +268,7 @@ public class RegisterActivity extends AppCompatActivity {
             throw new IllegalStateException("Database couldn't generate new key!");
 
         if (imageURI != null) {
-            logit("uploading an image...");
+            logit("Uploading an image...");
             uploadImageToStorage(userId);
         } else {
             pushToRealTimeDb(userId, "");
@@ -347,8 +345,7 @@ public class RegisterActivity extends AppCompatActivity {
             if (!profilePic.isEmpty())
                 guestLogin.setProfilePic(profilePic);
 
-
-            Paper.book().write("currentBuyer", guestLogin);
+            backend.saveToPersistentStorage("currentBuyer", guestLogin);
 
             logit("Current buyer added: " + guestLogin.getNickname());
 
@@ -362,12 +359,13 @@ public class RegisterActivity extends AppCompatActivity {
                 guestLogin.setProfilePic(profilePic);
             }
 
-            Paper.book().write("currentUser", guestLogin);
+//            Paper.book().write("currentUser", guestLogin);
+
+            backend.saveToPersistentStorage("currentBuyer", guestLogin);
 
             logit("Current seller added: " + guestLogin.getName());
 
             FirebaseDatabase.getInstance().getReference().child("/users/sellers/").child(userID).setValue(guestLogin);
-
 
         }
 

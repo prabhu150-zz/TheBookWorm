@@ -37,7 +37,6 @@ import com.xwray.groupie.ViewHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class BuyerDashBoard extends Fragment {
@@ -77,6 +76,7 @@ public class BuyerDashBoard extends Fragment {
         Query getAllProducts = productRef.orderByChild("/pid/");
 
         final GroupAdapter<ViewHolder> adapter = new GroupAdapter<>();
+
         final RecyclerView recyclerView = getView().findViewById(R.id.productsList);
         final List<ProductRow> productsList = new ArrayList<>();
         final List<Product> catalogProducts = new ArrayList<>();
@@ -84,7 +84,6 @@ public class BuyerDashBoard extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         getAllProducts.addListenerForSingleValueEvent(new ValueEventListener() {
-
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -100,11 +99,10 @@ public class BuyerDashBoard extends Fragment {
 
                     }
 
-                    Collections.reverse(productsList);
+//                    Collections.reverse(productsList);
 
                     for (ProductRow currProd : productsList)
                         adapter.add(currProd);
-
 
 
                     adapter.setOnItemClickListener(new OnItemClickListener() {
@@ -113,22 +111,16 @@ public class BuyerDashBoard extends Fragment {
 
                             String pid = ((TextView) view.findViewById(R.id.productID)).getText().toString();
 
-
                             Product selectedProduct = findProduct(catalogProducts, pid);
 
-
                             Bundle fragArguments = new Bundle();
-
 
                             fragArguments.putString("pid", selectedProduct.getPID());
                             fragArguments.putString("productType", "book"); // TODO fix this after reloading inventory should be selectprod.getType()
 
-
                             ((BaseActivity) getActivity()).redirectToFragment(getString(R.string.buyer_get_product_by_id_request), fragArguments);
 
-
                             Log.d("Args", "FragArgs: " + pid);
-
 
                         }
                     });
@@ -181,36 +173,39 @@ public class BuyerDashBoard extends Fragment {
         }
     }
 
+}
 
-    static class ProductRow extends Item<ViewHolder> implements Filterable {
+class ProductRow extends Item<ViewHolder> implements Filterable {
 
     Product currentProduct;
 
-    ProductRow(Product currentProduct) {
+    // TODO finish this later
+
+    private Filter productFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            return null;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+
+        }
+    };
+
+    public ProductRow(Product currentProduct) {
         this.currentProduct = currentProduct;
     }
 
-        private Filter productFilter = new Filter() {
-            @Override
-            protected FilterResults performFiltering(CharSequence constraint) {
-                return null;
-            }
-
-            @Override
-            protected void publishResults(CharSequence constraint, FilterResults results) {
-
-            }
-        };
-
-        @Override
-        public int getLayout() {
-            return R.layout.product_catalog_row;
-        }
+    @Override
+    public int getLayout() {
+        return R.layout.product_catalog_row;
+    }
 
     @Override
     public void bind(@NonNull ViewHolder viewHolder, int position) {
         TextView productName = viewHolder.itemView.findViewById(R.id.productName);
-        TextView productPrice = viewHolder.itemView.findViewById(R.id.soldBy);
+        TextView productPrice = viewHolder.itemView.findViewById(R.id.sellerPrice);
         ImageView productImage = viewHolder.itemView.findViewById(R.id.productImage);
         TextView productStock = viewHolder.itemView.findViewById(R.id.stock);
         TextView productSeller = viewHolder.itemView.findViewById(R.id.seller);
@@ -231,8 +226,6 @@ public class BuyerDashBoard extends Fragment {
         return productFilter;
     }
 
-    }
 }
-
 
 

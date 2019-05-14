@@ -19,7 +19,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import io.paperdb.Paper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -28,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressBar createUserprogress;
     private final boolean debug = true;
     Button signIn, registerRedirect;
-    private BackEnd singleton;
+    private BackEnd backend;
 
 
     @Override
@@ -40,12 +39,13 @@ public class LoginActivity extends AppCompatActivity {
         createUserprogress = findViewById(R.id.createUserprogress);
         signIn = findViewById(R.id.sign_in_button);
         registerRedirect = findViewById(R.id.register_redirect);
-        Paper.init(this);
-        singleton = new BackEnd(this, Tag);
+
+        backend = new BackEnd(this, Tag);
 
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            singleton.findCurrentUser();
+            backend.findCurrentUser();
+            finish();
         }
 
     }
@@ -106,7 +106,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent redirect = new Intent(this, registerActivityClass);
         redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(redirect);
-        finish();
     }
 
 
@@ -115,13 +114,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    singleton.notifyByToast("Logged in successfully!");
-                    singleton.logit("Login Success");
-                    singleton.findCurrentUser();
+                    backend.notifyByToast("Logged in successfully!");
+                    backend.logit("Login Success");
+                    backend.findCurrentUser();
 
                 } else {
-                    singleton.notifyByToast("Login Failed. Error: " + task.getException().getMessage());
-                    singleton.logit("Error: " + task.getException().getMessage());
+                    backend.notifyByToast("Login Failed. Error: " + task.getException().getMessage());
+                    backend.logit("Error: " + task.getException().getMessage());
                 }
                 createUserprogress.setVisibility(View.GONE);
             }
