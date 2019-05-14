@@ -51,6 +51,11 @@ public class Buyer {
     }
 
     public boolean addToCart(Product currentProduct) {
+
+        for (Product curr : cart)
+            if (curr.getPID().equals(currentProduct.getPID()))
+                return false;
+
         return cart.add(currentProduct);
     }
 

@@ -20,8 +20,10 @@ import com.example.thebookworm.BackEnd;
 import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Product;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
@@ -33,7 +35,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ViewCart extends Fragment {
+public class ViewCart extends Fragment implements View.OnClickListener {
 
 
     private final String tag = "ViewCart";
@@ -51,16 +53,28 @@ public class ViewCart extends Fragment {
         super.onStart();
         backEnd = new BackEnd(getActivity(), tag);
         getCartItems();
+
     }
 
     private void getCartItems() {
+
+        final TextView emptyCartsAlert = getView().findViewById(R.id.emptyCartAlert);
+
+        final Button placeOrder = getView().findViewById(R.id.placeOrder);
+
+
+        emptyCartsAlert.setVisibility(View.INVISIBLE);
+
+
         final Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
+        checkIfEmpty(placeOrder, emptyCartsAlert, currentBuyer);
         final GroupAdapter<ViewHolder> adapter = new GroupAdapter<>();
         final RecyclerView recyclerView = getView().findViewById(R.id.shopping_cart);
         final List<CartItemRow> cartItemList = new ArrayList<>();
 
+        DatabaseReference cartRef = FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart");
 
-        FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart").addListenerForSingleValueEvent(new ValueEventListener() {
+        cartRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -77,9 +91,6 @@ public class ViewCart extends Fragment {
 
                     Collections.reverse(cartProducts);
 
-                    updateUI(currentBuyer);
-
-
                     for (Product cartItem : cartProducts)
                         cartItemList.add(new CartItemRow(cartItem, backEnd, adapter));
 
@@ -95,8 +106,8 @@ public class ViewCart extends Fragment {
 
 
                 } else {
-                    // handle no items in cart situation
                     backEnd.notifyByToast("No items in cart!");
+                    checkIfEmpty(placeOrder, emptyCartsAlert, currentBuyer);
                 }
             }
 
@@ -106,16 +117,58 @@ public class ViewCart extends Fragment {
             }
         });
 
+        cartRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                checkIfEmpty(placeOrder, emptyCartsAlert, currentBuyer);
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
+
+    private void checkIfEmpty(Button placeOrder, TextView emptyCartsAlert, Buyer currentBuyer) {
+
+        if (currentBuyer.cartSize() == 0) {
+            placeOrder.setVisibility(View.GONE);
+            emptyCartsAlert.setVisibility(View.VISIBLE);
+        }
+
+    }
+
 
     private void updateUI(Buyer currentBuyer) {
         TextView bill = getView().findViewById(R.id.bill);
         TextView numItems = getView().findViewById(R.id.numItems);
+
         bill.setText(String.format("%.2f", currentBuyer.calculateBill()));
         numItems.setText(String.valueOf(currentBuyer.cartSize()));
     }
 
 
+    @Override
+    public void onClick(View v) {
+        backEnd.notifyByToast("Clicked: " + v.getId());
+    }
 }
 
 class CartItemRow extends Item<ViewHolder> {
@@ -123,7 +176,6 @@ class CartItemRow extends Item<ViewHolder> {
     Product currentProduct;
     BackEnd backEnd;
     GroupAdapter<ViewHolder> adapter;
-
 
 
     // TODO finish this later
@@ -170,7 +222,6 @@ class CartItemRow extends Item<ViewHolder> {
                 backEnd.removeItemFromCart(currentProduct.getPID());
                 adapter.remove(currRow);
                 notifyChanged();
-
 
             }
         });

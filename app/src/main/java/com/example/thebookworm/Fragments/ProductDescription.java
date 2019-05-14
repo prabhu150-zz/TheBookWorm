@@ -121,17 +121,15 @@ public class ProductDescription extends Fragment {
 
 
                 Log.d("AddToCart", "onClick: ");
-                boolean status = currentBuyer.addToCart(currentProduct);
 
+                boolean additionStatus = currentBuyer.addToCart(currentProduct);
 
-                if (status) {
+                if (additionStatus) {
                     singleton.notifyByToast("Items in cart: " + currentBuyer.cartSize());
                     singleton.saveToPersistentStorage("currentUser", currentBuyer);
-
-                    Log.d("lastUrl", "Latest Product: " + currentBuyer.getCart().get(currentBuyer.cartSize() - 1).getImageURL());
                     singleton.updateBuyeronBackEnd(currentBuyer, currentBuyer.cartSize());
                 } else {
-                    singleton.notifyByToast("Couldn't add to cart!");
+                    singleton.notifyByToast("Already in Cart!");
                 }
 
             }

@@ -50,7 +50,7 @@ public class BackEnd {
     }
 
     public void notifyByToast(String message) {
-        Toast.makeText(currentActivity, message, Toast.LENGTH_LONG).show();
+        Toast.makeText(currentActivity, message, Toast.LENGTH_SHORT).show();
     }
 
     private void checkSellersList() {
