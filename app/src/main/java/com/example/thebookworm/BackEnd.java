@@ -37,6 +37,7 @@ public class BackEnd {
     public BackEnd(Context currentActivity, String tag) {
         this.currentActivity = currentActivity;
         this.tag = tag;
+        Paper.init(currentActivity);
     }
 
     public void findCurrentUser() {
@@ -89,11 +90,11 @@ public class BackEnd {
         query.addListenerForSingleValueEvent(eventListener);
     }
 
-    public Seller getSeller(DataSnapshot currentTask, String path) {
-        Seller currentSeller = currentTask.child(path).getValue(Seller.class);
-        logit("Seller for curr product " + currentSeller.getName());
-        return currentSeller;
-    }
+//    public Seller getSeller(DataSnapshot currentTask, String path) {
+//        Seller currentSeller = currentTask.child(path).getValue(Seller.class);
+//        logit("Seller for curr product " + currentSeller.getName());
+//        return currentSeller;
+//    }
 
 
     public void saveToPersistentStorage(String key, Object value) {
@@ -102,7 +103,6 @@ public class BackEnd {
 
 
     public String getChildStringVal(DataSnapshot currentChild, String path) {
-
         String result = currentChild.child(path).getValue().toString();
         logit("path: " + path + "child exists: " + currentChild.child(path).exists() + " value: " + result);
         return result;
@@ -111,6 +111,11 @@ public class BackEnd {
     public Object getFromPersistentStorage(String key) {
         return Paper.book().read(key);
     }
+
+    public void deletePersistentStorage(String key) {
+        Paper.book().delete(key);
+    }
+
 
     private void checkBuyersList() {
         final String emailText = FirebaseAuth.getInstance().getCurrentUser().getEmail();
@@ -160,8 +165,10 @@ public class BackEnd {
 
     public void logout() {
         FirebaseAuth.getInstance().signOut();
+        deletePersistentStorage("currentUser");
         redirect(LoginActivity.class);
     }
+
 
     private void redirect(Class nextActivity) {
         Intent redirect = new Intent(currentActivity, nextActivity);
@@ -216,7 +223,6 @@ public class BackEnd {
 
         Product currentProduct;
 
-
         String productType = args.getString("productType");
 
         productType = productType.trim().toLowerCase().replaceAll("[^\\w\\s]", "");
@@ -227,6 +233,9 @@ public class BackEnd {
                 currentProduct = new Book(getChildStringVal(currentChild, "/name/"), getChildStringVal(currentChild, "/description/"), getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(getChildStringVal(currentChild, "/price/")), getChildStringVal(currentChild, "/pid/"), Integer.parseInt(getChildStringVal(currentChild, "/availableStock/")), getChildStringVal(currentChild, "/soldBy"), getChildStringVal(currentChild, "/type"));
 //                String author, String genre, String publisher, int pages, String datePublished
 
+
+                Log.d("checkURL", currentProduct.getImageURL());
+
                 ((Book) currentProduct).setDetails(getChildStringVal(currentChild, "/author/"), getChildStringVal(currentChild, "/genre"), getChildStringVal(currentChild, "/publisher/"), Integer.parseInt(getChildStringVal(currentChild, "/pages/")), getChildStringVal(currentChild, "/datePublished"));
                 return currentProduct;
 
@@ -236,4 +245,10 @@ public class BackEnd {
     }
 
 
+    public void updateBuyeronBackEnd() {
+        Buyer currentBuyer = (Buyer) getFromPersistentStorage("currentUser");
+
+        FirebaseDatabase.getInstance().getReference("/users/buyers").child(currentBuyer.getUserID()).setValue(currentBuyer);
+
+    }
 }

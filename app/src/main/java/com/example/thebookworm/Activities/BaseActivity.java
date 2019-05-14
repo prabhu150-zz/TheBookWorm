@@ -23,6 +23,7 @@ import com.example.thebookworm.BackEnd;
 import com.example.thebookworm.Fragments.BuyerDashBoard;
 import com.example.thebookworm.Fragments.ProductDescription;
 import com.example.thebookworm.Fragments.SellerDashboard;
+import com.example.thebookworm.Fragments.ViewCart;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Seller;
 import com.google.android.material.navigation.NavigationView;
@@ -217,14 +218,8 @@ public class BaseActivity extends AppCompatActivity
                 singleton.notifyByToast("Search clicked!");
                 break;
 
-
             case R.id.filter:
                 singleton.notifyByToast("filter clicked!");
-                break;
-
-
-            case R.id.cart_appbar:
-                singleton.notifyByToast("cart_appbar clicked!");
                 break;
         }
 
@@ -232,7 +227,6 @@ public class BaseActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -242,6 +236,7 @@ public class BaseActivity extends AppCompatActivity
         switch (id) {
             case R.id.cart:
                 singleton.notifyByToast("Shopping Cart!");
+                replaceFragment(new ViewCart());
                 break;
 
             case R.id.catalog:
