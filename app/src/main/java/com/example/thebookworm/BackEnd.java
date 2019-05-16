@@ -72,7 +72,7 @@ public class BackEnd {
                         currentSeller.setProfilePic(currentTask.child("profilePic").getValue().toString());
                         logit("Seller profile pic set as: " + currentSeller);
                         saveToPersistentStorage("currentUser", currentSeller);
-                        getDashBoard("Seller");
+                        getDashBoard("seller");
                     }
                 } else {
                     logit("Its probably a buyer. No-one from sellers found!");
@@ -80,7 +80,6 @@ public class BackEnd {
                 }
 
             }
-
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -90,12 +89,6 @@ public class BackEnd {
 
         query.addListenerForSingleValueEvent(eventListener);
     }
-
-//    public Seller getSeller(DataSnapshot currentTask, String path) {
-//        Seller currentSeller = currentTask.child(path).getValue(Seller.class);
-//        logit("Seller for curr product " + currentSeller.getName());
-//        return currentSeller;
-//    }
 
 
     public void saveToPersistentStorage(String key, Object value) {
@@ -138,7 +131,7 @@ public class BackEnd {
 
                         currentBuyer.setProfilePic(currentTask.child("profilePic").getValue().toString());
                         saveToPersistentStorage("currentUser", currentBuyer);
-                        getDashBoard("Buyer");
+                        getDashBoard("buyer");
                     }
                 } else {
                     logit("Not a buyer either. No-one found");
@@ -251,19 +244,59 @@ public class BackEnd {
     }
 
     public void removeItemFromCart(String currentProductPID) {
-        Buyer currentBuyer = (Buyer) getFromPersistentStorage("currentUser");
+        final Buyer currentBuyer = (Buyer) getFromPersistentStorage("currentUser");
 
-        currentBuyer.removeFromCart(currentBuyer.getUserID());
+        Log.d("removeFromCart", "Removing item: " + currentProductPID + " for user id: " + currentBuyer.getUserID());
+
+        currentBuyer.removeFromCart(currentProductPID);
+
+        saveToPersistentStorage("currentUser", currentBuyer);
+
         Log.d("removeFromCart", "UserId: " + currentBuyer.getUserID());
 
         FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID()).child("/cart/" + currentProductPID).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 logit("Deleted item from cart!");
-
             }
         });
+    }
 
+    public void removeItemFromInventory(String currentProductPID, String productType) {
+        Seller currentSeller = (Seller) getFromPersistentStorage("currentUser");
+
+        DatabaseReference sellerInventoryRef = FirebaseDatabase.getInstance().getReference("/users/sellers/" + currentSeller.getUserID() + "/inventory/" + productType).child(currentProductPID);
+
+        sellerInventoryRef.removeValue();
+        Log.d("removeFromCart", "UserId: " + currentSeller.getUserID());
 
     }
+
+    @NotNull
+    public Product getSpecificProduct(DataSnapshot currentChild, String productType) {
+
+        Product currentProduct;
+
+        productType = productType.trim().toLowerCase().replaceAll("[^\\w\\s]", "");
+
+        logit("About to get specific item!");
+
+
+        switch (productType) {
+            case "book":
+
+                currentProduct = new Book(getChildStringVal(currentChild, "/name/"), getChildStringVal(currentChild, "/description/"), getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(getChildStringVal(currentChild, "/price/")), getChildStringVal(currentChild, "/pid/"), Integer.parseInt(getChildStringVal(currentChild, "/availableStock/")), getChildStringVal(currentChild, "/soldBy"), getChildStringVal(currentChild, "/type"));
+//                String author, String genre, String publisher, int pages, String datePublished
+
+                ((Book) currentProduct).setDetails(getChildStringVal(currentChild, "/author/"), getChildStringVal(currentChild, "/genre"), getChildStringVal(currentChild, "/publisher/"), Integer.parseInt(getChildStringVal(currentChild, "/pages/")), getChildStringVal(currentChild, "/datePublished"));
+
+                logit("Retrieved product " + currentProduct.getName());
+                return currentProduct;
+
+            default:
+                throw new IllegalArgumentException("This product " + productType + " is not yet supported!");
+        }
+    }
+
+
 }

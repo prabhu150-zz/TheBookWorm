@@ -133,12 +133,65 @@
     <string name="buyer_get_product_by_id_request">333</string>
     <string name="buyer_get_product_by_price_request">444</string>
     <string name="buyer_get_product_by_author_request">555</string>
+    <string name="buyer_see_orders_request">1345</string>
 
-
+    <string name="seller_get_all_products_request">777</string>
     <string name="seller_get_product_by_id_request">666</string>
-    <string name="seller_inventory_request">777</string>
-    <string name="seller_orders_request">888</string>
-    <string name="seller_customers_request">999</string>
+    <string name="seller_see_orders_request">888</string>
+    <string name="seller_see_customers_request">931</string>
 
+    <string name="shipping_title_textview">Shipping Details</string>
+    <string name="fullName_textview">Full Name</string>
+    <string name="address01_textview">Address</string>
+    <string name="address02_textview">Apt,Suit Number (Optional)</string>
+    <string name="city_textview">City</string>
+    <string name="state_textView">State and Zip</string>
+    <string name="zip_textView">Zip</string>
+    <string name="email_textview">Email</string>
+    <string name="phone_textview">Phone</string>
+
+    <string name="payment_title_textview">Payment Information</string>
+    <string name="payment_Details">Payment Method</string>
+    <string name="Billing_Address_details">Billing Adress</string>
+    <string name="NameonCard_Textview">Name On Card</string>
+    <string name="CardNumber_TextView">Card Details</string>
+    <string name="Expiration_TextView">Expiration Date</string>
+
+    <string name="outofstock_textview">Out of stock</string>
+    <string name="instock_textview">In stock</string>
+    <string name="OrderSummery_Textview">Order Summary</string>
+    <string name="itemsCount_Summury_Textview">Items</string>
+    <string name="shippingCharges_TextView">Shipping Costs</string>
+    <string name="totalTax_TextView">Estimated tax</string>
+    <string name="OrderTotal_Textview">Order Total</string>
+    <string name="place_order_button">Place Your Order</string>
+    <string name="same_address">Same as shipping address</string>
+    <string name="thankyou_message">\nThank you for shopping with Us!,</string>
+    <string name="shippingAdrress">It will be deliver at:\n</string>
+    <string name="nameerror">Please enter valid name.</string>
+    <string name="addresserror">Please enter Address</string>
+    <string name="cityerror">Please enter city.</string>
+    <string name="stateerror">Please enter State.</string>
+    <string name="ziperror">Please enter valid zip code with length of 5.</string>
+    <string name="emailerror">Please enter valid email address.</string>
+    <string name="phoneerror">Please enter valid Phone Number ONLY 10 DIGITS.</string>
+    <string name="carderror">Please enter valid card</string>
+    <string name="proceed_to_checkout">Proceed to checkout</string>
+    <string name="number_of_items">number of items</string>
+    <string name="no_items_in_cart">No Items in Cart!</string>
+    <string name="the_bill">the bill</string>
+
+
+    <string name="price_here">price here</string>
+    <string name="productname_here">productName here</string>
+    <string name="seller_here">seller here</string>
+    <string name="productstock_here">productStock here</string>
+    <string name="productid_hidden">productId hidden</string>
+    <string name="remove_from_cart">Remove From Cart</string>
+
+
+    <string name="load_inventory_button">Load Inventory</string>
+    <string name="buyer_proceed_to_order">279</string>
+    <string name="buyer_proceed_to_cart">1221</string>
 
 </resources>

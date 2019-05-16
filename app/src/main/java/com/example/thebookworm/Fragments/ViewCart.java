@@ -38,6 +38,7 @@ import java.util.List;
 public class ViewCart extends Fragment implements View.OnClickListener {
 
 
+    // BUYER SPECIFIC USECASE
     private final String tag = "ViewCart";
     private BackEnd backEnd;
 
@@ -53,7 +54,6 @@ public class ViewCart extends Fragment implements View.OnClickListener {
         super.onStart();
         backEnd = new BackEnd(getActivity(), tag);
         getCartItems();
-
     }
 
     private void getCartItems() {
@@ -63,14 +63,16 @@ public class ViewCart extends Fragment implements View.OnClickListener {
         final Button placeOrder = getView().findViewById(R.id.placeOrder);
 
 
-        emptyCartsAlert.setVisibility(View.INVISIBLE);
-
+        // TODO fix empty cart bug
+        resetUI(emptyCartsAlert, placeOrder, View.GONE, View.VISIBLE);
 
         final Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
-        checkIfEmpty(placeOrder, emptyCartsAlert, currentBuyer);
         final GroupAdapter<ViewHolder> adapter = new GroupAdapter<>();
         final RecyclerView recyclerView = getView().findViewById(R.id.shopping_cart);
         final List<CartItemRow> cartItemList = new ArrayList<>();
+
+//        checkIfEmpty(placeOrder,emptyCartsAlert,recyclerView);
+
 
         DatabaseReference cartRef = FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart");
 
@@ -107,7 +109,8 @@ public class ViewCart extends Fragment implements View.OnClickListener {
 
                 } else {
                     backEnd.notifyByToast("No items in cart!");
-                    checkIfEmpty(placeOrder, emptyCartsAlert, currentBuyer);
+                    currentBuyer.getCart().clear();
+                    resetUI(emptyCartsAlert, placeOrder, View.VISIBLE, View.GONE);
                 }
             }
 
@@ -120,7 +123,8 @@ public class ViewCart extends Fragment implements View.OnClickListener {
         cartRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                Log.d("CartListener", "Child Event Added");
+                checkIfEmpty(placeOrder, emptyCartsAlert, recyclerView);
             }
 
             @Override
@@ -130,8 +134,8 @@ public class ViewCart extends Fragment implements View.OnClickListener {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                checkIfEmpty(placeOrder, emptyCartsAlert, currentBuyer);
-
+                Log.d("CartListener", "Child Event Removed!");
+                checkIfEmpty(placeOrder, emptyCartsAlert, recyclerView);
             }
 
             @Override
@@ -146,12 +150,17 @@ public class ViewCart extends Fragment implements View.OnClickListener {
         });
     }
 
-    private void checkIfEmpty(Button placeOrder, TextView emptyCartsAlert, Buyer currentBuyer) {
+    private void resetUI(TextView emptyCartsAlert, Button placeOrder, int visible, int gone) {
+        placeOrder.setVisibility(visible);
+        emptyCartsAlert.setVisibility(gone);
+    }
 
-        if (currentBuyer.cartSize() == 0) {
-            placeOrder.setVisibility(View.GONE);
-            emptyCartsAlert.setVisibility(View.VISIBLE);
-        }
+    private void checkIfEmpty(Button placeOrder, TextView emptyCartsAlert, RecyclerView recyclerView) {
+        // TODO buggy code
+//        if (recyclerView.getChildCount() == 0)
+//            resetUI(emptyCartsAlert, placeOrder, View.GONE, View.VISIBLE);
+//        else
+//            resetUI(emptyCartsAlert, placeOrder, View.VISIBLE, View.GONE);
 
     }
 
@@ -213,12 +222,12 @@ class CartItemRow extends Item<ViewHolder> {
         productId.setText(currentProduct.getPID());
         removeFromCart.setVisibility(View.VISIBLE);
 
+        // TODO pulled this out app:layout_behavior=""
 
         removeFromCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.d("removeFromCart", "onClick: " + currentProduct.getPID());
-
                 backEnd.removeItemFromCart(currentProduct.getPID());
                 adapter.remove(currRow);
                 notifyChanged();

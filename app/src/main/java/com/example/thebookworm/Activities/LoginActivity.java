@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
     private void autofill() {
-        email.setText("abcd@gm.com");
+        email.setText("abc@gm.com");
         password.setText("123456");
     }
 

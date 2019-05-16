@@ -125,9 +125,14 @@ public class ProductDescription extends Fragment {
                 boolean additionStatus = currentBuyer.addToCart(currentProduct);
 
                 if (additionStatus) {
-                    singleton.notifyByToast("Items in cart: " + currentBuyer.cartSize());
+
                     singleton.saveToPersistentStorage("currentUser", currentBuyer);
                     singleton.updateBuyeronBackEnd(currentBuyer, currentBuyer.cartSize());
+
+//                    singleton.notifyByToast("Items in cart: " + currentBuyer.cartSize());
+
+                    //TODO remove the list dependency altogether if possible
+
                 } else {
                     singleton.notifyByToast("Already in Cart!");
                 }

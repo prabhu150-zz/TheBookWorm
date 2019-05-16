@@ -66,11 +66,10 @@ public class RegisterActivity extends AppCompatActivity {
 
         backend = new BackEnd(this, Tag);
 
-//        FirebaseAuth.getInstance().signOut();
+        backend.logout();
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             backend.findCurrentUser();
-            finish();
         }
 
 //        FirebaseApp.initializeApp(this); should only uncomment this the first time
@@ -91,8 +90,6 @@ public class RegisterActivity extends AppCompatActivity {
         profilePic = findViewById(R.id.previewProfilePic);
         createUserprogress = findViewById(R.id.createUserprogress);
 
-
-//        FirebaseAuth.getInstance().signOut();
 
     }
 
@@ -168,7 +165,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void redirect(Class nextActivity) {
         Intent redirect = new Intent(this, nextActivity);
-        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         redirect.putExtra("userType", type.getText().toString());
         startActivity(redirect);
     }
@@ -226,10 +223,12 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> it) {
                 if (it.isSuccessful()) {
+                    createUserprogress.setVisibility(View.GONE);
                     logit("New user added to auth!");
                     storeUserDetails();
 
                 } else {
+                    createUserprogress.setVisibility(View.GONE);
                     logit("Failed to create user error: " + it.getException().getMessage());
                     notifyByToast("Failed Signup: " + it.getException().getMessage());
                 }

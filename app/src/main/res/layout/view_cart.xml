@@ -9,7 +9,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <Button
@@ -24,7 +24,7 @@
             android:background="@color/colorAccent"
             android:padding="15dp"
 
-            android:text="place Order"
+            android:text="@string/proceed_to_checkout"
             android:textColor="@color/common_google_signin_btn_text_dark_focused"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="108dp"
             android:layout_marginTop="64dp"
-            android:text="number of items"
+            android:text="@string/number_of_items"
             android:textColor="#3C03DA"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -54,7 +54,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="No Items in Cart!"
+            android:text="@string/no_items_in_cart"
             android:textAlignment="center"
             android:textColor="@android:color/holo_red_dark"
             android:textSize="18sp"
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="36dp"
             android:layout_marginEnd="8dp"
-            android:text="the bill"
+            android:text="@string/the_bill"
             android:textColor="@color/bg_login"
             android:textSize="18sp"
             android:visibility="gone"

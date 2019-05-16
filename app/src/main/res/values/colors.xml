@@ -20,4 +20,5 @@
     <color name="dark_blue">#003366</color>
     <color name="imageBorder">#FF000000</color>
     <color name="lightGray">#E8E8E8</color>
+    <color name="price">#24C9A5</color>
 </resources>

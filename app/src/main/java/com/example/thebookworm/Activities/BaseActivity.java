@@ -20,9 +20,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.bookworm.R;
 import com.example.thebookworm.BackEnd;
-import com.example.thebookworm.Fragments.BuyerDashBoard;
-import com.example.thebookworm.Fragments.ProductDescription;
-import com.example.thebookworm.Fragments.SellerDashboard;
+import com.example.thebookworm.Fragments.CustomerList;
+import com.example.thebookworm.Fragments.OrderList;
+import com.example.thebookworm.Fragments.ShowCatalog;
+import com.example.thebookworm.Fragments.ShowInventory;
 import com.example.thebookworm.Fragments.ViewCart;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Seller;
@@ -34,52 +35,96 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private BackEnd singleton;
-    boolean isBuyer = false;
+    boolean isBuyer;
+    private BackEnd backEnd;
+    private String currentFragment = "#currentFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        singleton = new BackEnd(this, "FragmentManager");
+        backEnd = new BackEnd(this, "FragmentManager");
 
         Intent prevActivity = getIntent();
         String currentUserType = prevActivity.getStringExtra("userType");
 
-        if (currentUserType.equals("Buyer")) {
-            handleBuyer();
+        if (currentUserType.equals("buyer")) {
             isBuyer = true;
-        } else if (currentUserType.equals("Seller")) {
+            handleBuyer();
+        } else if (currentUserType.equals("seller")) {
+            isBuyer = false;
             handleSeller();
         } else {
             throw new IllegalArgumentException("Invalid user. Please check intent args");
         }
+        backEnd.logit("Reached baseactivity. IsBuyer: " + isBuyer);
+
     }
+
 
     protected void replaceFragment(Fragment currentFragment) {
         final FragmentManager manager = getSupportFragmentManager();
         final FragmentTransaction transaction = manager.beginTransaction();
+
         transaction.replace(R.id.fragment_container, currentFragment);
         transaction.addToBackStack(null);
         transaction.commit();
     }
 
 
-    public void redirectToFragment(String request, Bundle fragmentArguments) {
-        final String buyerRequest = getString(R.string.buyer_get_product_by_id_request);
-        final String sellerRequest = getString(R.string.seller_get_product_by_id_request);
+    public void redirectToFragment(Fragment fragment, Bundle fragmentArguments) {
 
-        if (request.equals(buyerRequest)) {
-            Fragment buyerDash = new ProductDescription();
-            buyerDash.setArguments(fragmentArguments);
-            replaceFragment(buyerDash);
+        final String request = fragmentArguments.getString("request");
+        final String userType = fragmentArguments.getString("userType");
 
-        } else if (request.equals(sellerRequest)) {
-            Fragment sellerDash = new ProductDescription();
-            sellerDash.setArguments(fragmentArguments);
-            replaceFragment(sellerDash);
+        final String showSpecificProductBuyer = getString(R.string.buyer_get_product_by_id_request);
+        final String showBuyersCatalog = getString(R.string.buyer_get_all_products_request);
+        final String userWantsToBuyRequest = getString(R.string.buyer_proceed_to_order);
+        final String showUserHisCart = getString(R.string.buyer_proceed_to_cart);
+
+        final String showSellerHisInventory = getString(R.string.seller_get_all_products_request);
+        final String showSellerHisInventoryItem = getString(R.string.seller_get_product_by_id_request);
+        final String showSellerHisOrders = getString(R.string.seller_see_orders_request);
+        final String showSellerHisCustomers = getString(R.string.seller_see_customers_request);
+
+
+        backEnd.logit("Reached redirection. IsBuyer: " + isBuyer);
+
+
+        if (request.equals(showSpecificProductBuyer)) {
+
+            backEnd.logit("About to display specific item");
+
+            fragment.setArguments(fragmentArguments);
+            replaceFragment(fragment);
+
+        } else if (request.equals(showSellerHisInventoryItem)) {
+
+            backEnd.logit("About to display inventory");
+            fragment.setArguments(fragmentArguments);
+            replaceFragment(fragment);
+
+        } else if (request.equals(showBuyersCatalog)) {
+            backEnd.logit("About to display all products");
+            fragment.setArguments(fragmentArguments);
+            replaceFragment(fragment);
+
+        } else if (request.equals(showSellerHisOrders)) {
+            //TODO to be implemented
+
+        } else if (request.equals(showSellerHisCustomers)) {
+            //TODO to be implemented
+        } else if (request.equals(showUserHisCart)) {
+            backEnd.logit("Showing Cart!");
+            fragment.setArguments(fragmentArguments);
+            replaceFragment(fragment);
+        } else if (request.equals(userWantsToBuyRequest)) {
+            // TODO to be implemented
+        } else if (request.equals(showSellerHisInventory)) {
+            backEnd.logit("Showing inventory:");
+            fragment.setArguments(fragmentArguments);
+            replaceFragment(fragment);
         } else {
-            throw new IllegalArgumentException("This user not currently supported!");
+            throw new IllegalArgumentException("This user not currently supported!" + request);
         }
 
     }
@@ -87,16 +132,19 @@ public class BaseActivity extends AppCompatActivity
 
     private void handleBuyer() {
         setContentView(R.layout.buyer_navbar);
+
         Toolbar toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
-        toolbar.setTitle("Catalog");
+        toolbar.setTitle("Catalog"); // handle at buyer fragment
+
         toolbar.inflateMenu(R.menu.buyer_toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-
         View navbar = navigationView.getHeaderView(0);
-        updateBuyerDashUI(navbar);
+
+        updateBuyerDashUI(navbar); // // handle at buyer fragment
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -106,15 +154,18 @@ public class BaseActivity extends AppCompatActivity
         toggle.syncState();
         navigationView.setNavigationItemSelectedListener(this);
 
-        Fragment dashBoard = new BuyerDashBoard();
-        replaceFragment(dashBoard);
+        Fragment dashBoard = new ShowCatalog();
+        Bundle arguments = new Bundle();
+        arguments.putString("userType", "buyer");
+        arguments.putString("request", getString(R.string.buyer_get_all_products_request));
+        redirectToFragment(dashBoard, arguments);
     }
 
     private void handleSeller() {
 
         setContentView(R.layout.seller_navbar);
         Toolbar toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
-        toolbar.setTitle("Seller Dashboard");
+        toolbar.setTitle("Inventory");
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -132,12 +183,17 @@ public class BaseActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-        Fragment dashBoard = new SellerDashboard();
-        replaceFragment(dashBoard);
+
+        Fragment dashBoard = new ShowInventory();
+        Bundle arguments = new Bundle();
+        arguments.putString("userType", "buyer");
+        arguments.putString("request", getString(R.string.seller_get_all_products_request));
+        redirectToFragment(dashBoard, arguments);
+
     }
 
     private void updateSellerDashUI(View navbar) {
-        Seller currentSeller = (Seller) singleton.getFromPersistentStorage("currentUser");
+        Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
 
         CircleImageView profilePic = navbar.findViewById(R.id.profilePic);
         TextView sellerName = navbar.findViewById(R.id.userName);
@@ -148,15 +204,14 @@ public class BaseActivity extends AppCompatActivity
         sellerEmail.setText(currentSeller.getEmail());
     }
 
-
     private void updateBuyerDashUI(View navbar) {
-        Buyer currentBuyer = (Buyer) singleton.getFromPersistentStorage("currentUser");
+        Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
 
         CircleImageView profilePic = navbar.findViewById(R.id.profilePic);
         TextView sellerName = navbar.findViewById(R.id.userName);
         TextView sellerEmail = navbar.findViewById(R.id.userEmail);
 
-        sellerName.setText(currentBuyer.getNickname());
+        sellerName.setText(currentBuyer.getName());
         Picasso.get().load(currentBuyer.getProfilePic()).into(profilePic);
         sellerEmail.setText(currentBuyer.getEmail());
     }
@@ -176,17 +231,11 @@ public class BaseActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-
         MenuInflater inflater = getMenuInflater();
-
-        if (isBuyer) {
             inflater.inflate(R.menu.buyer_toolbar, menu);
-
             MenuItem search = menu.findItem(R.id.search);
-
             SearchView searchView = (SearchView)
                     search.getActionView();
-
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
@@ -198,9 +247,7 @@ public class BaseActivity extends AppCompatActivity
                     return false;
                 }
             });
-        } else {
-            // handle sellers case
-        }
+
 
         return super.onCreateOptionsMenu(menu);
 
@@ -215,14 +262,13 @@ public class BaseActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.search:
-                singleton.notifyByToast("Search clicked!");
+                backEnd.notifyByToast("Search clicked!");
                 break;
 
             case R.id.filter:
-                singleton.notifyByToast("filter clicked!");
+                backEnd.notifyByToast("Filter clicked!");
                 break;
         }
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -234,30 +280,86 @@ public class BaseActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.cart:
-                singleton.notifyByToast("Shopping Cart!");
-                replaceFragment(new ViewCart());
+            case R.id.cart: {
+                backEnd.notifyByToast("Shopping Cart!");
+
+                Bundle args = new Bundle();
+                args.putString("request", getString(R.string.buyer_proceed_to_cart));
+                redirectToFragment(new ViewCart(), args);
+
+
+//                replaceFragment(); // BUYER ONLY
+
+            }
                 break;
 
-            case R.id.catalog:
-                singleton.notifyByToast("Show Catalog");
-                replaceFragment(new BuyerDashBoard());
+            case R.id.catalog: {
+
+
+                Bundle args = new Bundle();
+                if (isBuyer) {
+
+                    Fragment showCatalog = new ShowCatalog();
+                    backEnd.notifyByToast("Show Catalog");
+                    args.putString("userType", "buyer");
+                    args.putString("request", getString(R.string.buyer_get_all_products_request));
+                    redirectToFragment(showCatalog, args);
+
+                } else {
+
+
+                    Fragment showInventory = new ShowInventory();
+                    backEnd.notifyByToast("Show Inventory");
+                    args.putString("userType", "seller");
+                    args.putString("request", getString(R.string.seller_get_all_products_request));
+                    redirectToFragment(showInventory, args);
+                }
+
+            }
                 break;
 
-            case R.id.viewCustomers:
-                singleton.notifyByToast("View Customers!");
+            case R.id.viewCustomers: {
+                backEnd.notifyByToast("View Customers!"); // SELLER ONLY
+
+                Fragment seeCustomers = new CustomerList(); //TODO to be implemented
+
+                Bundle args = new Bundle();
+
+                args.putString("request", getString(R.string.seller_see_customers_request));
+                // get seller ID from that class
+
+                redirectToFragment(seeCustomers, args);
+
+            }
                 break;
 
-            case R.id.orders:
-                singleton.notifyByToast("View all orders!");
+            case R.id.orders: {
+
+                Fragment seeOrders = new OrderList();
+                Bundle args = new Bundle();
+
+                if (isBuyer) {
+                    backEnd.notifyByToast("Show Buyers Orders");
+                    args.putString("userType", "buyer");
+                    args.putString("request", getString(R.string.buyer_see_orders_request));
+
+                } else {
+                    backEnd.notifyByToast("Show Sellers Orders");
+                    args.putString("userType", "seller");
+                    args.putString("request", getString(R.string.seller_see_orders_request));
+                }
+                redirectToFragment(seeOrders, args);
+
+            }
+            backEnd.notifyByToast("View all orders!"); // BOTH
                 break;
 
             case R.id.logoutButton:
-                singleton.notifyByToast("Logging out!");
-                singleton.logout();
+                backEnd.notifyByToast("Logging out!"); // BOTH
+                backEnd.logout();
                 break;
 
-            ///////
+            //
 
         }
 
@@ -265,4 +367,9 @@ public class BaseActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+//    public Fragment getVisibleFragment TODO get visible fragment to make changes to it
+
+
+
 }

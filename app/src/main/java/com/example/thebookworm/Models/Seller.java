@@ -33,6 +33,10 @@ import java.util.Queue;
 
 public class Seller {
 
+    public String getUserID() {
+        return userID;
+    }
+
     String userID, name, email;
     String profilePic = "https://firebasestorage.googleapis.com/v0/b/bookworm-cb649.appspot.com/o/profile-pics%2Fbarnes.png?alt=media&token=750c05c8-67e2-436c-ad04-79d8f1fa9e3d";
     List<Buyer> customers;
@@ -169,6 +173,7 @@ public class Seller {
         final DatabaseReference inventoryRef = FirebaseDatabase.getInstance().getReference("/users/sellers/" + userID + "/inventory/" + productType);
 
         final Queue<String> imageUrls = new LinkedList<String>();
+        final Queue<String> productIDs = new LinkedList<String>();
 
         /*
         I am keeping market separate from buyer and seller to accommodate product/user deletions in the future. If a buyer or seller decides to delete their account its easier to remove them from the market rather than individually removing them from buyer and seller tables respectively.
@@ -187,20 +192,23 @@ public class Seller {
         for (Product currentProduct : inventory) {
             productsRef.child(currentProduct.getPID()).setValue(currentProduct);
             imageUrls.add(currentProduct.getImageURL());
+            productIDs.add(currentProduct.getPID());
         }
 
         productsRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                // if any new products are added in the market then the corresponding inventory of that user
+                // if any new products are added in the market then the corresponding inventory of that seller
                 // should be updated!
 
                 Product newProduct = dataSnapshot.getValue(Book.class);
 
-
                 String path = dataSnapshot.child("pid").getValue().toString();
+
                 inventoryRef.child(path).setValue(newProduct);
+
                 inventoryRef.child(path + "/imageURL").setValue(imageUrls.remove());
+                inventoryRef.child(path + "/pid").setValue(path);
 
             }
 
@@ -209,9 +217,11 @@ public class Seller {
 
                 Product newProduct = dataSnapshot.getValue(Book.class);
 
-                inventory.add(newProduct);
 
-                inventoryRef.child(dataSnapshot.child("pid").getValue().toString()).setValue(newProduct);
+                String pid = dataSnapshot.child("pid").getValue().toString();
+                updateInventoryProduct(pid, newProduct);
+
+                inventoryRef.child(pid).setValue(newProduct);
             }
 
             @Override
@@ -219,7 +229,7 @@ public class Seller {
 
                 Product newProduct = dataSnapshot.getValue(Book.class);
 
-                inventory.remove(newProduct);
+                removeByPID(dataSnapshot.child("pid").getValue().toString());
 
                 inventoryRef.child(dataSnapshot.child("pid").getValue().toString()).removeValue();
             }
@@ -235,6 +245,29 @@ public class Seller {
             }
         });
 
+
+    }
+
+    private void updateInventoryProduct(String pid, Product newProduct) {
+
+        int index = 0;
+
+        for (Product curr : inventory) {
+            index++;
+            if (curr.getPID().equals(pid)) {
+                inventory.remove(curr);
+                inventory.add(index, newProduct);
+            }
+        }
+
+
+    }
+
+    private void removeByPID(String pid) {
+
+        for (Product curr : inventory)
+            if (curr.getPID().equals(pid))
+                inventory.remove(curr);
 
     }
 
