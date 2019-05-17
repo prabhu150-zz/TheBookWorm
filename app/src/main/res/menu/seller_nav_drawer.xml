@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/catalog"
+            android:id="@+id/showInventory"
             android:icon="@mipmap/dashboard"
             android:title="@string/view_inventory" />
 

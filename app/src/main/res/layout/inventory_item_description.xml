@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollView3"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp">
+
+
+        <include
+            android:id="@+id/news_title"
+            layout="@layout/product_catalog_row"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!--<ImageView-->
+        <!--android:id="@+id/imageView"-->
+        <!--android:layout_width="130dp"-->
+        <!--android:layout_height="130dp"-->
+        <!--android:layout_marginStart="16dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--tools:srcCompat="@tools:sample/avatars[1]" />-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/productName"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:text="productName here"-->
+        <!--android:textSize="22sp"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toEndOf="@+id/imageView"-->
+        <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/soldBy"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="24dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:text="soldBy"-->
+        <!--app:layout_constraintStart_toEndOf="@+id/imageView"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/productName" />-->
+
+        <!--<TextView-->
+        <!--android:id="@+id/productPrice"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="24dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:text="price here"-->
+        <!--app:layout_constraintStart_toEndOf="@+id/imageView"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/soldBy" />-->
+
+        <!--<TextView-->
+
+        <!--android:id="@+id/stocks"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="24dp"-->
+        <!--android:layout_marginTop="12dp"-->
+        <!--android:text="availableStock"-->
+        <!--app:layout_constraintStart_toEndOf="@+id/imageView"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/productPrice" />-->
+
+
+        <TableLayout
+            android:id="@+id/specificDetails"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/news_title"
+            app:layout_constraintVertical_bias="0.156">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </TableLayout>
+
+        <Button
+            android:id="@+id/modifyInventoryItem"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="16dp"
+            android:background="#1E88E5"
+
+            android:text="@string/modify_item"
+            android:textColor="#ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/deleteInventory"
+            app:layout_constraintStart_toStartOf="@+id/specificDetails"
+            app:layout_constraintTop_toBottomOf="@+id/specificDetails" />
+
+        <Button
+            android:id="@+id/deleteInventoryItem"
+            android:layout_width="175dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:background="#F4511E"
+            android:text="@string/delete_label"
+            android:textColor="#ffffff"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/specificDetails"
+            app:layout_constraintStart_toEndOf="@+id/modifyInventory"
+            app:layout_constraintTop_toBottomOf="@+id/specificDetails" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

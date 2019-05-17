@@ -9,16 +9,29 @@ public class Buyer {
      */
     private String userID, name, email, nickname, profilePic = "https://firebasestorage.googleapis.com/v0/b/bookworm-cb649.appspot.com/o/profile-pics%2Fdefault .png?alt=media&token=58ed84ff-1040-428d-bfb3-0e1c224693ba";
 
+    List<Order> orders;
+    List<Product> cart;
+    private String fullName, addressLine1, addressLine2, city, state, zipCode, phoneNumber;
+    private String nameOnCard;
+
+    public void setShippingDetails(String fullName, String addressLine1, String addressLine2, String city, String state, String zipCode, String phoneNumber) {
+        this.fullName = fullName;
+        this.addressLine1 = addressLine1;
+        this.addressLine2 = addressLine2;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
+        this.phoneNumber = phoneNumber;
+    }
+
     public String getName() {
         return name;
     }
 
+
     public void setName(String name) {
         this.name = name;
     }
-
-    //    List<Orders> orders;
-    List<Product> cart;
 
     public String getEmail() {
         return email;
@@ -98,4 +111,40 @@ public class Buyer {
     public void setEmail(String newEmail) {
         this.email = newEmail;
     }
+
+
+    public void placeOrder(List<String> sellerID) {
+        double bill = 0.0, shipping = 0.0875, tax = 0.125, grandTotal;
+
+        for (Product item : cart)
+            bill += item.getPrice();
+
+
+        grandTotal = bill * (1 + shipping + tax);
+
+        Order currentOrder = new Order(this, new ArrayList<>(cart), bill, shipping * bill, tax * bill, grandTotal, new ArrayList<String>(sellerID));
+
+        orders.add(currentOrder);
+
+    }
+
+
+    public void immediateOrder(String sellerID, Product currentProduct) {
+        double bill = currentProduct.getPrice(), shipping = 0.0875, tax = 0.125, grandTotal;
+
+        grandTotal = bill * (1 + shipping + tax);
+
+        List<String> currentSeller = new ArrayList<>();
+        currentSeller.add(sellerID);
+
+        Order currentOrder = new Order(this, new ArrayList<>(cart), bill, shipping * bill, tax * bill, grandTotal, currentSeller);
+
+        orders.add(currentOrder);
+    }
+
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
 }

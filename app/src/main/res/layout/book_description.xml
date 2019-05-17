@@ -1,0 +1,367 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <!--<androidx.cardview.widget.CardView-->
+    <!--android:id="@+id/cardView2"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_margin="5dp"-->
+    <!--android:background="@color/dark_blue"-->
+    <!--android:elevation="5dp"-->
+    <!--app:cardCornerRadius="5dp"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--tools:layout_editor_absoluteY="-170dp">-->
+
+
+    <!--</androidx.cardview.widget.CardView>-->
+
+    <TextView
+        android:id="@+id/aboutLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-thin"
+        android:text="About this item:"
+        android:textAllCaps="true"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/summaryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="sans-serif-thin"
+        android:text="Summary:"
+        android:textAllCaps="true"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:typeface="normal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/itemDescription" />
+
+    <com.uncopt.android.widget.text.justify.JustifiedTextView
+        android:id="@+id/itemDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="#E8F5E9"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:text="@string/lorem_ipsum"
+        android:textSize="10sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/aboutLabel" />
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/summaryLabel">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+
+            <TextView
+                android:id="@+id/authorLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:background="#41596166"
+                android:fontFamily="sans-serif-condensed"
+                android:lineSpacingExtra="8sp"
+                android:maxWidth="125dp"
+
+                android:maxHeight="50dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:shadowColor="#00000000"
+                android:shadowDx="3"
+                android:text="Author"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:typeface="sans" />
+
+
+            <TextView
+                android:id="@+id/author"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.80"
+                android:background="#E8F5E9"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="JKRowling"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/bg_register"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+
+            <TextView
+                android:id="@+id/genreLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:background="#41596166"
+                android:fontFamily="sans-serif-condensed"
+                android:lineSpacingExtra="8sp"
+                android:maxWidth="125dp"
+
+                android:maxHeight="50dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:shadowColor="#00000000"
+                android:shadowDx="3"
+                android:text="Genre"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:typeface="sans" />
+
+
+            <TextView
+                android:id="@+id/genre"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.80"
+                android:background="#E8F5E9"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="JKRowling"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/bg_register"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+
+            <TextView
+                android:id="@+id/publisherLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:background="#41596166"
+                android:fontFamily="sans-serif-condensed"
+                android:lineSpacingExtra="8sp"
+                android:maxWidth="125dp"
+
+                android:maxHeight="50dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:shadowColor="#00000000"
+                android:shadowDx="3"
+                android:text="Publisher"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:typeface="sans" />
+
+
+            <TextView
+                android:id="@+id/publisher"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.80"
+                android:background="#E8F5E9"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="JKRowling"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/bg_register"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+
+            <TextView
+                android:id="@+id/pagesLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:background="#41596166"
+                android:fontFamily="sans-serif-condensed"
+                android:lineSpacingExtra="8sp"
+                android:maxWidth="125dp"
+
+                android:maxHeight="50dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:shadowColor="#00000000"
+                android:shadowDx="3"
+                android:text="Pages"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:typeface="sans" />
+
+
+            <TextView
+                android:id="@+id/pages"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.80"
+                android:background="#E8F5E9"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="JKRowling"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/bg_register"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+
+            <TextView
+                android:id="@+id/titleLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:background="#41596166"
+                android:fontFamily="sans-serif-condensed"
+                android:lineSpacingExtra="8sp"
+                android:maxWidth="125dp"
+
+                android:maxHeight="50dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:shadowColor="#00000000"
+                android:shadowDx="3"
+                android:text="Title123"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:typeface="sans" />
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.80"
+                android:background="#E8F5E9"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="JKRowling"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/bg_register"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="1">
+
+
+            <TextView
+                android:id="@+id/stockLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:background="#41596166"
+                android:fontFamily="sans-serif-condensed"
+                android:lineSpacingExtra="8sp"
+                android:maxWidth="125dp"
+
+                android:maxHeight="50dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:shadowColor="#00000000"
+                android:shadowDx="3"
+                android:text="Stocks"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:typeface="sans" />
+
+
+            <TextView
+                android:id="@+id/stock"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.80"
+                android:background="#E8F5E9"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="JKRowling"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/bg_register"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+        </TableRow>
+
+
+    </TableLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

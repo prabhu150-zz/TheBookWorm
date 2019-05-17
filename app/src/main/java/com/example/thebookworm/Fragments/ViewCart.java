@@ -42,6 +42,9 @@ public class ViewCart extends Fragment implements View.OnClickListener {
     private final String tag = "ViewCart";
     private BackEnd backEnd;
 
+    private Button checkOut;
+    private TextView emptyCartAlert;
+
     @Nullable
     @Override
 

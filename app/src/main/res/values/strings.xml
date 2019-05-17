@@ -35,6 +35,7 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="lorem_ipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eu convallis diam. Mauris sodales erat molestie molestie dignissim. Maecenas vitae laoreet odio, eu suscipit felis. Phasellus condimentum, ligula ut sagittis venenatis, mi sem pretium est, eleifend imperdiet sem sem eget mauris. Duis placerat fringilla consequat. Etiam semper leo vitae nulla volutpat volutpat. Suspendisse ante nibh, scelerisque ut aliquet nec, semper id justo. Pellentesque quis lacinia ex. Fusce auctor augue non neque sodales tempor.</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

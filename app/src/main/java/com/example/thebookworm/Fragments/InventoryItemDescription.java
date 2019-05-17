@@ -26,9 +26,7 @@ import com.squareup.picasso.Picasso;
 
 public class InventoryItemDescription extends Fragment {
 
-
     private BackEnd backEnd;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

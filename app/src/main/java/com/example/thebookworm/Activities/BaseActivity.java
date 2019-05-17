@@ -336,29 +336,26 @@ public class BaseActivity extends AppCompatActivity
                 break;
 
             case R.id.catalog: {
-
-
-                Bundle args = new Bundle();
-                if (isBuyer) {
-
                     Fragment showCatalog = new ShowCatalog();
+                Bundle args = new Bundle();
                     backEnd.notifyByToast("Show Catalog");
                     args.putString("currentUserType", "buyer");
                     args.putString("request", getString(R.string.buyer_get_all_products_request));
                     redirectToFragment(showCatalog, args);
-
-                } else {
-
-
-                    Fragment showInventory = new ShowInventory();
-                    backEnd.notifyByToast("Show Inventory");
-                    args.putString("currentUserType", "seller");
-                    args.putString("request", getString(R.string.seller_get_all_products_request));
-                    redirectToFragment(showInventory, args);
-                }
-
             }
                 break;
+
+            case R.id.showInventory: {
+                Fragment showInventory = new ShowInventory();
+                Bundle args = new Bundle();
+                backEnd.notifyByToast("Show Inventory");
+                args.putString("currentUserType", "seller");
+                args.putString("request", getString(R.string.seller_get_all_products_request));
+                redirectToFragment(showInventory, args);
+            }
+
+            break;
+
 
             case R.id.viewCustomers: {
                 backEnd.notifyByToast("View Customers!"); // SELLER ONLY
@@ -392,9 +389,10 @@ public class BaseActivity extends AppCompatActivity
             backEnd.notifyByToast("View all orders!"); // BOTH
                 break;
 
-            case R.id.logoutButton:
+            case R.id.logoutButton: {
                 backEnd.notifyByToast("Logging out!"); // BOTH
                 backEnd.logout();
+            }
                 break;
 
 

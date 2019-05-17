@@ -111,7 +111,7 @@ public class ShowInventory extends Fragment {
 
                             String pid = ((TextView) view.findViewById(R.id.productID)).getText().toString();
                             Product selectedProduct = findProduct(inventoryItems, pid);
-                            Fragment productDescription = new CatalogItemDescription();
+                            Fragment productDescription = new InventoryItemDescription();
 
                             Bundle fragArguments = new Bundle();
                             fragArguments.putString("pid", selectedProduct.getPID());
