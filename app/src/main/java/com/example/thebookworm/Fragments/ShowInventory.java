@@ -1,6 +1,5 @@
 package com.example.thebookworm.Fragments;
 
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,8 +31,6 @@ import com.xwray.groupie.Item;
 import com.xwray.groupie.OnItemClickListener;
 import com.xwray.groupie.ViewHolder;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,24 +39,6 @@ public class ShowInventory extends Fragment {
 
 
     private BackEnd backEnd;
-
-
-    public List<String> loadInventory() {
-        AssetManager assetManager = getActivity().getAssets();
-        List<String> res = new ArrayList<>();
-        Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
-
-        try {
-            InputStream myInput;
-            myInput = assetManager.open("Books.xls");
-            currentSeller.loadInventory(myInput);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
-
 
     @Nullable
     @Override
@@ -71,7 +50,11 @@ public class ShowInventory extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         backEnd = new BackEnd(getActivity(), "ShowInventory");
         super.onCreate(savedInstanceState);
-        loadInventory();
+
+        Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
+        currentSeller.loadInventory(getActivity());
+
+
     }
 
     @Override
@@ -128,12 +111,12 @@ public class ShowInventory extends Fragment {
 
                             String pid = ((TextView) view.findViewById(R.id.productID)).getText().toString();
                             Product selectedProduct = findProduct(inventoryItems, pid);
-                            Fragment productDescription = new ProductDescription();
+                            Fragment productDescription = new CatalogItemDescription();
 
                             Bundle fragArguments = new Bundle();
                             fragArguments.putString("pid", selectedProduct.getPID());
                             fragArguments.putString("productType", selectedProduct.getType());
-                            fragArguments.putString("userType", "seller");
+                            fragArguments.putString("currentUserType", "seller");
 
                             fragArguments.putString("request", getString(R.string.seller_get_product_by_id_request));
 

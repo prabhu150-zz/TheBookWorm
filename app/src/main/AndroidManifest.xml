@@ -17,17 +17,21 @@
         android:roundIcon="@mipmap/books_rounded"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name="com.example.thebookworm.Activities.BaseActivity"
-            android:label="@string/title_activity_dash"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name="com.example.thebookworm.Activities.RegisterActivity">
+
+        <activity android:name="com.example.thebookworm.Activities.RegisterActivity"
+
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.example.thebookworm.Activities.BaseActivity"
+            android:label="BookWorm"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name="com.example.thebookworm.Activities.LoginActivity" />
         <activity android:name="com.example.thebookworm.Fragments.PaymentInfo" />
 

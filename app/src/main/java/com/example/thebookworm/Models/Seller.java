@@ -1,5 +1,7 @@
 package com.example.thebookworm.Models;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -93,7 +96,22 @@ public class Seller {
         this.profilePic = profilePic;
     }
 
-    public void loadInventory(InputStream myInput) {
+
+    public void loadInventory(Context currentActivity) {
+        AssetManager assetManager = currentActivity.getAssets();
+
+        try {
+            InputStream myInput;
+            myInput = assetManager.open("Books.xls");
+            loadItemsFromFile(myInput);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void loadItemsFromFile(InputStream myInput) {
 
 
         String productType = "";
@@ -215,23 +233,31 @@ public class Seller {
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                Product newProduct = dataSnapshot.getValue(Book.class);
-
-
-                String pid = dataSnapshot.child("pid").getValue().toString();
-                updateInventoryProduct(pid, newProduct);
-
-                inventoryRef.child(pid).setValue(newProduct);
+//                Product newProduct = dataSnapshot.getValue(Book.class);
+//
+//                String pid = dataSnapshot.child("pid").getValue().toString();
+//                updateInventoryProduct(pid, newProduct);
+//
+//                inventoryRef.child(pid).setValue(newProduct);
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-                Product newProduct = dataSnapshot.getValue(Book.class);
+                String pid = dataSnapshot.child("pid").getValue().toString();
 
-                removeByPID(dataSnapshot.child("pid").getValue().toString());
+                logit("Removing book from market!");
+                DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("market/products/book/" + pid);
 
-                inventoryRef.child(dataSnapshot.child("pid").getValue().toString()).removeValue();
+                marketRef.removeValue();
+
+                logit("Child Event Triggered! Market value removed!");
+
+//                Product newProduct = dataSnapshot.getValue(Book.class);
+//
+//                marketRef.child(pid).removeValue();
+
+                removeFromInventory(pid);
             }
 
             @Override
@@ -263,13 +289,20 @@ public class Seller {
 
     }
 
-    private void removeByPID(String pid) {
+
+    public void removeFromInventory(String currentProductPID) {
 
         for (Product curr : inventory)
-            if (curr.getPID().equals(pid))
+            if (curr.getPID().equals(currentProductPID))
                 inventory.remove(curr);
 
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public void setEmail(String newEmail) {
+        this.email = newEmail;
+    }
 }

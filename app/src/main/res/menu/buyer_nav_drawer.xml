@@ -18,10 +18,12 @@
             android:icon="@mipmap/orders"
             android:title="@string/orders" />
 
-        <!--<item-->
-        <!--android:id="@+id/nav_tools"-->
-        <!--android:icon="@drawable/ic_menu_manage"-->
-        <!--android:title="@string/menu_tools" />-->
+
+        <item
+            android:id="@+id/buyer_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/action_settings" />
+
 
         <item
             android:id="@+id/logoutButton"

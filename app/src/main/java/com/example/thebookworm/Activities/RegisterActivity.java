@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -47,7 +46,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    private String Tag = "SignUpUser";
     private EditText name, email, password, confirmPassword, nickname;
     private Switch type;
     private Button signin, signup, uploadImageButton;
@@ -58,55 +56,67 @@ public class RegisterActivity extends AppCompatActivity {
     private Uri imageURI;
     private final boolean debug = true;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_page);
+        backend = new BackEnd(this, "RegisterAct#logger");
 
-        backend = new BackEnd(this, Tag);
+//        backend.logout();
 
-        backend.logout();
+        backend.logit("Checking if user is logged in?");
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            backend.logit("User is already logged in:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
             backend.findCurrentUser();
         }
 
+        //
 //        FirebaseApp.initializeApp(this); should only uncomment this the first time
 
+        findIDs();
+
+        type.setChecked(false);
+        type.setText(R.string.sellerSelected);
+
+        if (debug)
+            autofill();
+
+
+    }
+
+    private void findIDs() {
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         nickname = findViewById(R.id.nickname);
         password = findViewById(R.id.password);
         confirmPassword = findViewById(R.id.confirmPassword);
         type = findViewById(R.id.type);
-
-        type.setChecked(false);
-        type.setText(R.string.sellerSelected);
-
         signin = findViewById(R.id.sign_in_button);
         signup = findViewById(R.id.sign_up_button);
         uploadImageButton = findViewById(R.id.select_image_button);
         profilePic = findViewById(R.id.previewProfilePic);
         createUserprogress = findViewById(R.id.createUserprogress);
-
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        if (debug)
-            autofill();
+
 
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                backend.logit("Going to Login screen!");
                 redirect(LoginActivity.class);
             }
 
         });
+
+
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,7 +149,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void checkIfEmpty(final EditText txtView, final String error) {
-
+        if (debug)
+            autofill();
         txtView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 
             @Override
@@ -159,14 +170,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    private void logit(String message) {
-        Log.d(Tag, message);
-    }
-
     private void redirect(Class nextActivity) {
         Intent redirect = new Intent(this, nextActivity);
-        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        redirect.putExtra("userType", type.getText().toString());
+        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(redirect);
     }
 
@@ -185,26 +191,25 @@ public class RegisterActivity extends AppCompatActivity {
                 if (validateUserInput()) {
                     createUserprogress.setVisibility(View.VISIBLE);
 
-                    FirebaseDatabase.getInstance().getReference().child("users").orderByChild("nickName")
-                            .equalTo(((EditText) findViewById(R.id.nickname)).getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    FirebaseDatabase.getInstance().getReference().child("users/buyers").orderByChild("nickname").equalTo(nickname.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             createUserprogress.setVisibility(View.GONE);
 
                             if (dataSnapshot.getChildrenCount() > 0) {
-                                findViewById(R.id.createUserprogress).setVisibility(View.GONE);
-                                ((EditText) findViewById(R.id.nickname)).setError("That one is taken!");
+                                createUserprogress.setVisibility(View.GONE);
+                                nickname.setError("That one is taken!");
                                 notifyByToast("Please select a different nickname!");
                             } else {
-                                findViewById(R.id.createUserprogress).setVisibility(View.VISIBLE);
-                                logit("Creating user with unique nickname!");
+                                createUserprogress.setVisibility(View.VISIBLE);
+                                backend.logit("Creating user with unique nickname!");
                                 createNewUser();
                             }
                         }
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
-                            logit("Database Error: " + databaseError.getMessage());
+                            backend.logit("Database Error: " + databaseError.getMessage());
                         }
                     });
 
@@ -222,14 +227,13 @@ public class RegisterActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.getText().toString(), password.getText().toString()).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> it) {
+                createUserprogress.setVisibility(View.GONE);
                 if (it.isSuccessful()) {
-                    createUserprogress.setVisibility(View.GONE);
-                    logit("New user added to auth!");
+                    backend.logit("New user added to auth!");
                     storeUserDetails();
 
                 } else {
-                    createUserprogress.setVisibility(View.GONE);
-                    logit("Failed to create user error: " + it.getException().getMessage());
+                    backend.logit("Failed to create user error: " + it.getException().getMessage());
                     notifyByToast("Failed Signup: " + it.getException().getMessage());
                 }
             }
@@ -267,7 +271,7 @@ public class RegisterActivity extends AppCompatActivity {
             throw new IllegalStateException("Database couldn't generate new key!");
 
         if (imageURI != null) {
-            logit("Uploading an image...");
+            backend.logit("Uploading an image...");
             uploadImageToStorage(userId);
         } else {
             pushToRealTimeDb(userId, "");
@@ -291,19 +295,19 @@ public class RegisterActivity extends AppCompatActivity {
         fileReference.putFile(imageURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                logit("Uploaded image sucessfully");
+                backend.logit("Uploaded image sucessfully");
                 notifyByToast("Profile pic uploaded!");
 
                 profilePics.child(fileName).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
-                        logit("Url retrieved is : " + uri.toString());
+                        backend.logit("Url retrieved is : " + uri.toString());
                         pushToRealTimeDb(userID, uri.toString());
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        logit("Couldn't fetch URL, using default image");
+                        backend.logit("Couldn't fetch URL, using default image");
                         pushToRealTimeDb(userID, "");
                     }
                 });
@@ -311,13 +315,13 @@ public class RegisterActivity extends AppCompatActivity {
             }
         })
                 .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                int progress = (int) ((100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-                createUserprogress.setProgress(progress);
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        int progress = (int) ((100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+                        createUserprogress.setProgress(progress);
 
-            }
-        });
+                    }
+                });
 
         createUserprogress.setVisibility(View.GONE);
     }
@@ -334,19 +338,19 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void pushToRealTimeDb(String userID, String profilePic) {
 
-        logit("pushToRealTimeDb method");
-        logit(type.getText().toString() + " is the selected option");
+        backend.logit("pushToRealTimeDb method");
+        backend.logit(type.getText().toString() + " is the selected option");
 
         if (type.getText().toString().equals("Buyer")) {
 
             Buyer guestLogin = new Buyer(userID, name.getText().toString(), email.getText().toString(), nickname.getText().toString());
 
+            backend.saveToPersistentStorage("currentUser", guestLogin);
+
             if (!profilePic.isEmpty())
                 guestLogin.setProfilePic(profilePic);
 
-            backend.saveToPersistentStorage("currentBuyer", guestLogin);
-
-            logit("Current buyer added: " + guestLogin.getNickname());
+            backend.logit("Current buyer added: " + guestLogin.getName());
 
             FirebaseDatabase.getInstance().getReference().child("/users/buyers/").child(userID).setValue(guestLogin);
 
@@ -354,22 +358,22 @@ public class RegisterActivity extends AppCompatActivity {
 
             Seller guestLogin = new Seller(userID, name.getText().toString(), email.getText().toString());
 
+
+            backend.saveToPersistentStorage("currentUser", guestLogin);
+
+
             if (!profilePic.isEmpty()) {
                 guestLogin.setProfilePic(profilePic);
             }
 
-//            Paper.book().write("currentUser", guestLogin);
 
-            backend.saveToPersistentStorage("currentBuyer", guestLogin);
-
-            logit("Current seller added: " + guestLogin.getName());
+            backend.logit("Current seller added: " + guestLogin.getName());
 
             FirebaseDatabase.getInstance().getReference().child("/users/sellers/").child(userID).setValue(guestLogin);
 
         }
 
         signin();
-
 
 
     }
@@ -380,14 +384,22 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> it) {
                 if (it.isSuccessful()) {
-                    logit("User signed in!");
-                    redirect(BaseActivity.class);
+                    backend.logit("User signed in!");
+                    redirectToDashBoard(BaseActivity.class);
                 } else {
-                    logit("Couldn't Sign-In Error: " + it.getException().getMessage());
+                    backend.logit("Couldn't Sign-In Error: " + it.getException().getMessage());
                     notifyByToast("Couldn't Sign-In Error: " + it.getException().getMessage());
                 }
             }
         });
+    }
+
+    private void redirectToDashBoard(Class<BaseActivity> baseActivityClass) {
+        Intent redirect = new Intent(this, baseActivityClass);
+        redirect.putExtra("currentUserType", type.getText().toString().toLowerCase());
+        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        backend.saveToPersistentStorage("currentUserType", type.getText().toString().toLowerCase());
+        startActivity(redirect);
     }
 
     private Boolean validateUserInput() {
@@ -399,7 +411,7 @@ public class RegisterActivity extends AppCompatActivity {
                         email.getText().toString()
                 ));
 
-        logit("All fields are valid: " + validSignup);
+        backend.logit("All fields are valid: " + validSignup);
         return validSignup;
 
     }
@@ -437,7 +449,6 @@ public class RegisterActivity extends AppCompatActivity {
 
 
     }
-
 
     private void checkEmailFormat(final EditText email) {
 

@@ -4,8 +4,8 @@ public class SellerDashboardTest {
 
 
 //    @Test
-//    public void loadInventory() {
-//        List<String> res = new SellerDashboard().loadInventory();
+//    public void loadItemsFromFile() {
+//        List<String> res = new SellerDashboard().loadItemsFromFile();
 //
 //        for (String curr : res)
 //            System.out.println(curr);

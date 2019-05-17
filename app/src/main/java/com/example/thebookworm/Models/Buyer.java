@@ -13,6 +13,10 @@ public class Buyer {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     //    List<Orders> orders;
     List<Product> cart;
 
@@ -89,5 +93,9 @@ public class Buyer {
 
     public Product getLatestItem() {
         return cart.get(cart.size() - 1);
+    }
+
+    public void setEmail(String newEmail) {
+        this.email = newEmail;
     }
 }

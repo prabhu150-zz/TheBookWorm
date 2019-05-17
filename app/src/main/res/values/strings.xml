@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Book_Worm</string>
+    <string name="app_name">BookWorm</string>
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
@@ -105,9 +105,10 @@
 
 
     <string name="sellerNamePlaceHolder">Seller Name here</string>
-    <string name="load_books">Load All Books</string>
+    <string name="update_inventory">Update Inventory</string>
     <string name="view_orders">View Orders</string>
     <string name="view_customers">View Customers</string>
+    <string name="update_info">Update user information</string>
     <string name="title_activity_dash">DashActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -139,6 +140,7 @@
     <string name="seller_get_product_by_id_request">666</string>
     <string name="seller_see_orders_request">888</string>
     <string name="seller_see_customers_request">931</string>
+    <string name="see_settings">1125</string>
 
     <string name="shipping_title_textview">Shipping Details</string>
     <string name="fullName_textview">Full Name</string>
@@ -191,7 +193,11 @@
 
 
     <string name="load_inventory_button">Load Inventory</string>
+
     <string name="buyer_proceed_to_order">279</string>
     <string name="buyer_proceed_to_cart">1221</string>
+    <string name="delete_label">Delete</string>
+    <string name="modify_item">Modify Item</string>
+    <string name="delete">Delete</string>
 
 </resources>

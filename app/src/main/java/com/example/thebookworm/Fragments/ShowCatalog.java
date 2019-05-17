@@ -106,7 +106,7 @@ public class ShowCatalog extends Fragment {
 
                             String pid = ((TextView) view.findViewById(R.id.productID)).getText().toString();
                             Product selectedProduct = findProduct(catalogProducts, pid);
-                            Fragment productDescription = new ProductDescription();
+                            Fragment productDescription = new CatalogItemDescription();
 
                             Bundle fragArguments = new Bundle();
                             fragArguments.putString("pid", selectedProduct.getPID());

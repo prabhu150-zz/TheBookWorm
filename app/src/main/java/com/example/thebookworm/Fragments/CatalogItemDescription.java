@@ -25,7 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import io.paperdb.Paper;
 
-public class ProductDescription extends Fragment {
+public class CatalogItemDescription extends Fragment {
 
 
     BackEnd singleton;
@@ -96,8 +96,8 @@ public class ProductDescription extends Fragment {
         TextView price = getView().findViewById(R.id.sellerPrice);
         TextView productName = getView().findViewById(R.id.productName);
         TextView soldBy = getView().findViewById(R.id.seller);
-        Button addToCart = getView().findViewById(R.id.cartslashmodify);
-        Button buyNow = getView().findViewById(R.id.buyslashdelete);
+        Button addToCart = getView().findViewById(R.id.add_to_cart);
+        Button buyNow = getView().findViewById(R.id.buy_now);
         TextView stocks = getView().findViewById(R.id.stock);
 
         buyNow.setText("Buy Now!");

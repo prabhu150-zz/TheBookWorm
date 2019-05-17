@@ -14,6 +14,7 @@ import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Product;
 import com.example.thebookworm.Models.Seller;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -30,10 +31,11 @@ import java.util.List;
 
 import io.paperdb.Paper;
 
+
 public class BackEnd {
 
-    Context currentActivity;
-    String tag;
+    private Context currentActivity;
+    private String tag;
 
     public BackEnd(Context currentActivity, String tag) {
         this.currentActivity = currentActivity;
@@ -71,8 +73,11 @@ public class BackEnd {
                         Seller currentSeller = new Seller(currentTask.child("userID").getValue().toString(), currentTask.child("name").getValue().toString(), currentTask.child("email").getValue().toString());
                         currentSeller.setProfilePic(currentTask.child("profilePic").getValue().toString());
                         logit("Seller profile pic set as: " + currentSeller);
+                        logit("Its a seller alright " + currentSeller.getName());
                         saveToPersistentStorage("currentUser", currentSeller);
-                        getDashBoard("seller");
+                        String currentUserType = "seller";
+                        saveToPersistentStorage("currentUserType", currentUserType);
+                        getDashBoard(currentUserType);
                     }
                 } else {
                     logit("Its probably a buyer. No-one from sellers found!");
@@ -93,6 +98,7 @@ public class BackEnd {
 
     public void saveToPersistentStorage(String key, Object value) {
         Paper.book().write(key, value);
+        logit("Storing in persistent " + key + ":" + value);
     }
 
 
@@ -103,11 +109,23 @@ public class BackEnd {
     }
 
     public Object getFromPersistentStorage(String key) {
-        return Paper.book().read(key);
+        Object value = Paper.book().read(key);
+        return value;
     }
 
     public void deletePersistentStorage(String key) {
+        logit("Deleting key for " + key);
         Paper.book().delete(key);
+    }
+
+    public void peekPersistentStorage() {
+        List<String> keys = Paper.book().getAllKeys();
+
+        logit("Viewing all persistent values");
+
+        for (String key : keys) {
+            logit("Key:" + key + " Value:" + Paper.book().read(key).toString());
+        }
     }
 
 
@@ -130,12 +148,15 @@ public class BackEnd {
                         Buyer currentBuyer = new Buyer(currentTask.child("userID").getValue().toString(), currentTask.child("name").getValue().toString(), currentTask.child("email").getValue().toString(), currentTask.child("nickname").getValue().toString());
 
                         currentBuyer.setProfilePic(currentTask.child("profilePic").getValue().toString());
+                        logit("Its a buyer alright! Name " + currentBuyer.getName());
                         saveToPersistentStorage("currentUser", currentBuyer);
+                        saveToPersistentStorage("currentUserType", "buyer");
                         getDashBoard("buyer");
                     }
                 } else {
                     logit("Not a buyer either. No-one found");
                     notifyByToast("Email doesn't match any user! Please re-enter");
+                    logout();
                 }
 
 
@@ -152,7 +173,7 @@ public class BackEnd {
 
     private void getDashBoard(String type) {
         Intent redirect = new Intent(currentActivity, BaseActivity.class);
-        redirect.putExtra("userType", type);
+        redirect.putExtra("currentUserType", type);
         redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         currentActivity.startActivity(redirect);
     }
@@ -160,6 +181,7 @@ public class BackEnd {
     public void logout() {
         FirebaseAuth.getInstance().signOut();
         deletePersistentStorage("currentUser");
+        deletePersistentStorage("currentUserType");
         redirect(LoginActivity.class);
     }
 
@@ -168,7 +190,6 @@ public class BackEnd {
         Intent redirect = new Intent(currentActivity, nextActivity);
         redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         currentActivity.startActivity(redirect);
-
     }
 
     private void loadInventoryFromBackEnd(final Seller currentSeller) {
@@ -193,7 +214,6 @@ public class BackEnd {
                     for (String productId : productIds) {
 //                        DatabaseReference productRef = marketRef.child(productId);
 //                        Product product = new Product(productRef.child("name").toString(), productRef.child("description"), productRef.child("imageURL"))
-
 
 //                        currentSeller.inventory.add();
                     }
@@ -267,8 +287,40 @@ public class BackEnd {
 
         DatabaseReference sellerInventoryRef = FirebaseDatabase.getInstance().getReference("/users/sellers/" + currentSeller.getUserID() + "/inventory/" + productType).child(currentProductPID);
 
+
+        removeItemFromMarket(currentProductPID, productType);
+
+        currentSeller.removeFromInventory(currentProductPID);
         sellerInventoryRef.removeValue();
+
+        saveToPersistentStorage("currentUser", currentSeller);
+
         Log.d("removeFromCart", "UserId: " + currentSeller.getUserID());
+
+    }
+
+    private void removeItemFromMarket(String currentProductPID, String productType) {
+
+
+        logit("removing " + productType + " prod: " + currentProductPID);
+
+        DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("/market/products/" + productType).child(currentProductPID);
+
+
+        marketRef.removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                logit("Item removed from database!");
+            }
+        }).addOnFailureListener(
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        logit("Couldnt do it. Reason: " + e.getMessage());
+                    }
+                }
+        );
+
 
     }
 

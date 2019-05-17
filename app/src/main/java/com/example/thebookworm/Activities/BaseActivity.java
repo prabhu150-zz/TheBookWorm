@@ -22,12 +22,14 @@ import com.example.bookworm.R;
 import com.example.thebookworm.BackEnd;
 import com.example.thebookworm.Fragments.CustomerList;
 import com.example.thebookworm.Fragments.OrderList;
+import com.example.thebookworm.Fragments.SellerSettings;
 import com.example.thebookworm.Fragments.ShowCatalog;
 import com.example.thebookworm.Fragments.ShowInventory;
 import com.example.thebookworm.Fragments.ViewCart;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Seller;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -38,14 +40,28 @@ public class BaseActivity extends AppCompatActivity
     boolean isBuyer;
     private BackEnd backEnd;
     private String currentFragment = "#currentFragment";
+    private String tag = "BaseAct#logger";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        backEnd = new BackEnd(this, "FragmentManager");
 
-        Intent prevActivity = getIntent();
-        String currentUserType = prevActivity.getStringExtra("userType");
+        backEnd = new BackEnd(this, tag);
+
+        checkIfUserLogin();
+
+        String currentUserType;
+
+        if (getIntent() != null) {
+            currentUserType = getIntent().getStringExtra("currentUserType").toLowerCase();
+        } else {
+            currentUserType = backEnd.getFromPersistentStorage("currentUserType").toString();
+        }
+
+        backEnd.logit("Current user is a:" + currentUserType);
+
+
+
 
         if (currentUserType.equals("buyer")) {
             isBuyer = true;
@@ -54,9 +70,30 @@ public class BaseActivity extends AppCompatActivity
             isBuyer = false;
             handleSeller();
         } else {
-            throw new IllegalArgumentException("Invalid user. Please check intent args");
+            throw new IllegalArgumentException("Invalid user. Please check intent args/persistent storage for user " + currentUserType);
+
+//            Intent redirect = new Intent(this,RegisterActivity.class);
+//            redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(redirect);
+
         }
         backEnd.logit("Reached baseactivity. IsBuyer: " + isBuyer);
+
+    }
+
+    private void kick() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(this, RegisterActivity.class));
+    }
+
+    private void checkIfUserLogin() {
+
+        backEnd.logit("Checking if user is logged in");
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Intent redirect = new Intent(this, RegisterActivity.class);
+            redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(redirect);
+        }
 
     }
 
@@ -74,13 +111,13 @@ public class BaseActivity extends AppCompatActivity
     public void redirectToFragment(Fragment fragment, Bundle fragmentArguments) {
 
         final String request = fragmentArguments.getString("request");
-        final String userType = fragmentArguments.getString("userType");
+        final String currentUserType = fragmentArguments.getString("currentUserType");
 
         final String showSpecificProductBuyer = getString(R.string.buyer_get_product_by_id_request);
         final String showBuyersCatalog = getString(R.string.buyer_get_all_products_request);
         final String userWantsToBuyRequest = getString(R.string.buyer_proceed_to_order);
         final String showUserHisCart = getString(R.string.buyer_proceed_to_cart);
-
+        final String showSettings = getString(R.string.see_settings);
         final String showSellerHisInventory = getString(R.string.seller_get_all_products_request);
         final String showSellerHisInventoryItem = getString(R.string.seller_get_product_by_id_request);
         final String showSellerHisOrders = getString(R.string.seller_see_orders_request);
@@ -99,7 +136,7 @@ public class BaseActivity extends AppCompatActivity
 
         } else if (request.equals(showSellerHisInventoryItem)) {
 
-            backEnd.logit("About to display inventory");
+            backEnd.logit("About to display inventory item");
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
 
@@ -123,17 +160,20 @@ public class BaseActivity extends AppCompatActivity
             backEnd.logit("Showing inventory:");
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
+        } else if (request.equals(showSettings)) {
+            backEnd.logit("Showing settings for " + currentUserType);
+            fragment.setArguments(fragmentArguments);
+            replaceFragment(fragment);
         } else {
             throw new IllegalArgumentException("This user not currently supported!" + request);
         }
 
     }
-
-
     private void handleBuyer() {
         setContentView(R.layout.buyer_navbar);
 
         Toolbar toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
+
         toolbar.setTitle("Catalog"); // handle at buyer fragment
 
         toolbar.inflateMenu(R.menu.buyer_toolbar);
@@ -156,7 +196,7 @@ public class BaseActivity extends AppCompatActivity
 
         Fragment dashBoard = new ShowCatalog();
         Bundle arguments = new Bundle();
-        arguments.putString("userType", "buyer");
+        arguments.putString("currentUserType", "buyer");
         arguments.putString("request", getString(R.string.buyer_get_all_products_request));
         redirectToFragment(dashBoard, arguments);
     }
@@ -183,10 +223,9 @@ public class BaseActivity extends AppCompatActivity
 
         navigationView.setNavigationItemSelectedListener(this);
 
-
         Fragment dashBoard = new ShowInventory();
         Bundle arguments = new Bundle();
-        arguments.putString("userType", "buyer");
+        arguments.putString("currentUserType", "seller");
         arguments.putString("request", getString(R.string.seller_get_all_products_request));
         redirectToFragment(dashBoard, arguments);
 
@@ -194,6 +233,8 @@ public class BaseActivity extends AppCompatActivity
 
     private void updateSellerDashUI(View navbar) {
         Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
+
+        backEnd.logit("Got currentSeller as: " + currentSeller.getName());
 
         CircleImageView profilePic = navbar.findViewById(R.id.profilePic);
         TextView sellerName = navbar.findViewById(R.id.userName);
@@ -236,7 +277,9 @@ public class BaseActivity extends AppCompatActivity
             MenuItem search = menu.findItem(R.id.search);
             SearchView searchView = (SearchView)
                     search.getActionView();
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
                     return false;
@@ -287,7 +330,6 @@ public class BaseActivity extends AppCompatActivity
                 args.putString("request", getString(R.string.buyer_proceed_to_cart));
                 redirectToFragment(new ViewCart(), args);
 
-
 //                replaceFragment(); // BUYER ONLY
 
             }
@@ -301,7 +343,7 @@ public class BaseActivity extends AppCompatActivity
 
                     Fragment showCatalog = new ShowCatalog();
                     backEnd.notifyByToast("Show Catalog");
-                    args.putString("userType", "buyer");
+                    args.putString("currentUserType", "buyer");
                     args.putString("request", getString(R.string.buyer_get_all_products_request));
                     redirectToFragment(showCatalog, args);
 
@@ -310,7 +352,7 @@ public class BaseActivity extends AppCompatActivity
 
                     Fragment showInventory = new ShowInventory();
                     backEnd.notifyByToast("Show Inventory");
-                    args.putString("userType", "seller");
+                    args.putString("currentUserType", "seller");
                     args.putString("request", getString(R.string.seller_get_all_products_request));
                     redirectToFragment(showInventory, args);
                 }
@@ -322,14 +364,10 @@ public class BaseActivity extends AppCompatActivity
                 backEnd.notifyByToast("View Customers!"); // SELLER ONLY
 
                 Fragment seeCustomers = new CustomerList(); //TODO to be implemented
-
                 Bundle args = new Bundle();
-
                 args.putString("request", getString(R.string.seller_see_customers_request));
                 // get seller ID from that class
-
                 redirectToFragment(seeCustomers, args);
-
             }
                 break;
 
@@ -340,12 +378,12 @@ public class BaseActivity extends AppCompatActivity
 
                 if (isBuyer) {
                     backEnd.notifyByToast("Show Buyers Orders");
-                    args.putString("userType", "buyer");
+                    args.putString("currentUserType", "buyer");
                     args.putString("request", getString(R.string.buyer_see_orders_request));
 
                 } else {
                     backEnd.notifyByToast("Show Sellers Orders");
-                    args.putString("userType", "seller");
+                    args.putString("currentUserType", "seller");
                     args.putString("request", getString(R.string.seller_see_orders_request));
                 }
                 redirectToFragment(seeOrders, args);
@@ -359,10 +397,35 @@ public class BaseActivity extends AppCompatActivity
                 backEnd.logout();
                 break;
 
+
+            case R.id.seller_settings: {
+                Fragment settings = new SellerSettings();
+                Bundle args = new Bundle();
+                args.putString("request", getString(R.string.see_settings));
+                if (isBuyer)
+                    args.putString("currentUserType", "buyer");
+                else
+                    args.putString("currentUserType", "seller");
+                settings.setArguments(args);
+                redirectToFragment(settings, args);
+            }
+            break;
+
+
+            case R.id.buyer_settings: {
+                Fragment settings = new SellerSettings();
+                Bundle args = new Bundle();
+                args.putString("request", getString(R.string.see_settings));
+                if (isBuyer)
+                    args.putString("currentUserType", "buyer");
+                else
+                    args.putString("currentUserType", "seller");
+                settings.setArguments(args);
+                redirectToFragment(settings, args);
+            }
+            break;
             //
-
         }
-
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

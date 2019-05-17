@@ -23,9 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText email, password;
-    private String Tag = "Login";
     private ProgressBar createUserprogress;
-    private final boolean debug = true;
     Button signIn, registerRedirect;
     private BackEnd backend;
 
@@ -40,12 +38,12 @@ public class LoginActivity extends AppCompatActivity {
         signIn = findViewById(R.id.sign_in_button);
         registerRedirect = findViewById(R.id.register_redirect);
 
-        backend = new BackEnd(this, Tag);
-
+        String tag = "LoginAct#logger";
+        backend = new BackEnd(this, tag);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            backend.logit("User is already logged in:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
             backend.findCurrentUser();
-            finish();
         }
 
     }
@@ -76,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        boolean debug = true;
         if (debug)
             autofill();
 
@@ -104,7 +103,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void redirect(Class<RegisterActivity> registerActivityClass) {
         Intent redirect = new Intent(this, registerActivityClass);
-        redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(redirect);
     }
 
@@ -134,6 +132,5 @@ public class LoginActivity extends AppCompatActivity {
         boolean validSignIn = !(email.getText().toString().isEmpty() || password.getText().toString().isEmpty());
         Log.d("LogIn", "Valid fields: " + validSignIn);
         return validSignIn;
-
     }
 }
