@@ -25,12 +25,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:fontFamily="sans-serif-thin"
         android:text="About this item:"
         android:textAllCaps="true"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -40,12 +39,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="32dp"
         android:fontFamily="sans-serif-thin"
         android:text="Summary:"
         android:textAllCaps="true"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textStyle="bold"
         android:typeface="normal"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,25 +54,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
         android:background="#E8F5E9"
         android:fontFamily="sans-serif-condensed-medium"
         android:text="@string/lorem_ipsum"
-        android:textSize="10sp"
+        android:textSize="14sp"
         android:textStyle="italic"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/aboutLabel" />
 
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/summaryLabel">
@@ -120,7 +112,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/bg_register"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:typeface="normal" />
 
@@ -167,7 +159,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/bg_register"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:typeface="normal" />
 
@@ -214,7 +206,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/bg_register"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:typeface="normal" />
 
@@ -227,7 +219,7 @@
 
 
             <TextView
-                android:id="@+id/pagesLabel"
+                android:id="@+id/dateLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
@@ -261,7 +253,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/bg_register"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:typeface="normal" />
 
@@ -288,7 +280,7 @@
                 android:paddingBottom="5dp"
                 android:shadowColor="#00000000"
                 android:shadowDx="3"
-                android:text="Title123"
+                android:text="Title"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="14sp"
@@ -308,7 +300,7 @@
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/bg_register"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:typeface="normal" />
 
@@ -321,7 +313,7 @@
 
 
             <TextView
-                android:id="@+id/stockLabel"
+                android:id="@+id/stocksLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.2"
@@ -343,7 +335,7 @@
 
 
             <TextView
-                android:id="@+id/stock"
+                android:id="@+id/bookStocks"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0.80"
@@ -355,7 +347,54 @@
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@color/bg_register"
-                android:textSize="12sp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="1">
+
+
+            <TextView
+                android:id="@+id/datePublishedLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.2"
+                android:background="#41596166"
+                android:fontFamily="sans-serif-condensed"
+                android:lineSpacingExtra="8sp"
+                android:maxWidth="125dp"
+
+                android:maxHeight="50dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:shadowColor="#00000000"
+                android:shadowDx="3"
+                android:text="Published"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:typeface="sans" />
+
+
+            <TextView
+                android:id="@+id/datePublished"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.80"
+                android:background="#E8F5E9"
+                android:fontFamily="sans-serif-condensed-medium"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="JKRowling"
+                android:textAlignment="center"
+                android:textAllCaps="false"
+                android:textColor="@color/bg_register"
+                android:textSize="14sp"
                 android:textStyle="bold"
                 android:typeface="normal" />
 

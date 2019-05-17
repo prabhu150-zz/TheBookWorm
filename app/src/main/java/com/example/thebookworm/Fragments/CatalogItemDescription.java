@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.bookworm.R;
 import com.example.thebookworm.BackEnd;
+import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Product;
 import com.google.firebase.database.DataSnapshot;
@@ -22,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.uncopt.android.widget.text.justify.JustifiedTextView;
 
 import io.paperdb.Paper;
 
@@ -100,6 +102,7 @@ public class CatalogItemDescription extends Fragment {
         Button buyNow = getView().findViewById(R.id.buy_now);
         TextView stocks = getView().findViewById(R.id.stock);
 
+
         buyNow.setText("Buy Now!");
         addToCart.setText("Add To Cart!");
 
@@ -107,6 +110,19 @@ public class CatalogItemDescription extends Fragment {
         productName.setText(currentProduct.getName());
         soldBy.setText(currentProduct.getSoldBy());
         price.setText(String.format("$%.2f", currentProduct.getPrice()));
+
+
+        TextView author = getView().findViewById(R.id.author);
+        TextView genre = getView().findViewById(R.id.genre);
+        TextView publisher = getView().findViewById(R.id.publisher);
+        TextView bookStocks = getView().findViewById(R.id.bookStocks);
+        TextView title = getView().findViewById(R.id.title);
+        TextView pages = getView().findViewById(R.id.pages);
+        TextView datePublished = getView().findViewById(R.id.datePublished);
+        JustifiedTextView itemDescription = getView().findViewById(R.id.itemDescription);
+
+        getItemDetails((Book) currentProduct, author, genre, publisher, bookStocks, title, pages, datePublished, itemDescription);
+
 
         String stocks_str = "Stocks: " + currentProduct.getAvailableStock() + " items";
         stocks.setText(stocks_str);
@@ -151,5 +167,17 @@ public class CatalogItemDescription extends Fragment {
 
 
 
+    }
+
+    private void getItemDetails(Book currentProduct, TextView author, TextView genre, TextView publisher, TextView bookStocks, TextView title, TextView pages, TextView datePublished, JustifiedTextView itemDescription) {
+        Book currentBook = currentProduct;
+        author.setText(currentBook.getAuthor());
+        genre.setText(currentBook.getGenre());
+        publisher.setText(currentBook.getPublisher());
+        bookStocks.setText(String.valueOf(currentBook.getAvailableStock()));
+        title.setText(currentBook.getTitle());
+        pages.setText(String.valueOf(currentBook.getPages()));
+        datePublished.setText(currentBook.getDatePublished());
+        itemDescription.setText(currentBook.getDescription());
     }
 }
