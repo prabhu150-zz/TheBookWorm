@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.example.bookworm.R;
 import com.example.thebookworm.Activities.BaseActivity;
 import com.example.thebookworm.BackEnd;
+import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Product;
 import com.example.thebookworm.Models.Seller;
 import com.google.firebase.database.DataSnapshot;
@@ -23,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.uncopt.android.widget.text.justify.JustifiedTextView;
 
 public class InventoryItemDescription extends Fragment {
 
@@ -101,13 +103,23 @@ public class InventoryItemDescription extends Fragment {
         Button delete = getView().findViewById(R.id.deleteInventory);
         TextView stocks = getView().findViewById(R.id.stock);
 
-        // product specific details in textbox
+        TextView author = getView().findViewById(R.id.author);
+        TextView genre = getView().findViewById(R.id.genre);
+        TextView publisher = getView().findViewById(R.id.publisher);
+        TextView bookStocks = getView().findViewById(R.id.bookStocks);
+        TextView title = getView().findViewById(R.id.title);
+        TextView pages = getView().findViewById(R.id.pages);
+        TextView datePublished = getView().findViewById(R.id.datePublished);
+        JustifiedTextView itemDescription = getView().findViewById(R.id.itemDescription);
 
+
+        // product specific details in textbox
 
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());
         soldBy.setText(currentProduct.getSoldBy());
         price.setText(String.format("$%.2f", currentProduct.getPrice()));
+
 
         String stocks_str = "Stocks: " + currentProduct.getAvailableStock() + " items";
         stocks.setText(stocks_str);
@@ -138,5 +150,18 @@ public class InventoryItemDescription extends Fragment {
         });
 
 
+    }
+
+
+    private void getItemDetails(Book currentProduct, TextView author, TextView genre, TextView publisher, TextView bookStocks, TextView title, TextView pages, TextView datePublished, JustifiedTextView itemDescription) {
+        Book currentBook = currentProduct;
+        author.setText(currentBook.getAuthor());
+        genre.setText(currentBook.getGenre());
+        publisher.setText(currentBook.getPublisher());
+        bookStocks.setText(String.valueOf(currentBook.getAvailableStock()));
+        title.setText(currentBook.getTitle());
+        pages.setText(String.valueOf(currentBook.getPages()));
+        datePublished.setText(currentBook.getDatePublished());
+        itemDescription.setText(currentBook.getDescription());
     }
 }

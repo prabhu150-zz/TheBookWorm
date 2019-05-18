@@ -34,7 +34,7 @@
 //
 //    FirebaseAuth auth;
 //    private String TAG = "SeeDash";
-//    private BackEnd singleton;
+//    private BackEnd backEnd;
 //
 //    public static File getFilefromAssets(Context context, String filename) throws IOException {
 //        File cacheFile = new File(context.getCacheDir(), filename);
@@ -62,7 +62,7 @@
 //
 //    @Override
 //    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        singleton = new BackEnd(getContext(), "SellerDashBoard");
+//        backEnd = new BackEnd(getContext(), "SellerDashBoard");
 //        return inflater.inflate(R.layout.update_user_settings, container, false);
 //    }
 //
@@ -109,7 +109,7 @@
 //        CircleImageView profilePic = getView().findViewById(R.id.previewProfilePic);
 //        TextView sellerName = getView().findViewById(R.id.sellerName);
 //
-//        Seller currentSeller = (Seller) singleton.getFromPersistentStorage("currentUser");
+//        Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
 //
 //        Picasso.get().load(currentSeller.getProfilePic()).into(profilePic);
 //        sellerName.setText(currentSeller.getName());
@@ -130,7 +130,7 @@
 //    public List<String> loadInventory() {
 //        AssetManager assetManager = getActivity().getAssets();
 //        List<String> res = new ArrayList<>();
-//        Seller currentSeller = (Seller) singleton.getFromPersistentStorage("currentUser");
+//        Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
 //
 //        try {
 //            InputStream myInput;

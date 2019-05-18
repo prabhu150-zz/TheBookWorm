@@ -200,5 +200,9 @@
     <string name="delete_label">Delete</string>
     <string name="modify_item">Modify Item</string>
     <string name="delete">Delete</string>
+    <string name="add_to_cart">Add To Cart</string>
+    <string name="addCartLabel">Add To Cart!</string>
+    <string name="removeCartLabel">Remove from Cart!</string>
+
 
 </resources>

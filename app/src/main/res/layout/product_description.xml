@@ -129,7 +129,7 @@
             android:layout_marginBottom="16dp"
             android:background="#1E88E5"
 
-            android:text="@string/modify_item"
+            android:text="@string/add_to_cart"
             android:textColor="#ffffff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/deleteInventory"
@@ -143,7 +143,7 @@
             android:layout_marginStart="2dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="16dp"
-            android:background="#F4511E"
+            android:background="#558B2F"
             android:text="@string/delete_label"
             android:textColor="#ffffff"
             app:layout_constraintBottom_toBottomOf="parent"

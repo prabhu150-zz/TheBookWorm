@@ -25,37 +25,80 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.uncopt.android.widget.text.justify.JustifiedTextView;
 
-import io.paperdb.Paper;
-
 public class CatalogItemDescription extends Fragment {
 
 
-    BackEnd singleton;
+    BackEnd backEnd;
+    Buyer currentBuyer;
+
+    ImageView productImage;
+    TextView price, productName, soldBy, stocks, author, genre, publisher, bookStocks, title, pages, datePublished;
+    JustifiedTextView itemDescription;
+    Button addToCart, buyNow;
+
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        backEnd = new BackEnd(getActivity(), "ProductDescription#logger");
+
         return inflater.inflate(R.layout.product_description, container, false);
+    }
+
+    private void findIDs() {
+        currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
+        productImage = getView().findViewById(R.id.productImage);
+        price = getView().findViewById(R.id.sellerPrice);
+        productName = getView().findViewById(R.id.productName);
+        soldBy = getView().findViewById(R.id.seller);
+        addToCart = getView().findViewById(R.id.add_to_cart);
+        buyNow = getView().findViewById(R.id.buy_now);
+        stocks = getView().findViewById(R.id.stock);
+        author = getView().findViewById(R.id.author);
+        genre = getView().findViewById(R.id.genre);
+        publisher = getView().findViewById(R.id.publisher);
+        bookStocks = getView().findViewById(R.id.bookStocks);
+        title = getView().findViewById(R.id.title);
+        pages = getView().findViewById(R.id.pages);
+        datePublished = getView().findViewById(R.id.datePublished);
+        itemDescription = getView().findViewById(R.id.itemDescription);
+        addToCart = getView().findViewById(R.id.add_to_cart);
+
     }
 
 
     @Override
     public void onStart() {
         super.onStart();
-        Paper.init(getActivity());
-        singleton = new BackEnd(getActivity(), "product_description");
+        findIDs();
         checkArguments();
+
     }
 
     private void checkArguments() {
 
         String pid = getArguments().getString("pid");
-//        String productType= getArguments().getString("productType");
+
+//        Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
 
         if (pid == null)
             throw new IllegalArgumentException("Arguments not recieved!");
 
         retrieveProduct(getArguments());
+    }
+
+    private boolean checkItemStatus(String pid, Buyer currentBuyer) {
+
+
+        if (currentBuyer.checkInCart(pid)) {
+            addToCart.setText(getResources().getString(R.string.removeCartLabel));
+            addToCart.setBackgroundColor(getResources().getColor(R.color.danger_red));
+            return true;
+        } else {
+            addToCart.setText(getResources().getString(R.string.addCartLabel));
+            addToCart.setBackgroundColor(getResources().getColor(R.color.sky_blue));
+            return false;
+        }
     }
 
     private void retrieveProduct(final Bundle arguments) {
@@ -69,13 +112,15 @@ public class CatalogItemDescription extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot.exists()) {
-                    Product currentProduct = singleton.fetchProduct(dataSnapshot, arguments);
+                    Product currentProduct = backEnd.fetchProduct(dataSnapshot, arguments);
 
                     Log.d("checkUrl", "onDataChange: " + currentProduct.getImageURL());
                     updateBuyersUI(currentProduct);
 
                 } else {
 
+
+                    // TODO redirect to catalog
 
                 }
 
@@ -90,36 +135,16 @@ public class CatalogItemDescription extends Fragment {
     }
 
     private void updateBuyersUI(final Product currentProduct) {
-//        ImageView productImage = getView().findViewById(R.id.imageView);
-//        TextView price = getView().findViewById(R.id.productPrice);
-//        TextView stocks = getView().findViewById(R.id.stocks);
 
-        ImageView productImage = getView().findViewById(R.id.productImage);
-        TextView price = getView().findViewById(R.id.sellerPrice);
-        TextView productName = getView().findViewById(R.id.productName);
-        TextView soldBy = getView().findViewById(R.id.seller);
-        Button addToCart = getView().findViewById(R.id.add_to_cart);
-        Button buyNow = getView().findViewById(R.id.buy_now);
-        TextView stocks = getView().findViewById(R.id.stock);
 
+//        checkItemStatus(currentProduct.getPID(), currentBuyer);
 
         buyNow.setText("Buy Now!");
-        addToCart.setText("Add To Cart!");
 
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());
         soldBy.setText(currentProduct.getSoldBy());
         price.setText(String.format("$%.2f", currentProduct.getPrice()));
-
-
-        TextView author = getView().findViewById(R.id.author);
-        TextView genre = getView().findViewById(R.id.genre);
-        TextView publisher = getView().findViewById(R.id.publisher);
-        TextView bookStocks = getView().findViewById(R.id.bookStocks);
-        TextView title = getView().findViewById(R.id.title);
-        TextView pages = getView().findViewById(R.id.pages);
-        TextView datePublished = getView().findViewById(R.id.datePublished);
-        JustifiedTextView itemDescription = getView().findViewById(R.id.itemDescription);
 
         getItemDetails((Book) currentProduct, author, genre, publisher, bookStocks, title, pages, datePublished, itemDescription);
 
@@ -127,30 +152,21 @@ public class CatalogItemDescription extends Fragment {
         String stocks_str = "Stocks: " + currentProduct.getAvailableStock() + " items";
         stocks.setText(stocks_str);
 
-        // TODO display product specific details in the table below
-
-        final Buyer currentBuyer = (Buyer) (singleton.getFromPersistentStorage("currentUser"));
+        currentBuyer = (Buyer) (backEnd.getFromPersistentStorage("currentUser"));
 
         addToCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
-                Log.d("AddToCart", "onClick: ");
-
-                boolean additionStatus = currentBuyer.addToCart(currentProduct);
-
-                if (additionStatus) {
-
-                    singleton.saveToPersistentStorage("currentUser", currentBuyer);
-                    singleton.updateBuyeronBackEnd(currentBuyer, currentBuyer.cartSize());
-
-//                    singleton.notifyByToast("Items in cart: " + currentBuyer.cartSize());
-
-                    //TODO remove the list dependency altogether if possible
-
+                if (!checkItemStatus(currentProduct.getPID(), currentBuyer)) {
+                    currentBuyer.addToCart(currentProduct);
+                    backEnd.saveToPersistentStorage("currentUser", currentBuyer);
+                    backEnd.updateBuyeronBackEnd(currentBuyer, currentBuyer.cartSize());
+                    backEnd.notifyByToast("Added to Cart!");
                 } else {
-                    singleton.notifyByToast("Already in Cart!");
+                    backEnd.removeItemFromCart(currentProduct.getPID());
+                    backEnd.notifyByToast("Removed from Cart!");
                 }
 
             }
@@ -164,7 +180,6 @@ public class CatalogItemDescription extends Fragment {
                 // redirect to orders
             }
         });
-
 
 
     }

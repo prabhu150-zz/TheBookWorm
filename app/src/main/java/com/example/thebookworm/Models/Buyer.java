@@ -147,4 +147,10 @@ public class Buyer {
         return orders;
     }
 
+    public boolean checkInCart(String pid) {
+        for (Product curr : cart)
+            if (curr.getPID().equals(pid))
+                return true;
+        return false;
+    }
 }
