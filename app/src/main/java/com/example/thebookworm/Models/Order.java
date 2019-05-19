@@ -1,5 +1,6 @@
 package com.example.thebookworm.Models;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
@@ -13,14 +14,42 @@ public class Order {
     private double grandTotal;
     private List<String> sellerID;
 
-    public Order(Buyer customer, List<Product> items, double bill, double shippingCosts, double estimatedTax, double grandTotal, List<String> sellerID) {
+    public Order(Buyer customer, List<Product> items, List<String> sellerID) {
         this.customer = customer;
         this.items = items;
-        this.bill = bill;
-        this.shippingCosts = shippingCosts;
-        this.estimatedTax = estimatedTax;
-        this.grandTotal = grandTotal;
         this.sellerID = sellerID;
+    }
+
+    public Order(Buyer currentBuyer, ArrayList<Product> items, double bill, double shippingCosts, double estimatedTax, double grandTotal, List<String> sellerIDs) {
+
+    }
+
+    public double getShippingCosts() {
+        return shippingCosts;
+    }
+
+    public void setShippingCosts(double shippingCosts) {
+        this.shippingCosts = shippingCosts;
+    }
+
+    public double getEstimatedTax() {
+        return estimatedTax;
+    }
+
+    public void setEstimatedTax(double estimatedTax) {
+        this.estimatedTax = estimatedTax;
+    }
+
+    public double getGrandTotal() {
+        return grandTotal;
+    }
+
+    public void setGrandTotal(double grandTotal) {
+        this.grandTotal = grandTotal;
+    }
+
+    public void setDetails() {
+
     }
 
     public Buyer getCustomer() {
@@ -40,4 +69,11 @@ public class Order {
     }
 
 
+    public String getOrderID() {
+        return orderID;
+    }
+
+    public void setOrderID(String orderID) {
+        this.orderID = orderID;
+    }
 }

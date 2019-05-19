@@ -75,38 +75,18 @@
         <!--app:layout_constraintStart_toEndOf="@+id/imageView"-->
         <!--app:layout_constraintTop_toBottomOf="@+id/productPrice" />-->
 
-
-        <TableLayout
+        <include
             android:id="@+id/specificDetails"
+            layout="@layout/book_description"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/news_title"
-            app:layout_constraintVertical_bias="0.156">
+            app:layout_constraintTop_toBottomOf="@+id/news_title" />
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </TableLayout>
 
         <Button
             android:id="@+id/modifyInventoryItem"
@@ -120,7 +100,7 @@
             android:text="@string/modify_item"
             android:textColor="#ffffff"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/deleteInventory"
+            app:layout_constraintEnd_toStartOf="@+id/deleteInventoryItem"
             app:layout_constraintStart_toStartOf="@+id/specificDetails"
             app:layout_constraintTop_toBottomOf="@+id/specificDetails" />
 
@@ -136,7 +116,7 @@
             android:textColor="#ffffff"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/specificDetails"
-            app:layout_constraintStart_toEndOf="@+id/modifyInventory"
+            app:layout_constraintStart_toEndOf="@+id/modifyInventoryItem"
             app:layout_constraintTop_toBottomOf="@+id/specificDetails" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

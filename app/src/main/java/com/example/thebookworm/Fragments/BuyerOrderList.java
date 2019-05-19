@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.thebookworm.BackEnd;
 
-public class OrderList extends Fragment {
+public class BuyerOrderList extends Fragment {
 
     BackEnd backEnd;
 
@@ -26,5 +26,12 @@ public class OrderList extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         backEnd = new BackEnd(getActivity(), "OrdersList");
         super.onCreate(savedInstanceState);
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
     }
 }

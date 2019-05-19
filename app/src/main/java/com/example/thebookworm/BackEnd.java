@@ -26,9 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import io.paperdb.Paper;
 
 
@@ -118,17 +115,6 @@ public class BackEnd {
         Paper.book().delete(key);
     }
 
-    public void peekPersistentStorage() {
-        List<String> keys = Paper.book().getAllKeys();
-
-        logit("Viewing all persistent values");
-
-        for (String key : keys) {
-            logit("Key:" + key + " Value:" + Paper.book().read(key).toString());
-        }
-    }
-
-
     private void checkBuyersList() {
         final String emailText = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
@@ -192,6 +178,7 @@ public class BackEnd {
         currentActivity.startActivity(redirect);
     }
 
+    /*
     private void loadInventoryFromBackEnd(final Seller currentSeller) {
 
         Query selectAllProducts = FirebaseDatabase.getInstance().getReference("/users/sellers/inventory/");
@@ -230,7 +217,7 @@ public class BackEnd {
 
 
     }
-
+    */
 
     @NotNull
     public Product fetchProduct(DataSnapshot currentChild, Bundle args) {
@@ -263,14 +250,12 @@ public class BackEnd {
         FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart/" + currentBuyer.getLatestItem().getPID()).setValue(currentBuyer.getLatestItem());
     }
 
-    public void removeItemFromCart(String currentProductPID) {
-        final Buyer currentBuyer = (Buyer) getFromPersistentStorage("currentUser");
+
+    public void removeItemFromCart(String currentProductPID, Buyer currentBuyer) {
+
 
         Log.d("removeFromCart", "Removing item: " + currentProductPID + " for user id: " + currentBuyer.getUserID());
 
-        currentBuyer.removeFromCart(currentProductPID);
-
-        saveToPersistentStorage("currentUser", currentBuyer);
 
         Log.d("removeFromCart", "UserId: " + currentBuyer.getUserID());
 
@@ -280,6 +265,10 @@ public class BackEnd {
                 logit("Deleted item from cart!");
             }
         });
+
+        currentBuyer.removeFromCart(currentProductPID);
+
+        saveToPersistentStorage("currentUser", currentBuyer);
     }
 
     public void removeItemFromInventory(String currentProductPID, String productType) {
@@ -288,10 +277,11 @@ public class BackEnd {
         DatabaseReference sellerInventoryRef = FirebaseDatabase.getInstance().getReference("/users/sellers/" + currentSeller.getUserID() + "/inventory/" + productType).child(currentProductPID);
 
 
+        sellerInventoryRef.removeValue();
+
         removeItemFromMarket(currentProductPID, productType);
 
         currentSeller.removeFromInventory(currentProductPID);
-        sellerInventoryRef.removeValue();
 
         saveToPersistentStorage("currentUser", currentSeller);
 
@@ -302,7 +292,7 @@ public class BackEnd {
     private void removeItemFromMarket(String currentProductPID, String productType) {
 
 
-        logit("removing " + productType + " prod: " + currentProductPID);
+        logit("Removing " + productType + " prod: " + currentProductPID);
 
         DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("/market/products/" + productType).child(currentProductPID);
 
@@ -342,7 +332,7 @@ public class BackEnd {
 
                 ((Book) currentProduct).setDetails(getChildStringVal(currentChild, "/author/"), getChildStringVal(currentChild, "/genre"), getChildStringVal(currentChild, "/publisher/"), Integer.parseInt(getChildStringVal(currentChild, "/pages/")), getChildStringVal(currentChild, "/datePublished"));
 
-                logit("Retrieved product " + currentProduct.getName());
+//                logit("Retrieved product " + currentProduct.getName());
                 return currentProduct;
 
             default:

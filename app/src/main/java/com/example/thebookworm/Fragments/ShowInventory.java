@@ -48,11 +48,11 @@ public class ShowInventory extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        backEnd = new BackEnd(getActivity(), "ShowInventory");
+        backEnd = new BackEnd(getActivity(), "ShowInventory#logger");
         super.onCreate(savedInstanceState);
 
-        Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
-        currentSeller.loadInventory(getActivity());
+//        Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
+//        currentSeller.loadInventory(getActivity());
 
 
     }
@@ -111,6 +111,8 @@ public class ShowInventory extends Fragment {
 
                             String pid = ((TextView) view.findViewById(R.id.productID)).getText().toString();
                             Product selectedProduct = findProduct(inventoryItems, pid);
+
+                            backEnd.logit("Redirecting to inventory specific item: " + selectedProduct.getName());
                             Fragment productDescription = new InventoryItemDescription();
 
                             Bundle fragArguments = new Bundle();
@@ -132,7 +134,7 @@ public class ShowInventory extends Fragment {
                 } else {
                     backEnd.logit("No products found!");
                     getView().findViewById(R.id.emptyInventoryAlert).setVisibility(View.VISIBLE);
-                    getView().findViewById(R.id.placeOrder).setVisibility(View.GONE);
+
                     backEnd.notifyByToast("No Products Found!");
                 }
 

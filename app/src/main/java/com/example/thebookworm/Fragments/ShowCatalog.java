@@ -42,7 +42,7 @@ public class ShowCatalog extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         backEnd = new BackEnd(getContext(), "BuyerDashBoard");
-        return inflater.inflate(R.layout.buyer_dashboard, container, false);
+        return inflater.inflate(R.layout.product_catalog, container, false);
     }
 
     private void notifyByToast(String message) {

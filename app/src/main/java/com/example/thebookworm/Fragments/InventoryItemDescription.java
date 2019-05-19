@@ -29,23 +29,27 @@ import com.uncopt.android.widget.text.justify.JustifiedTextView;
 public class InventoryItemDescription extends Fragment {
 
     private BackEnd backEnd;
+    ImageView productImage;
+    TextView price, productName, soldBy, stocks, author, genre, publisher, bookStocks, title, pages, datePublished;
+    JustifiedTextView itemDescription;
+    Button modify, delete;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.product_description, container, false);
+        return inflater.inflate(R.layout.inventory_item_description, container, false);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        backEnd = new BackEnd(getActivity(), "SellerSpecificItem");
+        backEnd = new BackEnd(getActivity(), "SellerSpecificItem#logger");
         checkArguments();
     }
 
     private void checkArguments() {
-
         String pid = getArguments().getString("pid");
-//        String productType= getArguments().getString("productType");
 
         if (pid == null)
             throw new IllegalArgumentException("Arguments not recieved!");
@@ -57,19 +61,21 @@ public class InventoryItemDescription extends Fragment {
 
         String pid = getArguments().getString("pid");
         String productType = getArguments().getString("productType");
+        Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
 
-
-        FirebaseDatabase.getInstance().getReference("users/sellers/inventory" + productType).child(pid).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("users/sellers/" + currentSeller.getUserID() + "/inventory/" + productType).child(pid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 if (dataSnapshot.exists()) {
                     Product currentProduct = backEnd.fetchProduct(dataSnapshot, arguments);
-
+                    backEnd.logit("Found one item! P:" + currentProduct.getPID());
                     Log.d("checkUrl", "onDataChange: " + currentProduct.getImageURL());
                     updateSellerUI(currentProduct);
 
                 } else {
+
+                    backEnd.logit("No item by that pid found!");
 
                     Fragment inventory = new ShowInventory();
                     Bundle args = new Bundle();
@@ -91,27 +97,27 @@ public class InventoryItemDescription extends Fragment {
     }
 
     private void updateSellerUI(final Product currentProduct) {
-//        ImageView productImage = getView().findViewById(R.id.imageView);
-//        TextView price = getView().findViewById(R.id.productPrice);
-//        TextView stocks = getView().findViewById(R.id.stocks);
 
-        ImageView productImage = getView().findViewById(R.id.productImage);
-        TextView price = getView().findViewById(R.id.sellerPrice);
-        TextView productName = getView().findViewById(R.id.productName);
-        TextView soldBy = getView().findViewById(R.id.seller);
-        Button modify = getView().findViewById(R.id.modifyInventory);
-        Button delete = getView().findViewById(R.id.deleteInventory);
-        TextView stocks = getView().findViewById(R.id.stock);
+        productImage = getView().findViewById(R.id.productImage);
+        price = getView().findViewById(R.id.sellerPrice);
+        productName = getView().findViewById(R.id.productName);
+        soldBy = getView().findViewById(R.id.seller);
+        modify = getView().findViewById(R.id.modifyInventory);
+        delete = getView().findViewById(R.id.deleteInventory);
+        stocks = getView().findViewById(R.id.stock);
 
-        TextView author = getView().findViewById(R.id.author);
-        TextView genre = getView().findViewById(R.id.genre);
-        TextView publisher = getView().findViewById(R.id.publisher);
-        TextView bookStocks = getView().findViewById(R.id.bookStocks);
-        TextView title = getView().findViewById(R.id.title);
-        TextView pages = getView().findViewById(R.id.pages);
-        TextView datePublished = getView().findViewById(R.id.datePublished);
-        JustifiedTextView itemDescription = getView().findViewById(R.id.itemDescription);
+        author = getView().findViewById(R.id.author);
+        genre = getView().findViewById(R.id.genre);
+        publisher = getView().findViewById(R.id.publisher);
+        bookStocks = getView().findViewById(R.id.bookStocks);
+        title = getView().findViewById(R.id.title);
+        pages = getView().findViewById(R.id.pages);
+        datePublished = getView().findViewById(R.id.datePublished);
+        itemDescription = getView().findViewById(R.id.itemDescription);
+        modify = getView().findViewById(R.id.modifyInventoryItem);
+        delete = getView().findViewById(R.id.deleteInventoryItem);
 
+        getItemDetails((Book) currentProduct, author, genre, publisher, bookStocks, title, pages, datePublished, itemDescription);
 
         // product specific details in textbox
 
@@ -133,25 +139,26 @@ public class InventoryItemDescription extends Fragment {
             @Override
             public void onClick(View v) {
 
-
-                // TBA
-
+                backEnd.notifyByToast("Update your inventory file and reupload to notice the changes");
 
             }
         });
-
-
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // TBA
+                backEnd.removeItemFromInventory(currentProduct.getPID(), currentProduct.getType());
+                backEnd.notifyByToast("Item removed from inventory!");
+                Fragment showInventory = new ShowInventory();
+                Bundle args = new Bundle();
+                args.putString("request", getResources().getString(R.string.seller_get_all_products_request));
+                args.putString("productType", "book");
+                args.putString("currentUserType", "seller");
+
+                ((BaseActivity) getActivity()).redirectToFragment(showInventory, args);
 
             }
         });
-
-
     }
-
 
     private void getItemDetails(Book currentProduct, TextView author, TextView genre, TextView publisher, TextView bookStocks, TextView title, TextView pages, TextView datePublished, JustifiedTextView itemDescription) {
         Book currentBook = currentProduct;

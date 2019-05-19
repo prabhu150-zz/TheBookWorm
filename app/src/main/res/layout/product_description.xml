@@ -122,7 +122,7 @@
 
         <Button
             android:id="@+id/add_to_cart"
-            android:layout_width="175dp"
+            android:layout_width="363dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="2dp"
@@ -136,20 +136,6 @@
             app:layout_constraintStart_toStartOf="@+id/specificDetails"
             app:layout_constraintTop_toBottomOf="@+id/specificDetails" />
 
-        <Button
-            android:id="@+id/buy_now"
-            android:layout_width="175dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
-            android:background="#558B2F"
-            android:text="@string/delete_label"
-            android:textColor="#ffffff"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/specificDetails"
-            app:layout_constraintStart_toEndOf="@+id/modifyInventory"
-            app:layout_constraintTop_toBottomOf="@+id/specificDetails" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

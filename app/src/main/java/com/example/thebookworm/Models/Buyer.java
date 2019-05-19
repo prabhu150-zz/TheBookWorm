@@ -28,6 +28,15 @@ public class Buyer {
         return name;
     }
 
+    public double getBill() {
+        double bill = 0.0;
+        for (Product curr : cart) {
+            bill += curr.getPrice();
+        }
+
+        return bill;
+    }
+
 
     public void setName(String name) {
         this.name = name;
@@ -56,8 +65,6 @@ public class Buyer {
     public Buyer() {
         cart = new ArrayList<>();
     }
-//    List<String> reviews;
-//    List<Integer> ratings;
 
     public List<Product> getCart() {
         return cart;
@@ -76,12 +83,12 @@ public class Buyer {
         return cart.add(currentProduct);
     }
 
-    public boolean removeFromCart(String pid) {
+    public void removeFromCart(String pid) {
         for (Product curr : cart)
             if (curr.getPID().equals(pid)) {
-                return cart.remove(curr);
+                cart.remove(curr);
             }
-        return false;
+
     }
 
 
@@ -96,10 +103,8 @@ public class Buyer {
     public Double calculateBill() {
 
         double bill = 0f;
-
         for (Product curr : cart)
             bill += curr.getPrice();
-
 
         return bill;
     }
@@ -113,7 +118,7 @@ public class Buyer {
     }
 
 
-    public void placeOrder(List<String> sellerID) {
+    public Order placeOrder(List<String> sellerID) {
         double bill = 0.0, shipping = 0.0875, tax = 0.125, grandTotal;
 
         for (Product item : cart)
@@ -125,6 +130,8 @@ public class Buyer {
         Order currentOrder = new Order(this, new ArrayList<>(cart), bill, shipping * bill, tax * bill, grandTotal, new ArrayList<String>(sellerID));
 
         orders.add(currentOrder);
+
+        return currentOrder;
 
     }
 
@@ -148,9 +155,14 @@ public class Buyer {
     }
 
     public boolean checkInCart(String pid) {
+
         for (Product curr : cart)
             if (curr.getPID().equals(pid))
                 return true;
         return false;
+    }
+
+    public void setCart(List<Product> cartProducts) {
+        this.cart = new ArrayList<>(cartProducts);
     }
 }

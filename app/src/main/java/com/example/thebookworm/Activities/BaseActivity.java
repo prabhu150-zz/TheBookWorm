@@ -20,8 +20,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.bookworm.R;
 import com.example.thebookworm.BackEnd;
+import com.example.thebookworm.Fragments.BuyerOrderList;
 import com.example.thebookworm.Fragments.CustomerList;
-import com.example.thebookworm.Fragments.OrderList;
 import com.example.thebookworm.Fragments.SellerSettings;
 import com.example.thebookworm.Fragments.ShowCatalog;
 import com.example.thebookworm.Fragments.ShowInventory;
@@ -39,7 +39,6 @@ public class BaseActivity extends AppCompatActivity
 
     boolean isBuyer;
     private BackEnd backEnd;
-    private String currentFragment = "#currentFragment";
     private String tag = "BaseAct#logger";
 
     @Override
@@ -49,7 +48,6 @@ public class BaseActivity extends AppCompatActivity
         backEnd = new BackEnd(this, tag);
 
         checkIfUserLogin();
-
         String currentUserType;
 
         if (getIntent() != null) {
@@ -58,10 +56,9 @@ public class BaseActivity extends AppCompatActivity
             currentUserType = backEnd.getFromPersistentStorage("currentUserType").toString();
         }
 
+
+        // REDUNDANCY to avoid crash
         backEnd.logit("Current user is a:" + currentUserType);
-
-
-
 
         if (currentUserType.equals("buyer")) {
             isBuyer = true;
@@ -71,11 +68,6 @@ public class BaseActivity extends AppCompatActivity
             handleSeller();
         } else {
             throw new IllegalArgumentException("Invalid user. Please check intent args/persistent storage for user " + currentUserType);
-
-//            Intent redirect = new Intent(this,RegisterActivity.class);
-//            redirect.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//            startActivity(redirect);
-
         }
         backEnd.logit("Reached baseactivity. IsBuyer: " + isBuyer);
 
@@ -116,6 +108,7 @@ public class BaseActivity extends AppCompatActivity
         final String showSpecificProductBuyer = getString(R.string.buyer_get_product_by_id_request);
         final String showBuyersCatalog = getString(R.string.buyer_get_all_products_request);
         final String userWantsToBuyRequest = getString(R.string.buyer_proceed_to_order);
+        final String userWantsToCheckOut = getString(R.string.proceed_to_checkout);
         final String showUserHisCart = getString(R.string.buyer_proceed_to_cart);
         final String showSettings = getString(R.string.see_settings);
         final String showSellerHisInventory = getString(R.string.seller_get_all_products_request);
@@ -164,11 +157,17 @@ public class BaseActivity extends AppCompatActivity
             backEnd.logit("Showing settings for " + currentUserType);
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
+        } else if (request.equals(userWantsToCheckOut)) {
+            backEnd.logit("Proceeding to billing page..." + currentUserType);
+            fragment.setArguments(fragmentArguments);
+            replaceFragment(fragment);
+
         } else {
             throw new IllegalArgumentException("This user not currently supported!" + request);
         }
 
     }
+
     private void handleBuyer() {
         setContentView(R.layout.buyer_navbar);
 
@@ -273,23 +272,23 @@ public class BaseActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater = getMenuInflater();
-            inflater.inflate(R.menu.buyer_toolbar, menu);
-            MenuItem search = menu.findItem(R.id.search);
-            SearchView searchView = (SearchView)
-                    search.getActionView();
+        inflater.inflate(R.menu.buyer_toolbar, menu);
+        MenuItem search = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView)
+                search.getActionView();
 
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    return false;
-                }
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
-                }
-            });
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
 
 
         return super.onCreateOptionsMenu(menu);
@@ -333,17 +332,17 @@ public class BaseActivity extends AppCompatActivity
 //                replaceFragment(); // BUYER ONLY
 
             }
-                break;
+            break;
 
             case R.id.catalog: {
-                    Fragment showCatalog = new ShowCatalog();
+                Fragment showCatalog = new ShowCatalog();
                 Bundle args = new Bundle();
-                    backEnd.notifyByToast("Show Catalog");
-                    args.putString("currentUserType", "buyer");
-                    args.putString("request", getString(R.string.buyer_get_all_products_request));
-                    redirectToFragment(showCatalog, args);
+                backEnd.notifyByToast("Show Catalog");
+                args.putString("currentUserType", "buyer");
+                args.putString("request", getString(R.string.buyer_get_all_products_request));
+                redirectToFragment(showCatalog, args);
             }
-                break;
+            break;
 
             case R.id.showInventory: {
                 Fragment showInventory = new ShowInventory();
@@ -366,11 +365,11 @@ public class BaseActivity extends AppCompatActivity
                 // get seller ID from that class
                 redirectToFragment(seeCustomers, args);
             }
-                break;
+            break;
 
             case R.id.orders: {
 
-                Fragment seeOrders = new OrderList();
+                Fragment seeOrders = new BuyerOrderList();
                 Bundle args = new Bundle();
 
                 if (isBuyer) {
@@ -387,13 +386,13 @@ public class BaseActivity extends AppCompatActivity
 
             }
             backEnd.notifyByToast("View all orders!"); // BOTH
-                break;
+            break;
 
             case R.id.logoutButton: {
                 backEnd.notifyByToast("Logging out!"); // BOTH
                 backEnd.logout();
             }
-                break;
+            break;
 
 
             case R.id.seller_settings: {
@@ -430,7 +429,6 @@ public class BaseActivity extends AppCompatActivity
     }
 
 //    public Fragment getVisibleFragment TODO get visible fragment to make changes to it
-
 
 
 }

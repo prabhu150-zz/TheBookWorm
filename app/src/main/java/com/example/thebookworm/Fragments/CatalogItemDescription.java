@@ -34,7 +34,7 @@ public class CatalogItemDescription extends Fragment {
     ImageView productImage;
     TextView price, productName, soldBy, stocks, author, genre, publisher, bookStocks, title, pages, datePublished;
     JustifiedTextView itemDescription;
-    Button addToCart, buyNow;
+    Button addToCart;
 
 
     @Nullable
@@ -52,7 +52,7 @@ public class CatalogItemDescription extends Fragment {
         productName = getView().findViewById(R.id.productName);
         soldBy = getView().findViewById(R.id.seller);
         addToCart = getView().findViewById(R.id.add_to_cart);
-        buyNow = getView().findViewById(R.id.buy_now);
+
         stocks = getView().findViewById(R.id.stock);
         author = getView().findViewById(R.id.author);
         genre = getView().findViewById(R.id.genre);
@@ -79,8 +79,6 @@ public class CatalogItemDescription extends Fragment {
 
         String pid = getArguments().getString("pid");
 
-//        Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
-
         if (pid == null)
             throw new IllegalArgumentException("Arguments not recieved!");
 
@@ -89,16 +87,8 @@ public class CatalogItemDescription extends Fragment {
 
     private boolean checkItemStatus(String pid, Buyer currentBuyer) {
 
-
-        if (currentBuyer.checkInCart(pid)) {
-            addToCart.setText(getResources().getString(R.string.removeCartLabel));
-            addToCart.setBackgroundColor(getResources().getColor(R.color.danger_red));
-            return true;
-        } else {
-            addToCart.setText(getResources().getString(R.string.addCartLabel));
-            addToCart.setBackgroundColor(getResources().getColor(R.color.sky_blue));
-            return false;
-        }
+        backEnd.logit("Status in cart:" + currentBuyer.checkInCart(pid));
+        return currentBuyer.checkInCart(pid);
     }
 
     private void retrieveProduct(final Bundle arguments) {
@@ -118,8 +108,6 @@ public class CatalogItemDescription extends Fragment {
                     updateBuyersUI(currentProduct);
 
                 } else {
-
-
                     // TODO redirect to catalog
 
                 }
@@ -139,15 +127,12 @@ public class CatalogItemDescription extends Fragment {
 
 //        checkItemStatus(currentProduct.getPID(), currentBuyer);
 
-        buyNow.setText("Buy Now!");
-
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());
         soldBy.setText(currentProduct.getSoldBy());
         price.setText(String.format("$%.2f", currentProduct.getPrice()));
 
         getItemDetails((Book) currentProduct, author, genre, publisher, bookStocks, title, pages, datePublished, itemDescription);
-
 
         String stocks_str = "Stocks: " + currentProduct.getAvailableStock() + " items";
         stocks.setText(stocks_str);
@@ -158,26 +143,26 @@ public class CatalogItemDescription extends Fragment {
             @Override
             public void onClick(View v) {
 
+                boolean isInCart = checkItemStatus(currentProduct.getPID(), currentBuyer);
 
-                if (!checkItemStatus(currentProduct.getPID(), currentBuyer)) {
+                if (!isInCart) {
                     currentBuyer.addToCart(currentProduct);
-                    backEnd.saveToPersistentStorage("currentUser", currentBuyer);
+
                     backEnd.updateBuyeronBackEnd(currentBuyer, currentBuyer.cartSize());
+                    addToCart.setText(getResources().getString(R.string.removeCartLabel));
+                    addToCart.setBackgroundColor(getResources().getColor(R.color.danger_red));
+
+                    backEnd.saveToPersistentStorage("currentUser", currentBuyer);
                     backEnd.notifyByToast("Added to Cart!");
                 } else {
-                    backEnd.removeItemFromCart(currentProduct.getPID());
+                    addToCart.setText(getResources().getString(R.string.addCartLabel));
+                    addToCart.setBackgroundColor(getResources().getColor(R.color.sky_blue));
+                    backEnd.removeItemFromCart(currentProduct.getPID(), currentBuyer);
+                    backEnd.saveToPersistentStorage("currentUser", currentBuyer);
                     backEnd.notifyByToast("Removed from Cart!");
+
                 }
 
-            }
-        });
-
-
-        buyNow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // add to cart first
-                // redirect to orders
             }
         });
 

@@ -72,13 +72,13 @@ public class SellerSettings extends Fragment {
         super.onStart();
         findIDs();
 
+
         updateDP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickFromGallery();
             }
         });
-
         autofill();
 
         email.setEnabled(false);
@@ -167,7 +167,7 @@ public class SellerSettings extends Fragment {
 
         if (type.equals("buyer")) {
 
-            Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentBuyer");
+            Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
 
             if (!profilePic.isEmpty())
                 currentBuyer.setProfilePic(profilePic);
@@ -191,7 +191,7 @@ public class SellerSettings extends Fragment {
 
         } else {
 
-            Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentBuyer");
+            Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
 
             if (!profilePic.isEmpty())
                 currentSeller.setProfilePic(profilePic);
