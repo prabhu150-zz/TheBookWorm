@@ -103,7 +103,7 @@ public class Seller {
 
         try {
             InputStream myInput;
-            myInput = assetManager.open("Books_amazon.xls");
+            myInput = assetManager.open("Books.xls");
             loadItemsFromFile(myInput);
 
         } catch (IOException e) {
