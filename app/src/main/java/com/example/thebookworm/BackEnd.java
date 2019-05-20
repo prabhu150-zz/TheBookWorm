@@ -208,7 +208,8 @@ public class BackEnd {
 
 
     public void updateBuyeronBackEnd(Buyer currentBuyer, int position) {
-        FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart/" + currentBuyer.getLatestItem().getPID()).setValue(currentBuyer.getLatestItem());
+        if (currentBuyer.cartSize() > 0)
+            FirebaseDatabase.getInstance().getReference("/users/buyers/" + currentBuyer.getUserID() + "/cart/" + currentBuyer.getLatestItem().getPID()).setValue(currentBuyer.getLatestItem());
     }
 
 

@@ -32,7 +32,8 @@ public class OrdersList extends Fragment {
 
     private BackEnd backEnd;
     private RecyclerView ordersRecyclerView;
-    private TextView emptyOrdersAlert;
+    boolean isBuyer = false;
+    private TextView emptyOrdersAlert, customerName;
 
     @Nullable
     @Override
@@ -62,6 +63,7 @@ public class OrdersList extends Fragment {
 
         if (currentUserType.equals("buyer")) {
             getBuyerOrders();
+            isBuyer = true;
         } else if (currentUserType.equals("seller")) {
             getSellerOrders();
         } else {
@@ -72,7 +74,7 @@ public class OrdersList extends Fragment {
     }
 
     private void getSellerOrders() {
-        Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
+        final Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
 
         final GroupAdapter<ViewHolder> adapter = new GroupAdapter<>();
 
@@ -92,7 +94,7 @@ public class OrdersList extends Fragment {
                         Order currentOrder = backEnd.getSpecificOrder(child);
 
                         orders.add(currentOrder);
-                        ordersLists.add(new OrdersItems(currentOrder, index++));
+                        ordersLists.add(new OrdersItems(currentOrder, index++, child.child("customer/name").getValue().toString(), isBuyer));
                     }
 
                     for (OrdersItems curr : ordersLists)
@@ -124,7 +126,7 @@ public class OrdersList extends Fragment {
 
     private void getBuyerOrders() {
 
-        Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
+        final Buyer currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
 
 
         final GroupAdapter<ViewHolder> adapter = new GroupAdapter<>();
@@ -147,7 +149,7 @@ public class OrdersList extends Fragment {
                         backEnd.logit("Retrieved Order# " + index + " Bill: " + currentOrder.getBill());
 
                         orders.add(currentOrder);
-                        ordersLists.add(new OrdersItems(currentOrder, index++));
+                        ordersLists.add(new OrdersItems(currentOrder, index++, currentBuyer.getName(), isBuyer));
                     }
 
                     for (OrdersItems curr : ordersLists)
@@ -183,10 +185,14 @@ class OrdersItems extends Item<ViewHolder> {
 
     Order currentOrder;
     Integer index;
+    String currentBuyer;
+    boolean isBuyer;
 
-    public OrdersItems(Order currentOrder, int index) {
+    public OrdersItems(Order currentOrder, int index, String currentBuyer, boolean isBuyer) {
         this.currentOrder = currentOrder;
         this.index = index;
+        this.currentBuyer = currentBuyer;
+        this.isBuyer = isBuyer;
     }
 
     @Override
@@ -200,13 +206,20 @@ class OrdersItems extends Item<ViewHolder> {
         TextView orderNumber = viewHolder.itemView.findViewById(R.id.orderNumber);
 
         TextView numItems = viewHolder.itemView.findViewById(R.id.numItemsOrder);
-        TextView theBill = viewHolder.itemView.findViewById(R.id.sellerPrice);
+        TextView customerName = viewHolder.itemView.findViewById(R.id.customerName);
+        TextView theBill = viewHolder.itemView.findViewById(R.id.theBill);
         TextView grandTotal = viewHolder.itemView.findViewById(R.id.grandTotalOrder);
         TextView shippingCost = viewHolder.itemView.findViewById(R.id.shippingCostsOrder);
         TextView estimatedTax = viewHolder.itemView.findViewById(R.id.estimatedTax);
 
 
         orderNumber.setText("Order #" + index);
+
+        if (!isBuyer)
+            customerName.setText("Bought by: " + currentBuyer);
+        else
+            customerName.setVisibility(View.INVISIBLE);
+
         numItems.setText(currentOrder.getNumItems() + " items");
         theBill.setText(String.format("Bill : %.2f", currentOrder.getBill()) + "$");
         grandTotal.setText(String.format("Total : %.2f", currentOrder.getGrandTotal()) + "$");

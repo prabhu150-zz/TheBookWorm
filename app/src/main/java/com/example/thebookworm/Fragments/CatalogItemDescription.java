@@ -48,7 +48,7 @@ public class CatalogItemDescription extends Fragment {
     private void findIDs() {
         currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
         productImage = getView().findViewById(R.id.productImage);
-        price = getView().findViewById(R.id.sellerPrice);
+        price = getView().findViewById(R.id.customerName);
         productName = getView().findViewById(R.id.productName);
         soldBy = getView().findViewById(R.id.seller);
         addToCart = getView().findViewById(R.id.add_to_cart);

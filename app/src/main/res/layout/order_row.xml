@@ -6,10 +6,10 @@
     android:id="@+id/cardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardBackgroundColor="#FFFFFF"
-    app:cardCornerRadius="3dp"
-    app:cardElevation="5dp"
-    app:contentPadding="3dp">
+    app:cardBackgroundColor="#FDFDFD"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="6dp"
+    app:contentPadding="5dp">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,34 +31,49 @@
             app:layout_constraintGuide_percent="0.5" />
 
         <TextView
-            android:id="@+id/sellerPrice"
+            android:id="@+id/customerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
 
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:padding="5sp"
+            android:text="customerName here"
+            android:textColor="#00C853"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/orderNumber" />
+
+
+        <TextView
+            android:id="@+id/theBill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+
+            android:layout_marginTop="16dp"
             android:padding="5sp"
             android:text="@string/the_bill"
             android:textColor="@color/price"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline6" />
-
+            app:layout_constraintTop_toBottomOf="@+id/customerName" />
 
         <TextView
             android:id="@+id/numItemsOrder"
             android:layout_width="wrap_content"
             android:layout_height="28sp"
-            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
             android:fontFamily="serif"
             android:padding="5sp"
             android:text="@string/number_of_items"
             android:textColor="#4CAF50"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="italic"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/orderNumber" />
 
         <TextView
@@ -66,28 +81,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:padding="5sp"
             android:text="shippingCosts"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="12sp"
+            android:textColor="#FF9100"
+            android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline6" />
+            app:layout_constraintTop_toBottomOf="@+id/numItemsOrder" />
 
         <TextView
             android:id="@+id/estimatedTax"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="8dp"
             android:padding="5sp"
             android:text="estimatedTax"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="12sp"
+            android:textColor="#FF9100"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/shippingCostsOrder" />
 
@@ -95,18 +108,17 @@
             android:id="@+id/grandTotalOrder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="16dp"
             android:padding="5sp"
             android:text="grandTotal"
-            android:textColor="@android:color/holo_red_dark"
-            android:textSize="12sp"
+            android:textColor="#3D5AFE"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sellerPrice"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/theBill" />
 
         <TextView
             android:id="@+id/orderID"
@@ -133,22 +145,24 @@
             android:textSize="12sp"
             android:textStyle="bold"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/sellerPrice"
-            app:layout_constraintTop_toBottomOf="@+id/sellerPrice"
+            app:layout_constraintStart_toStartOf="@+id/customerName"
+            app:layout_constraintTop_toBottomOf="@+id/customerName"
 
             />
 
         <TextView
             android:id="@+id/orderNumber"
-            android:layout_width="389dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:fontFamily="sans-serif-condensed-medium"
             android:text="Order Number"
             android:textAlignment="center"
-            android:textSize="18sp"
+            android:textSize="22sp"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,7 @@
 package com.example.thebookworm.Fragments;
 
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 import com.example.bookworm.R;
+import com.example.thebookworm.Activities.BaseActivity;
 import com.example.thebookworm.BackEnd;
 import com.example.thebookworm.Models.Buyer;
 import com.example.thebookworm.Models.Order;
@@ -26,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CheckOut extends Fragment {
@@ -34,7 +37,7 @@ public class CheckOut extends Fragment {
     Double grandTotal;
     AwesomeValidation awesomeValidation;
     Button placeYourOrder;
-    EditText fullName, addressLine1, addressLine2, city, stateEditText, zipEditText, email, phone;
+    EditText fullName, addressLine1, addressLine2, city, state, zip, email, phone;
     EditText personNameEditTextBilling, address01EditTextBilling, address02EditTextBilling, cityEditTextBilling, stateEditTextBilling, zipEditTextBilling, phoneEditTextBilling;
 
     private BackEnd backEnd;
@@ -63,18 +66,72 @@ public class CheckOut extends Fragment {
         super.onStart();
         backEnd = new BackEnd(getActivity(), "CheckOutAct#logger");
 
+
+        attachValidation();
         preProcessing();
 
         placeYourOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                backEnd.notifyByToast("Order Placed!");
 
-                userCombinedOrder();
-                sellerSpecificOrder();
+
+                if (awesomeValidation.validate()) {
+                    backEnd.notifyByToast("Order Placed!");
+                    userCombinedOrder();
+                    sellerSpecificOrder();
+                    updateUserInfo();
+                    redirectToCatalog();
+                } else {
+                    backEnd.notifyByToast("Please re-enter proper values!");
+                }
+
+
             }
         });
 
+
+    }
+
+    private void redirectToCatalog() {
+        Fragment showCatalog = new ShowCatalog();
+        Bundle args = new Bundle();
+        backEnd.notifyByToast("Show Catalog");
+        args.putString("currentUserType", "buyer");
+        args.putString("request", getString(R.string.buyer_get_all_products_request));
+        ((BaseActivity) getActivity()).redirectToFragment(showCatalog, args);
+    }
+
+    private void updateUserInfo() {
+        currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
+
+        HashMap<String, String> shippingInfo = new HashMap<>();
+
+
+        shippingInfo.put("fullName", fullName.getText().toString());
+        shippingInfo.put("addressLine1", addressLine1.getText().toString());
+        shippingInfo.put("addressLine2", addressLine2.getText().toString());
+        shippingInfo.put("city", city.getText().toString());
+        shippingInfo.put("email", email.getText().toString());
+        shippingInfo.put("phone", phone.getText().toString());
+        shippingInfo.put("state", state.getText().toString());
+        shippingInfo.put("zip", zip.getText().toString());
+
+        FirebaseDatabase.getInstance().getReference("users/buyers/").child(currentBuyer.getUserID()).child("/shipping/").setValue(shippingInfo);
+
+    }
+
+    private void attachValidation() {
+        awesomeValidation.addValidation(getActivity(), R.id.fullName, "^[A-Za-z\\s]{1,}[\\.]{0,1}[A-Za-z\\s]{0,}$", R.string.nameerror);
+        awesomeValidation.addValidation(getActivity(), R.id.address1, "^[A-Za-z0-9\\.\\,\\#\\-\\s]{1,}$", R.string.addresserror);
+        awesomeValidation.addValidation(getActivity(), R.id.address2, "^[A-Za-z0-9\\.\\,\\#\\-\\s]{1,}$", R.string.addresserror);
+        awesomeValidation.addValidation(getActivity(), R.id.city, "^[A-Za-z\\s]{1,}$", R.string.cityerror);
+        awesomeValidation.addValidation(getActivity(), R.id.state, "^[A-Za-z\\s]{1,}$", R.string.stateerror);
+        awesomeValidation.addValidation(getActivity(), R.id.zipCode, "^[0-9]{5}$", R.string.ziperror);
+        awesomeValidation.addValidation(getActivity(), R.id.email, Patterns.EMAIL_ADDRESS, R.string.emailerror);
+        awesomeValidation.addValidation(getActivity(), R.id.nameOnCard, "^[A-Za-z\\s]{1,}$", R.string.nameerror);
+
+        awesomeValidation.addValidation(getActivity(), R.id.phone, "^[0-9]{10}$", R.string.phoneerror);
+        awesomeValidation.addValidation(getActivity(), R.id.phone, "^[0-9]{10}$", R.string.phoneerror);
 
     }
 
@@ -178,8 +235,8 @@ Make a combined order for everyone and save in user table
                     city.setText(getValueIfExists(dataSnapshot.child("city").getValue()));
                     email.setText(getValueIfExists(dataSnapshot.child("email").getValue()));
                     phone.setText(getValueIfExists(dataSnapshot.child("phone").getValue()));
-                    stateEditText.setText(getValueIfExists(dataSnapshot.child("state").getValue()));
-                    zipEditText.setText(getValueIfExists(dataSnapshot.child("zip").getValue()));
+                    state.setText(getValueIfExists(dataSnapshot.child("state").getValue()));
+                    zip.setText(getValueIfExists(dataSnapshot.child("zip").getValue()));
 
                 } else {
                     backEnd.logit("Couldn't find any info on user!");
@@ -211,8 +268,8 @@ Make a combined order for everyone and save in user table
         city = getView().findViewById(R.id.city);
         email = getView().findViewById(R.id.email);
         phone = getView().findViewById(R.id.phone);
-        stateEditText = getView().findViewById(R.id.state);
-        zipEditText = getView().findViewById(R.id.zipCode);
+        state = getView().findViewById(R.id.state);
+        zip = getView().findViewById(R.id.zipCode);
         placeYourOrder = getView().findViewById(R.id.place_Order_Button);
         numItems = getView().findViewById(R.id.itemsCountOrder);
         shippingCosts = getView().findViewById(R.id.shippingCosts);

@@ -99,7 +99,7 @@ public class InventoryItemDescription extends Fragment {
     private void updateSellerUI(final Product currentProduct) {
 
         productImage = getView().findViewById(R.id.productImage);
-        price = getView().findViewById(R.id.sellerPrice);
+        price = getView().findViewById(R.id.customerName);
         productName = getView().findViewById(R.id.productName);
         soldBy = getView().findViewById(R.id.seller);
         modify = getView().findViewById(R.id.modifyInventory);

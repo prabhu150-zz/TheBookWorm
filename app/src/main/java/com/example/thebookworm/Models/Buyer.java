@@ -119,7 +119,10 @@ public class Buyer {
     }
 
     public Product getLatestItem() {
-        return cart.get(cart.size() - 1);
+        if (cartSize() > 0)
+            return cart.get(cart.size() - 1);
+
+        return null;
     }
 
     public void setEmail(String newEmail) {

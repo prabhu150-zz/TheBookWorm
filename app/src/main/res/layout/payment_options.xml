@@ -309,7 +309,7 @@
                     android:text="@string/NameonCard_Textview" />
 
                 <EditText
-                    android:id="@+id/NameonCard_EditText"
+                    android:id="@+id/nameOnCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapWords|textPersonName" />

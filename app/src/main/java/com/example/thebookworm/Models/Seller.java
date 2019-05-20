@@ -103,7 +103,7 @@ public class Seller {
 
         try {
             InputStream myInput;
-            myInput = assetManager.open("Books.xls");
+            myInput = assetManager.open("Books_amazon.xls");
             loadItemsFromFile(myInput);
 
         } catch (IOException e) {
@@ -246,24 +246,6 @@ public class Seller {
             productsRef.child(currentProduct.getPID()).setValue(currentProduct);
             imageUrls.add(currentProduct.getImageURL());
         }
-
-
-    }
-
-    private void updateInventoryProduct(String pid, Product newProduct) {
-
-        int index = 0;
-
-        for (Product curr : inventory) {
-            index++;
-            if (curr.getPID().equals(pid)) {
-                break;
-            }
-        }
-
-        inventory.remove(index);
-        inventory.add(index, newProduct);
-
 
     }
 

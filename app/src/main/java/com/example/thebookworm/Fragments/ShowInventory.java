@@ -94,8 +94,12 @@ public class ShowInventory extends Fragment {
                     backEnd.logit("Found " + dataSnapshot.getChildrenCount() + " products!");
                     for (DataSnapshot currentChild : dataSnapshot.getChildren()) {
                         Product currentProduct = backEnd.getSpecificProduct(currentChild, productType);
-                        inventoryItems.add(currentProduct);
-                        inventoryList.add(new InventoryList(currentProduct, backEnd, adapter));
+
+                        if (currentProduct.getSellerID().equals(currentSeller.getUserID())) {
+                            inventoryItems.add(currentProduct);
+                            inventoryList.add(new InventoryList(currentProduct, backEnd, adapter));
+                        }
+
 
                     }
 
@@ -177,7 +181,7 @@ class InventoryList extends Item<ViewHolder> {
     @Override
     public void bind(@NonNull ViewHolder viewHolder, int position) {
         TextView productName = viewHolder.itemView.findViewById(R.id.productName);
-        TextView productPrice = viewHolder.itemView.findViewById(R.id.sellerPrice);
+        TextView productPrice = viewHolder.itemView.findViewById(R.id.customerName);
         ImageView productImage = viewHolder.itemView.findViewById(R.id.productImage);
         TextView productStock = viewHolder.itemView.findViewById(R.id.stock);
         TextView productSeller = viewHolder.itemView.findViewById(R.id.seller);

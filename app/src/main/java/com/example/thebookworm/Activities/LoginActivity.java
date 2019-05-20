@@ -74,7 +74,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        boolean debug = true;
+        boolean debug = false;
+
         if (debug)
             autofill();
 

@@ -62,7 +62,7 @@
             app:layout_constraintGuide_percent="0.5" />
 
         <TextView
-            android:id="@+id/sellerPrice"
+            android:id="@+id/customerName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -104,8 +104,8 @@
             android:textColor="@android:color/holo_red_dark"
             android:textSize="12sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/sellerPrice"
-            app:layout_constraintTop_toBottomOf="@+id/sellerPrice" />
+            app:layout_constraintStart_toStartOf="@+id/customerName"
+            app:layout_constraintTop_toBottomOf="@+id/customerName" />
 
         <TextView
             android:id="@+id/productID"
@@ -132,8 +132,8 @@
             android:textSize="12sp"
             android:textStyle="bold"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/sellerPrice"
-            app:layout_constraintTop_toBottomOf="@+id/sellerPrice"
+            app:layout_constraintStart_toStartOf="@+id/customerName"
+            app:layout_constraintTop_toBottomOf="@+id/customerName"
 
             />
     </androidx.constraintlayout.widget.ConstraintLayout>

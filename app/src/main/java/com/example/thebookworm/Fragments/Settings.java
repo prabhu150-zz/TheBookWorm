@@ -52,8 +52,10 @@ public class Settings extends Fragment {
         updateInventory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Seller currentSeller = (Seller) backEnd.getFromPersistentStorage("currentUser");
 
+                backEnd.notifyByToast("Books loaded!");
                 currentSeller.loadInventory(getActivity());
             }
         });

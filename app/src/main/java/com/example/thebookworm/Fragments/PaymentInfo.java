@@ -21,7 +21,7 @@
 //    AwesomeValidation awesomeValidation;
 //    Button placeYourOrder;
 //
-//    EditText personNameEditText, address01EditText, address02EditText, cityEditText, stateEditText, zipEditText, emailEditText, phoneEditText;
+//    EditText personNameEditText, address01EditText, address02EditText, cityEditText, state, zip, emailEditText, phoneEditText;
 //
 //    EditText personNameEditTextBilling, address01EditTextBilling, address02EditTextBilling, cityEditTextBilling, stateEditTextBilling, zipEditTextBilling, phoneEditTextBilling;
 //
@@ -62,8 +62,8 @@
 //        cityEditText = findViewById(R.id.city);
 //        emailEditText = findViewById(R.id.email);
 //        phoneEditText = findViewById(R.id.phone);
-//        stateEditText = findViewById(R.id.state);
-//        zipEditText = findViewById(R.id.zipCode);
+//        state = findViewById(R.id.state);
+//        zip = findViewById(R.id.zipCode);
 //
 //        personNameEditTextBilling = findViewById(R.id.fullName_billing_EditText);
 //        address01EditTextBilling = findViewById(R.id.adress01_billing_EditText);
@@ -115,8 +115,8 @@
 //            address02EditTextBilling.setText(address02EditText.getText());
 //            cityEditTextBilling.setText(cityEditText.getText());
 //            phoneEditTextBilling.setText(phoneEditText.getText());
-//            stateEditTextBilling.setText(stateEditText.getText());
-//            zipEditTextBilling.setText(zipEditText.getText());
+//            stateEditTextBilling.setText(state.getText());
+//            zipEditTextBilling.setText(zip.getText());
 //        }
 //    }
 //

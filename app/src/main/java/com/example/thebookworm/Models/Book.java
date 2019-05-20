@@ -2,6 +2,11 @@ package com.example.thebookworm.Models;
 
 public class Book extends Product {
 
+    @Override
+    public void setImageURL(String imageURL) {
+        super.setImageURL(imageURL);
+    }
+
     private String title, author, genre, publisher, datePublished;
     private int pages;
     //    Date published; too complex not needed

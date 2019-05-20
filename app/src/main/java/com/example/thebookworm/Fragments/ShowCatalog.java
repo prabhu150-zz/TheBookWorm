@@ -127,7 +127,6 @@ public class ShowCatalog extends Fragment {
                 } else {
                     backEnd.logit("No products found!");
                     getView().findViewById(R.id.emptyInventoryAlert).setVisibility(View.VISIBLE);
-                    getView().findViewById(R.id.placeOrder).setVisibility(View.GONE);
                     notifyByToast("No Products Found!");
                 }
 
@@ -172,7 +171,7 @@ class ProductList extends Item<ViewHolder> {
     @Override
     public void bind(@NonNull ViewHolder viewHolder, int position) {
         TextView productName = viewHolder.itemView.findViewById(R.id.productName);
-        TextView productPrice = viewHolder.itemView.findViewById(R.id.sellerPrice);
+        TextView productPrice = viewHolder.itemView.findViewById(R.id.customerName);
         ImageView productImage = viewHolder.itemView.findViewById(R.id.productImage);
         TextView productStock = viewHolder.itemView.findViewById(R.id.stock);
         TextView productSeller = viewHolder.itemView.findViewById(R.id.seller);

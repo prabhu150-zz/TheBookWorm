@@ -54,7 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
     private int IMAGE_REQUEST = 11;
     private BackEnd backend;
     private Uri imageURI;
-    private final boolean debug = true;
+    private final boolean debug = false;
 
 
     @Override
@@ -65,6 +65,8 @@ public class RegisterActivity extends AppCompatActivity {
         backend = new BackEnd(this, "RegisterAct#logger");
         backend.logit("Checking if user is logged in?");
 
+
+//        backend.logout();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             backend.logit("User is already logged in:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
             backend.findCurrentUser();
@@ -331,18 +333,34 @@ public class RegisterActivity extends AppCompatActivity {
 
             Buyer guestLogin = new Buyer(userID, name.getText().toString(), email.getText().toString(), nickname.getText().toString());
 
+            /*
+            HashMap<String,String> keyVal = new HashMap<>();
+            keyVal.put("userID",userID);
+            keyVal.put("name",name.getText().toString());
+            keyVal.put("email",email.getText().toString());
+            keyVal.put("nickname",nickname.getText().toString());
+*/
             backend.saveToPersistentStorage("currentUser", guestLogin);
 
-            if (!profilePic.isEmpty())
+            if (!profilePic.isEmpty()) {
                 guestLogin.setProfilePic(profilePic);
+
+            }
 
             backend.logit("Current buyer added: " + guestLogin.getName());
 
             FirebaseDatabase.getInstance().getReference().child("/users/buyers/").child(userID).setValue(guestLogin);
+//            FirebaseDatabase.getInstance().getReference().child("/users/buyers/").child(userID).setValue(keyVal);
 
         } else {
 
             Seller guestLogin = new Seller(userID, name.getText().toString(), email.getText().toString());
+
+//            HashMap<String,String> keyVal = new HashMap<>();
+//            keyVal.put("userID",userID);
+//            keyVal.put("name",name.getText().toString());
+//            keyVal.put("email",email.getText().toString());
+
 
             backend.saveToPersistentStorage("currentUser", guestLogin);
 
@@ -354,6 +372,7 @@ public class RegisterActivity extends AppCompatActivity {
             backend.logit("Current seller added: " + guestLogin.getName());
 
             FirebaseDatabase.getInstance().getReference().child("/users/sellers/").child(userID).setValue(guestLogin);
+//            FirebaseDatabase.getInstance().getReference().child("/users/sellers/").child(userID).setValue(keyVal);
 
         }
 

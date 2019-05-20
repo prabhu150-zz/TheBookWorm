@@ -143,22 +143,31 @@ public class ViewCart extends Fragment {
                 if (dataSnapshot.exists()) {
 
                     List<Product> cartProducts = new ArrayList<>();
+                    List<String> imageUrls = new ArrayList<>();
 
                     for (DataSnapshot currItem : dataSnapshot.getChildren()) {
                         Product current = currItem.getValue(Book.class);
-                        current.setImageURL(currItem.child("/imageURL").getValue().toString());
+                        String imageURL = currItem.child("/imageURL").getValue().toString();
+                        imageUrls.add(imageURL);
                         current.setPID(currItem.child("/pid").getValue().toString());
+                        backEnd.logit("ImageURL inside value event listener: " + current.getImageURL());
+
+
                         cartProducts.add(current);
                         currentBuyer.addToCart(current);
                         Log.d("VE", "onDataChange: " + current.getImageURL());
                     }
 
                     Collections.reverse(cartProducts);
+                    Collections.reverse(imageUrls);
 
                     currentBuyer.setCart(cartProducts);
 
-                    for (Product cartItem : cartProducts)
-                        cartItemList.add(new CartItemRow(cartItem, backEnd, adapter));
+                    int index = 0;
+                    for (Product cartItem : cartProducts) {
+                        cartItemList.add(new CartItemRow(cartItem, backEnd, adapter, imageUrls.get(index)));
+                        index++;
+                    }
 
 
                     for (CartItemRow cartItem : cartItemList) {
@@ -195,11 +204,13 @@ class CartItemRow extends Item<ViewHolder> {
     Product currentProduct;
     BackEnd backEnd;
     GroupAdapter<ViewHolder> adapter;
+    String imageUrls;
 
-    public CartItemRow(Product currentProduct, BackEnd backEnd, GroupAdapter<ViewHolder> adapter) {
+    public CartItemRow(Product currentProduct, BackEnd backEnd, GroupAdapter<ViewHolder> adapter, String imageUrls) {
         this.currentProduct = currentProduct;
         this.backEnd = backEnd;
         this.adapter = adapter;
+        this.imageUrls = imageUrls;
     }
 
     @Override
@@ -212,7 +223,7 @@ class CartItemRow extends Item<ViewHolder> {
 
 
         TextView productName = viewHolder.itemView.findViewById(R.id.productName);
-        TextView productPrice = viewHolder.itemView.findViewById(R.id.sellerPrice);
+        TextView productPrice = viewHolder.itemView.findViewById(R.id.customerName);
         ImageView productImage = viewHolder.itemView.findViewById(R.id.productImage);
         TextView productStock = viewHolder.itemView.findViewById(R.id.stock);
         TextView productSeller = viewHolder.itemView.findViewById(R.id.seller);
@@ -221,8 +232,8 @@ class CartItemRow extends Item<ViewHolder> {
 
         final CartItemRow currRow = this;
 
-        backEnd.logit(currentProduct.getImageURL());
-        Picasso.get().load(currentProduct.getImageURL()).into(productImage);
+        backEnd.logit("Image URL within cart row: " + currentProduct.getImageURL());
+        Picasso.get().load(imageUrls).into(productImage);
 
         productName.setText(currentProduct.getName());
         productPrice.setText(String.format("$%.2f", currentProduct.getPrice()));
