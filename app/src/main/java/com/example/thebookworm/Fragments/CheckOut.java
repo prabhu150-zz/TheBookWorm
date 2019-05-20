@@ -36,6 +36,7 @@ public class CheckOut extends Fragment {
     Button placeYourOrder;
     EditText fullName, addressLine1, addressLine2, city, stateEditText, zipEditText, email, phone;
     EditText personNameEditTextBilling, address01EditTextBilling, address02EditTextBilling, cityEditTextBilling, stateEditTextBilling, zipEditTextBilling, phoneEditTextBilling;
+
     private BackEnd backEnd;
     private Order pendingOrder;
     private Buyer currentBuyer;
@@ -52,28 +53,25 @@ public class CheckOut extends Fragment {
 
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        backEnd = new BackEnd(getActivity(), "CheckOutAct#logger");
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         findIDs();
-
     }
-
 
     @Override
     public void onStart() {
         super.onStart();
-        preProcessing();
+        backEnd = new BackEnd(getActivity(), "CheckOutAct#logger");
 
+        preProcessing();
 
         placeYourOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                backEnd.notifyByToast("Order Placed!");
 
                 userCombinedOrder();
                 sellerSpecificOrder();
-
-
             }
         });
 
@@ -81,68 +79,107 @@ public class CheckOut extends Fragment {
     }
 
     private void sellerSpecificOrder() {
+        DatabaseReference sellerRef = FirebaseDatabase.getInstance().getReference("users/sellers/");
+
+        for (String currSeller : sellerIds) {
+            String orderID = sellerRef.push().getKey();
+            List<Product> sellerCart = getAllProductsByThisSeller(cart, currSeller);
+            Order sellersOrder = new Order(orderID, currentBuyer, sellerCart, currSeller);
+            sellerRef.child(currSeller).child("/orders/" + sellersOrder.getOrderID()).setValue(sellersOrder);
+            sellerRef.child(currSeller).child("/customers/" + sellersOrder.getCustomer().getUserID()).setValue(sellersOrder.getCustomer());
+        }
 
     }
 
+
+    private List<Product> getAllProductsByThisSeller(List<Product> cart, String sellerID) {
+        List<Product> sellersGoods = new ArrayList<>();
+
+        for (Product curr : cart) {
+            if (curr.getSellerID().equals(sellerID))
+                sellersGoods.add(curr);
+        }
+
+        return sellersGoods;
+    }
+
+
     private void userCombinedOrder() {
 
-        pendingOrder = currentBuyer.placeOrder(sellerIds);
+        DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("users/buyers/" + currentBuyer.getUserID());
 
-        DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("users/buyers/" + currentBuyer.getUserID()).child("/orders/");
+        String orderID = ordersRef.push().getKey();
 
-        String orderID = ordersRef.getKey();
-
+        backEnd.logit("Cart size: " + cart.size());
         pendingOrder.setOrderID(orderID);
+        pendingOrder.setItems(cart);
+        backEnd.logit("Seller list size: " + sellerIds.size());
+        pendingOrder.setSellerList(sellerIds);
 
-        ordersRef.child(orderID).setValue(pendingOrder);
+        backEnd.logit("Adding user specific order! " + pendingOrder.getGrandTotal());
+        ordersRef.child("/orders/" + orderID).setValue(pendingOrder);
+
+        ordersRef.child("/orders/" + orderID + "/items/").setValue(cart);
+        ordersRef.child("/orders/" + orderID + "/sellers/").setValue(sellerIds);
 
     }
 
     private void preProcessing() {
 
         currentBuyer = (Buyer) backEnd.getFromPersistentStorage("currentUser");
+
+        DatabaseReference ordersRef = FirebaseDatabase.getInstance().getReference("users/buyers/" + currentBuyer.getUserID());
+
+        String orderID = ordersRef.push().getKey();
+
+
         cart = new ArrayList<>(currentBuyer.getCart());
         sellerIds = new ArrayList<>();
 
         for (Product currentProduct : cart) {
             if (!sellerIds.contains(currentProduct.getPID()))
-                sellerIds.add(currentProduct.getSoldBy());
+                sellerIds.add(currentProduct.getSellerID());
         }
 
-        numItems.setText(cart.size());
-        shippingCosts.setText(String.format("%.2f", pendingOrder.getShippingCosts()));
-        estimatedTax.setText(String.format("%.2f", pendingOrder.getEstimatedTax()));
-        orderTotal.setText(String.format("%.2f", pendingOrder.getGrandTotal()));
-
-
-        autofill();
+        pendingOrder = new Order(orderID, currentBuyer, cart, sellerIds);
+        resetUI();
 
 
 /*
 TODO:
 
 Reupload to have soldBy as ID and not name
-
 Sort by seller ids
-
 Make a fresh order for each seller
     save each fresh order under seller table
-
 Make a combined order for everyone and save in user table
-
-
-
  */
     }
 
-    private void autofill() {
+    private void resetUI() {
+        numItems.setText(String.valueOf(pendingOrder.getNumItems()));
+        shippingCosts.setText(String.format("%.2f", pendingOrder.getShippingCosts()));
+        estimatedTax.setText(String.format("%.2f", pendingOrder.getEstimatedTax()));
+        orderTotal.setText(String.format("%.2f", pendingOrder.getGrandTotal()));
 
+        autofill();
+    }
+
+    private void autofill() {
 
         FirebaseDatabase.getInstance().getReference("/users/buyers/").child(currentBuyer.getUserID()).child("/shipping/").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
 
+                    fullName.setText(getValueIfExists(dataSnapshot.child("fullName").getValue()));
+                    addressLine1.setText(getValueIfExists(dataSnapshot.child("addressLine1").getValue()));
+                    addressLine2.setText(getValueIfExists(dataSnapshot.child("addressLine2").getValue()));
+                    city.setText(getValueIfExists(dataSnapshot.child("city").getValue()));
+                    email.setText(getValueIfExists(dataSnapshot.child("email").getValue()));
+                    phone.setText(getValueIfExists(dataSnapshot.child("phone").getValue()));
+                    stateEditText.setText(getValueIfExists(dataSnapshot.child("state").getValue()));
+                    zipEditText.setText(getValueIfExists(dataSnapshot.child("zip").getValue()));
 
                 } else {
                     backEnd.logit("Couldn't find any info on user!");
@@ -159,14 +196,12 @@ Make a combined order for everyone and save in user table
 
     }
 
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        // validateInput()
-
-
+    private String getValueIfExists(Object object) {
+        if (object == null)
+            return "";
+        return String.valueOf(object);
     }
+
 
     private void findIDs() {
         awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
@@ -178,16 +213,11 @@ Make a combined order for everyone and save in user table
         phone = getView().findViewById(R.id.phone);
         stateEditText = getView().findViewById(R.id.state);
         zipEditText = getView().findViewById(R.id.zipCode);
-        personNameEditTextBilling = getView().findViewById(R.id.fullName_billing_EditText);
-        address01EditTextBilling = getView().findViewById(R.id.adress01_billing_EditText);
-        address02EditTextBilling = getView().findViewById(R.id.address02_billing_EditText);
-        cityEditTextBilling = getView().findViewById(R.id.city_billing_EditText);
-        phoneEditTextBilling = getView().findViewById(R.id.phone_billing_EditText);
-        stateEditTextBilling = getView().findViewById(R.id.state_billing_EditText);
-        zipEditTextBilling = getView().findViewById(R.id.zip_billing_EditText);
-
-
         placeYourOrder = getView().findViewById(R.id.place_Order_Button);
+        numItems = getView().findViewById(R.id.itemsCountOrder);
+        shippingCosts = getView().findViewById(R.id.shippingCosts);
+        estimatedTax = getView().findViewById(R.id.totalTax);
+        orderTotal = getView().findViewById(R.id.orderTotal);
     }
 
 

@@ -60,10 +60,13 @@ public class Buyer {
         this.email = email;
         this.nickname = nickname;
         cart = new ArrayList<>();
+        orders = new ArrayList<>();
     }
 
     public Buyer() {
+
         cart = new ArrayList<>();
+        orders = new ArrayList<>();
     }
 
     public List<Product> getCart() {
@@ -84,11 +87,17 @@ public class Buyer {
     }
 
     public void removeFromCart(String pid) {
-        for (Product curr : cart)
-            if (curr.getPID().equals(pid)) {
-                cart.remove(curr);
-            }
 
+        int index = 0;
+
+        for (Product curr : cart) {
+            if (curr.getPID().equals(pid))
+                break;
+
+            index++;
+        }
+        if (!cart.isEmpty())
+            cart.remove(index);
     }
 
 
@@ -118,36 +127,6 @@ public class Buyer {
     }
 
 
-    public Order placeOrder(List<String> sellerID) {
-        double bill = 0.0, shipping = 0.0875, tax = 0.125, grandTotal;
-
-        for (Product item : cart)
-            bill += item.getPrice();
-
-
-        grandTotal = bill * (1 + shipping + tax);
-
-        Order currentOrder = new Order(this, new ArrayList<>(cart), bill, shipping * bill, tax * bill, grandTotal, new ArrayList<String>(sellerID));
-
-        orders.add(currentOrder);
-
-        return currentOrder;
-
-    }
-
-
-    public void immediateOrder(String sellerID, Product currentProduct) {
-        double bill = currentProduct.getPrice(), shipping = 0.0875, tax = 0.125, grandTotal;
-
-        grandTotal = bill * (1 + shipping + tax);
-
-        List<String> currentSeller = new ArrayList<>();
-        currentSeller.add(sellerID);
-
-        Order currentOrder = new Order(this, new ArrayList<>(cart), bill, shipping * bill, tax * bill, grandTotal, currentSeller);
-
-        orders.add(currentOrder);
-    }
 
 
     public List<Order> getOrders() {
@@ -164,5 +143,9 @@ public class Buyer {
 
     public void setCart(List<Product> cartProducts) {
         this.cart = new ArrayList<>(cartProducts);
+    }
+
+    public void addOrder(Order order) {
+        orders.add(order);
     }
 }

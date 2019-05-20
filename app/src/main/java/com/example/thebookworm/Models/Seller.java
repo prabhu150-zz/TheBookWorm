@@ -156,7 +156,7 @@ public class Seller {
 
                 switch (productType) {
                     case "book":
-                        Product currentProduct = new Book(itemList.get("title"), itemList.get("description"), itemList.get("book cover"), Double.parseDouble(itemList.get("price")), itemList.get("isbn") + userID, (int) Double.parseDouble(itemList.get("quantity")), name, productType);
+                        Product currentProduct = new Book(itemList.get("title"), itemList.get("description"), itemList.get("book cover"), Double.parseDouble(itemList.get("price")), itemList.get("isbn") + userID, (int) Double.parseDouble(itemList.get("quantity")), name, productType, userID);
 
 
                         ((Book) currentProduct).setDetails(itemList.get("author"), itemList.get("genre"), itemList.get("publisher"), (int) Double.parseDouble(itemList.get("pages")), itemList.get("date published"));
@@ -257,10 +257,12 @@ public class Seller {
         for (Product curr : inventory) {
             index++;
             if (curr.getPID().equals(pid)) {
-                inventory.remove(curr);
-                inventory.add(index, newProduct);
+                break;
             }
         }
+
+        inventory.remove(index);
+        inventory.add(index, newProduct);
 
 
     }
@@ -274,11 +276,17 @@ public class Seller {
     }
 
     public void removeFromInventory(String currentProductPID) {
+
+        int index = 0;
+
         for (Product curr : inventory) {
             if (curr.getPID().equals(currentProductPID))
-                inventory.remove(curr);
-
+                break;
+            index++;
         }
+
+        if (index < inventory.size())
+            inventory.remove(index);
 
     }
 }

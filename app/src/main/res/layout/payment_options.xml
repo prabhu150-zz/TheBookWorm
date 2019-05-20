@@ -7,27 +7,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:isScrollContainer="true"
-    android:orientation="vertical"
-    tools:context="com.example.thebookworm.Fragments.PaymentInfo">
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/my_toolbar_personalInformation"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-
-        <TextView
-            android:id="@+id/toolbar_title_personalInformation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textSize="24sp" />
-    </androidx.appcompat.widget.Toolbar>
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -76,7 +56,7 @@
                         android:textSize="16sp" />
 
                     <TextView
-                        android:id="@+id/itemsCount"
+                        android:id="@+id/itemsCountOrder"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="right"
@@ -344,134 +324,10 @@
                     android:id="@+id/card_input_widget"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
+
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/border"
-                android:orientation="vertical"
-                android:paddingLeft="16dp"
-                android:paddingTop="15dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="15dp"
-                android:visibility="gone">
-
-                <TextView
-                    android:id="@+id/billAddressTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="7dp"
-                    android:text="@string/Billing_Address_details"
-
-                    android:textColor="#000"
-                    android:textSize="20sp" />
-
-                <CheckBox
-                    android:id="@+id/same_address_checkbox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:onClick="sameAddress"
-                    android:text="@string/same_address"
-                    android:textSize="18sp" />
-
-
-                <TextView
-                    android:id="@+id/fnameBillTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/fullName_textview" />
-
-                <EditText
-                    android:id="@+id/fullName_billing_EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textCapWords|textPersonName"
-                    app:layout_constraintTop_toBottomOf="@+id/fullName_TextView" />
-
-                <TextView
-                    android:id="@+id/address01_billing_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/address01_textview" />
-
-                <EditText
-                    android:id="@+id/adress01_billing_EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textCapWords|textPersonName" />
-
-                <TextView
-                    android:id="@+id/address02_billing_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/address02_textview" />
-
-                <EditText
-                    android:id="@+id/address02_billing_EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textCapWords|textPersonName" />
-
-                <TextView
-                    android:id="@+id/city_billing_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/city_textview" />
-
-                <EditText
-                    android:id="@+id/city_billing_EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:ems="10"
-                    android:inputType="textCapWords|textPersonName"
-                    tools:layout_editor_absoluteX="16dp" />
-
-                <TextView
-                    android:id="@+id/state_billing_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/state_textView" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:paddingRight="16dp">
-
-                    <EditText
-                        android:id="@+id/state_billing_EditText"
-                        android:layout_width="125dp"
-                        android:layout_height="50dp"
-                        android:imeOptions="actionNext"
-                        android:inputType="textCapWords|textPersonName"
-                        android:nextFocusForward="@+id/zip_billing_EditText" />
-
-
-                    <EditText
-                        android:id="@+id/zip_billing_EditText"
-                        android:layout_width="125dp"
-                        android:layout_height="wrap_content"
-                        android:inputType="number" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/phone_billing_TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/phone_textview"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.085" />
-
-                <EditText
-                    android:id="@+id/phone_billing_EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="phone" />
-            </LinearLayout>
 
             <Button
                 android:id="@+id/place_Order_Button"
@@ -481,9 +337,9 @@
                 android:layout_marginBottom="50dp"
                 android:backgroundTint="#76FF03"
                 android:text="@string/place_order_button"
-                android:textColor="@color/white"
-                android:textColorLink="@color/white"
+                android:textColor="@color/dark_blue"
                 android:textSize="18sp" />
+
 
         </LinearLayout>
     </ScrollView>

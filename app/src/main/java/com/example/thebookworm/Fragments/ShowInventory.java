@@ -188,7 +188,7 @@ class InventoryList extends Item<ViewHolder> {
         productName.setText(currentProduct.getName());
         productPrice.setText(String.format("$%.2f", currentProduct.getPrice()));
         productStock.setText("Stock: " + currentProduct.getAvailableStock());
-        productSeller.setText("Sold By: " + currentProduct.getSoldBy());
+        productSeller.setText("Sold By: " + currentProduct.getSellerName());
         productId.setText(currentProduct.getPID());
 
         final InventoryList currentRow = this;

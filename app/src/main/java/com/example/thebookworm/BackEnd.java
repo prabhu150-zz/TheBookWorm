@@ -12,6 +12,7 @@ import com.example.thebookworm.Activities.BaseActivity;
 import com.example.thebookworm.Activities.LoginActivity;
 import com.example.thebookworm.Models.Book;
 import com.example.thebookworm.Models.Buyer;
+import com.example.thebookworm.Models.Order;
 import com.example.thebookworm.Models.Product;
 import com.example.thebookworm.Models.Seller;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -178,46 +179,6 @@ public class BackEnd {
         currentActivity.startActivity(redirect);
     }
 
-    /*
-    private void loadInventoryFromBackEnd(final Seller currentSeller) {
-
-        Query selectAllProducts = FirebaseDatabase.getInstance().getReference("/users/sellers/inventory/");
-
-        final DatabaseReference marketRef = FirebaseDatabase.getInstance().getReference("market/products/");
-
-        logit("Loading all products from seller's current inventory to seller model");
-
-        ValueEventListener listener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-
-                    List<String> productIds = new ArrayList<>();
-
-                    for (DataSnapshot currentChild : dataSnapshot.getChildren())
-                        productIds.add(currentChild.getValue().toString());
-
-
-                    for (String productId : productIds) {
-//                        DatabaseReference productRef = marketRef.child(productId);
-//                        Product product = new Product(productRef.child("name").toString(), productRef.child("description"), productRef.child("imageURL"))
-
-//                        currentSeller.inventory.add();
-                    }
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-
-
-    }
-    */
 
     @NotNull
     public Product fetchProduct(DataSnapshot currentChild, Bundle args) {
@@ -231,7 +192,7 @@ public class BackEnd {
         switch (productType) {
             case "book":
 
-                currentProduct = new Book(getChildStringVal(currentChild, "/name/"), getChildStringVal(currentChild, "/description/"), getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(getChildStringVal(currentChild, "/price/")), getChildStringVal(currentChild, "/pid/"), Integer.parseInt(getChildStringVal(currentChild, "/availableStock/")), getChildStringVal(currentChild, "/soldBy"), getChildStringVal(currentChild, "/type"));
+                currentProduct = new Book(getChildStringVal(currentChild, "/name/"), getChildStringVal(currentChild, "/description/"), getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(getChildStringVal(currentChild, "/price/")), getChildStringVal(currentChild, "/pid/"), Integer.parseInt(getChildStringVal(currentChild, "/availableStock/")), getChildStringVal(currentChild, "/sellerName"), getChildStringVal(currentChild, "/type"), getChildStringVal(currentChild, "/sellerID"));
 //                String author, String genre, String publisher, int pages, String datePublished
 
 
@@ -253,9 +214,7 @@ public class BackEnd {
 
     public void removeItemFromCart(String currentProductPID, Buyer currentBuyer) {
 
-
         Log.d("removeFromCart", "Removing item: " + currentProductPID + " for user id: " + currentBuyer.getUserID());
-
 
         Log.d("removeFromCart", "UserId: " + currentBuyer.getUserID());
 
@@ -267,7 +226,6 @@ public class BackEnd {
         });
 
         currentBuyer.removeFromCart(currentProductPID);
-
         saveToPersistentStorage("currentUser", currentBuyer);
     }
 
@@ -275,7 +233,6 @@ public class BackEnd {
         Seller currentSeller = (Seller) getFromPersistentStorage("currentUser");
 
         DatabaseReference sellerInventoryRef = FirebaseDatabase.getInstance().getReference("/users/sellers/" + currentSeller.getUserID() + "/inventory/" + productType).child(currentProductPID);
-
 
         sellerInventoryRef.removeValue();
 
@@ -327,12 +284,12 @@ public class BackEnd {
         switch (productType) {
             case "book":
 
-                currentProduct = new Book(getChildStringVal(currentChild, "/name/"), getChildStringVal(currentChild, "/description/"), getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(getChildStringVal(currentChild, "/price/")), getChildStringVal(currentChild, "/pid/"), Integer.parseInt(getChildStringVal(currentChild, "/availableStock/")), getChildStringVal(currentChild, "/soldBy"), getChildStringVal(currentChild, "/type"));
+                currentProduct = new Book(getChildStringVal(currentChild, "/name/"), getChildStringVal(currentChild, "/description/"), getChildStringVal(currentChild, "/imageURL/"), Double.parseDouble(getChildStringVal(currentChild, "/price/")), getChildStringVal(currentChild, "/pid/"), Integer.parseInt(getChildStringVal(currentChild, "/availableStock/")), getChildStringVal(currentChild, "/sellerName"), getChildStringVal(currentChild, "/type/"),
+                        getChildStringVal(currentChild, "/sellerID/"));
 //                String author, String genre, String publisher, int pages, String datePublished
 
                 ((Book) currentProduct).setDetails(getChildStringVal(currentChild, "/author/"), getChildStringVal(currentChild, "/genre"), getChildStringVal(currentChild, "/publisher/"), Integer.parseInt(getChildStringVal(currentChild, "/pages/")), getChildStringVal(currentChild, "/datePublished"));
 
-//                logit("Retrieved product " + currentProduct.getName());
                 return currentProduct;
 
             default:
@@ -341,4 +298,7 @@ public class BackEnd {
     }
 
 
+    public Order getSpecificOrder(DataSnapshot child) {
+        return new Order(getChildStringVal(child, "/orderID"), Integer.parseInt(getChildStringVal(child, "/numItems")), Double.parseDouble(getChildStringVal(child, "/bill")), Double.parseDouble(getChildStringVal(child, "/shippingCosts")), Double.parseDouble(getChildStringVal(child, "/estimatedTax")), Double.parseDouble(getChildStringVal(child, "/grandTotal")));
+    }
 }

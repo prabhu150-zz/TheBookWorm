@@ -2,11 +2,8 @@ package com.example.thebookworm.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -20,9 +17,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.bookworm.R;
 import com.example.thebookworm.BackEnd;
-import com.example.thebookworm.Fragments.BuyerOrderList;
-import com.example.thebookworm.Fragments.CustomerList;
-import com.example.thebookworm.Fragments.SellerSettings;
+import com.example.thebookworm.Fragments.OrdersList;
+import com.example.thebookworm.Fragments.Settings;
 import com.example.thebookworm.Fragments.ShowCatalog;
 import com.example.thebookworm.Fragments.ShowInventory;
 import com.example.thebookworm.Fragments.ViewCart;
@@ -40,6 +36,7 @@ public class BaseActivity extends AppCompatActivity
     boolean isBuyer;
     private BackEnd backEnd;
     private String tag = "BaseAct#logger";
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +97,11 @@ public class BaseActivity extends AppCompatActivity
     }
 
 
+    public void setTitleForNavBar(String title) {
+        toolbar.setTitle(title); // handle at buyer fragment
+    }
+
+
     public void redirectToFragment(Fragment fragment, Bundle fragmentArguments) {
 
         final String request = fragmentArguments.getString("request");
@@ -113,57 +115,58 @@ public class BaseActivity extends AppCompatActivity
         final String showSettings = getString(R.string.see_settings);
         final String showSellerHisInventory = getString(R.string.seller_get_all_products_request);
         final String showSellerHisInventoryItem = getString(R.string.seller_get_product_by_id_request);
-        final String showSellerHisOrders = getString(R.string.seller_see_orders_request);
-        final String showSellerHisCustomers = getString(R.string.seller_see_customers_request);
+
+        final String showUserHisOrders = getString(R.string.user_needs_orders_request);
 
 
         backEnd.logit("Reached redirection. IsBuyer: " + isBuyer);
 
-
         if (request.equals(showSpecificProductBuyer)) {
-
             backEnd.logit("About to display specific item");
-
+            setTitleForNavBar("Catalog Product");
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
 
         } else if (request.equals(showSellerHisInventoryItem)) {
-
+            setTitleForNavBar("Inventory Product");
             backEnd.logit("About to display inventory item");
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
 
         } else if (request.equals(showBuyersCatalog)) {
             backEnd.logit("About to display all products");
+            setTitleForNavBar("Catalog");
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
 
-        } else if (request.equals(showSellerHisOrders)) {
-            //TODO to be implemented
+        } else if (request.equals(showUserHisOrders)) {
+            backEnd.logit("About to display orders for " + fragmentArguments.get("currentUserType"));
+            setTitleForNavBar("Orders");
+            fragment.setArguments(fragmentArguments);
+            replaceFragment(fragment);
 
-        } else if (request.equals(showSellerHisCustomers)) {
-            //TODO to be implemented
         } else if (request.equals(showUserHisCart)) {
             backEnd.logit("Showing Cart!");
+            setTitleForNavBar("Shopping Cart");
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
-        } else if (request.equals(userWantsToBuyRequest)) {
-            // TODO to be implemented
         } else if (request.equals(showSellerHisInventory)) {
             backEnd.logit("Showing inventory:");
+            setTitleForNavBar("Inventory");
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
         } else if (request.equals(showSettings)) {
+            setTitleForNavBar("Settings");
             backEnd.logit("Showing settings for " + currentUserType);
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
         } else if (request.equals(userWantsToCheckOut)) {
+            setTitleForNavBar("Billing Page");
             backEnd.logit("Proceeding to billing page..." + currentUserType);
             fragment.setArguments(fragmentArguments);
             replaceFragment(fragment);
-
         } else {
-            throw new IllegalArgumentException("This user not currently supported!" + request);
+            throw new IllegalArgumentException("This request not currently supported!" + request);
         }
 
     }
@@ -171,11 +174,10 @@ public class BaseActivity extends AppCompatActivity
     private void handleBuyer() {
         setContentView(R.layout.buyer_navbar);
 
-        Toolbar toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
+        toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
 
         toolbar.setTitle("Catalog"); // handle at buyer fragment
 
-        toolbar.inflateMenu(R.menu.buyer_toolbar);
         setSupportActionBar(toolbar);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -203,7 +205,7 @@ public class BaseActivity extends AppCompatActivity
     private void handleSeller() {
 
         setContentView(R.layout.seller_navbar);
-        Toolbar toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
+        toolbar = findViewById(R.id.toolbar); // this will be sellers dashboard
         toolbar.setTitle("Inventory");
         setSupportActionBar(toolbar);
 
@@ -269,68 +271,14 @@ public class BaseActivity extends AppCompatActivity
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.buyer_toolbar, menu);
-        MenuItem search = menu.findItem(R.id.search);
-        SearchView searchView = (SearchView)
-                search.getActionView();
-
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-
-
-        return super.onCreateOptionsMenu(menu);
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.search:
-                backEnd.notifyByToast("Search clicked!");
-                break;
-
-            case R.id.filter:
-                backEnd.notifyByToast("Filter clicked!");
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here. Nav drawer items here
         int id = item.getItemId();
 
         switch (id) {
             case R.id.cart: {
-                backEnd.notifyByToast("Shopping Cart!");
-
                 Bundle args = new Bundle();
                 args.putString("request", getString(R.string.buyer_proceed_to_cart));
                 redirectToFragment(new ViewCart(), args);
-
-//                replaceFragment(); // BUYER ONLY
-
             }
             break;
 
@@ -352,35 +300,22 @@ public class BaseActivity extends AppCompatActivity
                 args.putString("request", getString(R.string.seller_get_all_products_request));
                 redirectToFragment(showInventory, args);
             }
-
-            break;
-
-
-            case R.id.viewCustomers: {
-                backEnd.notifyByToast("View Customers!"); // SELLER ONLY
-
-                Fragment seeCustomers = new CustomerList(); //TODO to be implemented
-                Bundle args = new Bundle();
-                args.putString("request", getString(R.string.seller_see_customers_request));
-                // get seller ID from that class
-                redirectToFragment(seeCustomers, args);
-            }
             break;
 
             case R.id.orders: {
 
-                Fragment seeOrders = new BuyerOrderList();
+                Fragment seeOrders = new OrdersList();
                 Bundle args = new Bundle();
 
                 if (isBuyer) {
                     backEnd.notifyByToast("Show Buyers Orders");
                     args.putString("currentUserType", "buyer");
-                    args.putString("request", getString(R.string.buyer_see_orders_request));
+                    args.putString("request", getString(R.string.user_needs_orders_request));
 
                 } else {
                     backEnd.notifyByToast("Show Sellers Orders");
                     args.putString("currentUserType", "seller");
-                    args.putString("request", getString(R.string.seller_see_orders_request));
+                    args.putString("request", getString(R.string.user_needs_orders_request));
                 }
                 redirectToFragment(seeOrders, args);
 
@@ -396,7 +331,7 @@ public class BaseActivity extends AppCompatActivity
 
 
             case R.id.seller_settings: {
-                Fragment settings = new SellerSettings();
+                Fragment settings = new Settings();
                 Bundle args = new Bundle();
                 args.putString("request", getString(R.string.see_settings));
                 if (isBuyer)
@@ -410,7 +345,7 @@ public class BaseActivity extends AppCompatActivity
 
 
             case R.id.buyer_settings: {
-                Fragment settings = new SellerSettings();
+                Fragment settings = new Settings();
                 Bundle args = new Bundle();
                 args.putString("request", getString(R.string.see_settings));
                 if (isBuyer)
@@ -427,8 +362,6 @@ public class BaseActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-//    public Fragment getVisibleFragment TODO get visible fragment to make changes to it
 
 
 }

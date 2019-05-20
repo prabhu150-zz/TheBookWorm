@@ -129,7 +129,7 @@ public class CatalogItemDescription extends Fragment {
 
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());
-        soldBy.setText(currentProduct.getSoldBy());
+        soldBy.setText(currentProduct.getSellerName());
         price.setText(String.format("$%.2f", currentProduct.getPrice()));
 
         getItemDetails((Book) currentProduct, author, genre, publisher, bookStocks, title, pages, datePublished, itemDescription);

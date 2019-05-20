@@ -106,7 +106,7 @@
 
 
     <string name="sellerNamePlaceHolder">Seller Name here</string>
-    <string name="update_inventory">Update Inventory</string>
+    <string name="update_inventory">Update Inventory from File</string>
     <string name="view_orders">View Orders</string>
     <string name="view_customers">View Customers</string>
     <string name="update_info">Update user information</string>
@@ -135,11 +135,11 @@
     <string name="buyer_get_product_by_id_request">333</string>
     <string name="buyer_get_product_by_price_request">444</string>
     <string name="buyer_get_product_by_author_request">555</string>
-    <string name="buyer_see_orders_request">1345</string>
+
+    <string name="user_needs_orders_request">1345</string>
 
     <string name="seller_get_all_products_request">777</string>
     <string name="seller_get_product_by_id_request">666</string>
-    <string name="seller_see_orders_request">888</string>
     <string name="seller_see_customers_request">931</string>
     <string name="see_settings">1125</string>
 
@@ -203,6 +203,8 @@
     <string name="add_to_cart">Add To Cart</string>
     <string name="addCartLabel">Add To Cart!</string>
     <string name="removeCartLabel">Remove from Cart!</string>
+    <string name="empty_orders">No Orders To Show!</string>
+    <string name="empty_customer_list">No Customers to Show!</string>
 
 
 </resources>

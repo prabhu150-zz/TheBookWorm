@@ -37,8 +37,8 @@ public class Book extends Product {
     }
 
 
-    public Book(String name, String description, String imageURL, double price, String PID, int stocks, String soldBy, String type) {
-        super(name, description, imageURL, price, PID, stocks, soldBy, type);
+    public Book(String name, String description, String imageURL, double price, String PID, int stocks, String sellerName, String type, String sellerID) {
+        super(name, description, imageURL, price, PID, stocks, sellerName, type, sellerID);
         this.title = name;
         this.imageURL = imageURL;
     }

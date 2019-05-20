@@ -9,11 +9,6 @@
             android:title="@string/view_inventory" />
 
         <item
-            android:id="@+id/viewCustomers"
-            android:icon="@mipmap/baseline_account_circle_black_24dp"
-            android:title="@string/view_customers" />
-
-        <item
             android:id="@+id/orders"
             android:icon="@mipmap/orders"
             android:title="@string/orders" />

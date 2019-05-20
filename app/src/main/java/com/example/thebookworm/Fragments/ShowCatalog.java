@@ -75,7 +75,9 @@ public class ShowCatalog extends Fragment {
         final GroupAdapter<ViewHolder> adapter = new GroupAdapter<>();
 
         final RecyclerView recyclerView = getView().findViewById(R.id.inventoryList);
+
         final List<ProductList> productsList = new ArrayList<>();
+
         final List<Product> catalogProducts = new ArrayList<>();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -180,7 +182,7 @@ class ProductList extends Item<ViewHolder> {
         productName.setText(currentProduct.getName());
         productPrice.setText(String.format("$%.2f", currentProduct.getPrice()));
         productStock.setText("Stock: " + currentProduct.getAvailableStock());
-        productSeller.setText("Sold By: " + currentProduct.getSoldBy());
+        productSeller.setText("Sold By: " + currentProduct.getSellerName());
         productId.setText(currentProduct.getPID());
     }
 

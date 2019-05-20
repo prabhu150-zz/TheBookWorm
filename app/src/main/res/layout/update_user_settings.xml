@@ -14,22 +14,6 @@
         android:layout_margin="0dp">
 
         <Button
-            android:id="@+id/updateProfilePic"
-            android:layout_width="@dimen/logo_w_h"
-            android:layout_height="@dimen/logo_w_h"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/circle_button"
-            android:contentDescription="@string/content_desc_logo"
-            android:elevation="2dp"
-            android:text="@string/select_image"
-            android:textColor="@color/colorAccent"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
             android:id="@+id/updateInventory"
             style="?android:textAppearanceSmall"
             android:layout_width="match_parent"
@@ -44,26 +28,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/updateInfoButton" />
-
-        <Button
-            android:id="@+id/updateInfoButton"
-            style="?android:textAppearanceSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="32dp"
-            android:background="@color/colorAccent"
-            android:text="@string/update_info"
-            android:textColor="@android:color/black"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/confirmUpdatePassword" />
+            app:layout_constraintTop_toBottomOf="@id/updateNickName" />
 
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/previewProfilePic"
+            android:id="@+id/updatedProfilePic"
             android:layout_width="@dimen/logo_w_h"
             android:layout_height="@dimen/logo_w_h"
             android:layout_marginTop="16dp"
@@ -90,69 +59,46 @@
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
 
-            app:layout_constraintTop_toBottomOf="@+id/previewProfilePic" />
+            app:layout_constraintTop_toBottomOf="@+id/updatedProfilePic" />
 
-        <EditText
+        <TextView
             android:id="@+id/updateEmail"
-            android:layout_width="0dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             android:text="@string/emailPlaceHolder"
             android:textAlignment="center"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/updateName" />
 
-        <EditText
-            android:id="@+id/updatePassword"
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/updateNickName"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:text="@string/passwordPlaceHolder"
+            android:text="@string/nicknamePlaceHolder"
             android:textAlignment="center"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/oldPassword" />
+            app:layout_constraintTop_toBottomOf="@id/updateEmail" />
 
-        <EditText
-            android:id="@+id/oldPassword"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="Enter Old Password"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/updateEmail" />
-
-        <EditText
-            android:id="@+id/confirmUpdatePassword"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:text="@string/confirmPasswordPlaceHolder"
-            android:textAlignment="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/updatePassword" />
-
-        <EditText
+        <TextView
             android:id="@+id/updateName"
-            android:layout_width="0dp"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
             android:text="@string/namePlaceHolder"
             android:textAlignment="center"
+            android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/heading" />
@@ -165,7 +111,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/updatePassword"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/updateName" />

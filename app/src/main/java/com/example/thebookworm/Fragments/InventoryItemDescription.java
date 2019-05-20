@@ -123,7 +123,7 @@ public class InventoryItemDescription extends Fragment {
 
         Picasso.get().load(currentProduct.getImageURL()).into(productImage);
         productName.setText(currentProduct.getName());
-        soldBy.setText(currentProduct.getSoldBy());
+        soldBy.setText(currentProduct.getSellerName());
         price.setText(String.format("$%.2f", currentProduct.getPrice()));
 
 

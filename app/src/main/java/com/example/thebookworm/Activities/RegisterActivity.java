@@ -63,18 +63,12 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signup_page);
         backend = new BackEnd(this, "RegisterAct#logger");
-
-//        backend.logout();
-
         backend.logit("Checking if user is logged in?");
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             backend.logit("User is already logged in:" + FirebaseAuth.getInstance().getCurrentUser().getEmail());
             backend.findCurrentUser();
         }
-
-        //
-//        FirebaseApp.initializeApp(this); should only uncomment this the first time
 
         findIDs();
 
@@ -105,8 +99,6 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-
-
         signin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,14 +108,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         });
 
-
         uploadImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickFromGallery();
             }
         });
-
 
         type.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -134,9 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
                     type.setText(R.string.sellerSelected);
             }
         });
-
         signUpCurrentUser();
-
     }
 
     private void autofill() {
@@ -145,7 +133,6 @@ public class RegisterActivity extends AppCompatActivity {
         nickname.setText("abcd");
         password.setText("123456");
         confirmPassword.setText("123456");
-
     }
 
     private void checkIfEmpty(final EditText txtView, final String error) {
@@ -167,7 +154,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void notifyByToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-
     }
 
     private void redirect(Class nextActivity) {
@@ -358,9 +344,7 @@ public class RegisterActivity extends AppCompatActivity {
 
             Seller guestLogin = new Seller(userID, name.getText().toString(), email.getText().toString());
 
-
             backend.saveToPersistentStorage("currentUser", guestLogin);
-
 
             if (!profilePic.isEmpty()) {
                 guestLogin.setProfilePic(profilePic);
