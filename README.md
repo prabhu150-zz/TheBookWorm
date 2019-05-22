@@ -1,9 +1,6 @@
 # TheBookWorm
 Ecommerce Android application for buying and selling of books
 
-Team:
-Abhijeet Prabhu 823323196
-Shubham Kale 822707841
 
 Brief description of the app:
 
@@ -18,7 +15,7 @@ Features of the app:
 3. Buyer has the ability to see his previous orders ie number of items bought,money spent on tax/shipping
 4. Buyer can add/remove items from cart dynamically when browsing through their catalog
 5. Seller can bulk add all their books directly from an excel file. Since the column names directly affect database schema,
-I have kept the files in the assets folder. 3 seperate files for 3 different sellers.
+I have kept the files in the assets folder. 3 seperate files for 3 different sellers.Next release will allow users to directly upload the excel file to see their changes reflected in the inventory.
 6. Seller can view/delete/modify the items in their inventory
 7. Seller can see who their customers are and how many products they have bought from them. They can see how much money they
 have spent on shipping/tax for just their items in the user's aggregated order and see their revenue.
@@ -30,7 +27,7 @@ App uses androidX. Hence it may include several components that I didnt directly
 
 **********************************************************************************
 
-testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0-beta01'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0-beta01'
 
@@ -81,12 +78,7 @@ Have used CircleImageView and Picasso to get attractive profile pictures to show
 
 Instructions:
 
-You can try with the below accounts to get started. To change any products to observe the changes modify the Books.xls
-to add/modify/remove a product. Logging in as a seller and loading inventory will cause those changes to be reflected.
-
-Please keep the columns intact. If I gave the option for uploading the file sometimes, the column data got corrupted which was
-why keeping it in assets was the best choice I had.
-
+You can try signing in with the below accounts to get started. To change any products to observe the changes modify the Books.xls to add/modify/remove a product. Logging in as a seller and loading inventory will cause those changes to be reflected. Please keep the columns intact. If I gave the option for uploading the file sometimes, the column data got corrupted which was why keeping it in assets was the best choice I had.
 
 Logging in as buyer gives you access to add/remove items from cart. Buy books and view past purchases.
 Logging in as seller gives you access to your inventory and purchases users made from your shop. 
@@ -106,11 +98,9 @@ target@gm.com
 amz@gm.com
 
 
-
-
 Issues:
 
-Sometimes Picassos acts up especially when loading multiple products for the first time
+Sometimes Picasso acts up especially when loading multiple products for the first time
 or when a user has registered for the very first time. Usually logging out and logging back in
 loads the images back. I have kept placeholder images to prevent any UI deformations.
 
